@@ -1,0 +1,13 @@
+body.dark-mode .container {
+    background-color: #121212;
+}
+
+body.dark-mode .content-wrapper {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark-mode .card {
+    background-color: #242424;
+    color: #ffffff;
+}

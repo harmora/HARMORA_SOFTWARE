@@ -2993,3 +2993,28 @@ $(document).ready(function () {
     // Initialize state on page load
     toggleRequiredFields();
 });
+
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    document.querySelectorAll('.header').forEach(el => el.classList.toggle('header-dark-mode'));
+    document.querySelectorAll('.navbar').forEach(el => el.classList.toggle('navbar-dark-mode'));
+    document.querySelectorAll('.footer').forEach(el => el.classList.toggle('footer-dark-mode'));
+    document.querySelectorAll('.card').forEach(el => el.classList.toggle('card-dark-mode'));
+    document.querySelectorAll('.menu-vertical').forEach(el => el.classList.toggle('bg-menu-theme-dark-mode')); // Toggle menu dark mode
+
+    // Save the user's preference in local storage
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('dark-mode', isDarkMode ? 'enabled' : 'disabled');
+}
+
+// Check user's preference on page load
+window.onload = () => {
+    const darkModePreference = localStorage.getItem('dark-mode');
+    if (darkModePreference === 'enabled') {
+        toggleDarkMode();
+    }
+};
+
+// Add event listener to toggle button
+document.querySelector('#darkModeToggle').addEventListener('click', toggleDarkMode);

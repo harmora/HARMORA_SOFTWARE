@@ -26,6 +26,13 @@ $default_language = $authenticatedUser->lang;
 
                 <li class="nav-item navbar-dropdown dropdown ml-1">
                     <div class="btn-group dropend px-1">
+                    <button id="darkModeToggle">Dark Mode</button>
+                    </div>
+                </li>
+                <script src="{{ asset('assets/js/custom.js') }}"></script>
+
+                <li class="nav-item navbar-dropdown dropdown ml-1">
+                    <div class="btn-group dropend px-1">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="icon-only"><i class='bx bx-globe'></i></span> <span class="language-name"><?= $current_language[0]['name'] ?? '' ?></span>
                         </button>
