@@ -6,9 +6,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 {{-- <!-- add disp MODAL  -->   add langs !!!!!!!!!!!1 --}}
-<div class="modal fade" id="createMeetingModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+<div class="modal fade" id="createreservationmodal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        {{-- <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{get_label('add_reservation', 'Add Reservation')}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -57,7 +57,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('create', 'Create') ?></button>
                 </div>
             </form>
-        </div>
+        </div> --}}
     </div>
 </div>
 
@@ -1540,7 +1540,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="editMeetingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

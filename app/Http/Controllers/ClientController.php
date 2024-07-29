@@ -62,7 +62,9 @@ class ClientController extends Controller
             'first_name' =>  $internal_purpose ? 'required' : 'nullable',
             'last_name' => $internal_purpose ? 'required' : 'nullable',
             'denomenation'=> $internal_purpose ? 'nullable' : 'required',
-            'company' => 'nullable',
+            'RC' => 'nullable|numeric|digits_between:10,14',
+            'ICE' => 'nullable|numeric|digits_between:3,8',
+            'IF' => 'nullable|numeric|digits_between:4,6',
             'email' => ['required', 'email', 'unique:clients,email'],
             'phone' => 'nullable',
             'country_code' => 'nullable',
@@ -73,6 +75,16 @@ class ClientController extends Controller
             'zip' => 'nullable',
             'dob' => 'nullable',
             'doj' => 'nullable'
+        ],
+        [
+            'first_name.required' => 'Le prénom est obligatoire.',
+            'last_name.required' => 'Le nom est obligatoire.',
+            'denomenation.required' => 'La dénomination est obligatoire.',
+            'RC.numeric' => 'ce champ doit être un nombre.',
+            'RC.digits_between' => 'ce champ doit avoir entre 10 et 14 chiffres.',
+            'ICM.numeric' => 'ce champ doit être un nombre.',
+            'ICM.digits_between' => 'ce champdoit avoir entre 1 et 8 chiffres.',
+            'IF.numeric' => 'ce champ doit être un nombre.',
         ]);
         // if (!$internal_purpose && $request->input('password')) {
         //     $password = $request->input('password');
@@ -80,6 +92,7 @@ class ClientController extends Controller
         // }
 
         $formFields['internal_purpose'] =  $internal_purpose;
+
 
         if ($request->hasFile('profile')) {
             $formFields['photo'] = $request->file('profile')->store('photos', 'public');
@@ -92,7 +105,7 @@ class ClientController extends Controller
         // $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
         // $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
 
-        // $role_id = Role::where('guard_name', 'client')->first()->id;
+
 
 
         $require_ev = isAdminOrHasAllDataAccess() && $request->has('require_ev') && $request->input('require_ev') == 0 ? 0 : 1;
@@ -111,11 +124,10 @@ class ClientController extends Controller
                 $client->update(['email_verification_mail_sent' => 1]);
             }else{
                 $client->notify(new VerifyEmail($client));
+                $client->update(['email_verification_mail_sent' => 0]);
             }
             // $workspace->clients()->attach($client->id);
-            // $client->assignRole($role_id);
-
-
+          
             if (!$internal_purpose && isEmailConfigured()) {
                 $account_creation_template = Template::where('type', 'email')
                     ->where('name', 'account_creation')
@@ -192,7 +204,9 @@ class ClientController extends Controller
             'first_name' =>  $internal_purpose ? 'required' : 'nullable',
             'last_name' => $internal_purpose ? 'required' : 'nullable',
             'denomenation'=> $internal_purpose ? 'nullable' : 'required',
-            'company' => 'nullable',
+            'RC' => 'nullable|numeric|digits_between:10,14',
+            'ICE' => 'nullable|numeric|digits_between:3,8',
+            'IF' => 'nullable|numeric|digits_between:4,6',
             'email' => [
                 'required',
                 Rule::unique('clients')->ignore($id),
@@ -246,16 +260,12 @@ class ClientController extends Controller
         if (!$internal_purpose && $client->acct_create_mail_sent === 0) {
             $send_account_creation_email = 1;
         }
+
         try {
             if (!$internal_purpose && $require_ev == 1) {
                 $client->notify(new VerifyEmail($client));
                 $client->update(['email_verification_mail_sent' => 1]);
             }
-            else{
-                $client->notify(new VerifyEmail($client));
-                $client->update(['email_verification_mail_sent' => 0]);
-            }
-
             if (!$internal_purpose && $send_account_creation_email == 1 && isEmailConfigured()) {
                 $account_creation_template = Template::where('type', 'email')
                     ->where('name', 'account_creation')

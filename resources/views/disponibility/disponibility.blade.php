@@ -18,7 +18,7 @@
             </nav>
         </div>
         <div>
-            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#createMeetingModal"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_reservation', 'Add Reservation') ?>"><i class='bx bx-plus'></i></button></a>
+            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#createreservationmodal"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_reservation', 'Add Reservation') ?>"><i class='bx bx-plus'></i></button></a>
             {{-- action_create_meetings --}}
         </div>
     </div>
