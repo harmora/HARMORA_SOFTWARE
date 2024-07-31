@@ -49,6 +49,7 @@ use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\EstimatesInvoicesController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DisponibiliteController;
+use App\Http\Controllers\ProductController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -160,6 +161,14 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/disponibility/calendar', [DisponibiliteController::class, 'calendar']);
         Route::get('/disponibility/get/{id}', [DisponibiliteController::class, 'show']);
         Route::get('/disponibility/store', [DisponibiliteController::class, 'store']);
+
+
+        Route::get('/products', [ProductController::class, 'index']);
+        Route::get('/products/get/{id}', [ProductController::class, 'show']);
+        Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/list', [ProductController::class, 'list']);
+        Route::get('/product/destroy/{id}', [ProductController::class, 'destroy']);
+        Route::get('/products/create', [ProductController::class, 'create']);
 
 
 

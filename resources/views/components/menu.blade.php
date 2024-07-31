@@ -108,7 +108,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         </li>
 
         <li class="menu-item">
-            <a href="/disponibility" class="menu-link">
+            <a href="/products" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-calendar text-info'></i>
                 <div><?= get_label('products', 'Products')  ?></div>
             </a>

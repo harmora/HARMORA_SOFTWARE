@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedinteger('stock')->default(0);
             $table->unsignedinteger('stock_defective')->default(0);
             $table->timestamps();
-            $table->foreign('product_category_id')->references('id')->on('product_categories')->onDelete('cascade');
+            $table->foreign('product_category_id')->references('id')->on('prod_categories')->onDelete('cascade');
         });
     }
 

@@ -37,8 +37,6 @@ class DisponibiliteController extends Controller
                 $startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $disp->start_date_time);
                 $endDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $disp->end_date_time);
 
-
-
                 // Prepare the event data
                 $event = [
                     'dispoId' => $disp->id,
