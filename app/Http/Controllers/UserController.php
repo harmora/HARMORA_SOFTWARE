@@ -6,6 +6,8 @@ use Throwable;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Forme_juridique;
+use App\Models\Entreprise;
 use App\Models\Project;
 use App\Models\TaskUser;
 use App\Models\Template;
@@ -52,7 +54,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::where('guard_name', 'web')->get();
-        return view('users.create_user', ['roles' => $roles]);
+        $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
+        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique
+    ]);
     }
 
     /**
@@ -70,13 +74,23 @@ class UserController extends Controller
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => 'required|min:6',
             'password_confirmation' => 'required|same:password',
-            'address' => 'nullable',
+            'addressuser' => 'nullable',
             'phone' => 'nullable',
             'country_code' => 'nullable',
-            'city' => 'nullable',
-            'state' => 'nullable',
-            'country' => 'nullable',
-            'zip' => 'nullable',
+            'cityuser' => 'nullable',
+            'stateuser' => 'nullable',
+            'countryuser' => 'nullable',
+            'denomenation_u' => 'nullable',
+            // 'forme_juridique_id' => 'nullable',
+            'RC' => 'nullable|numeric|digits_between:2,6',
+            'ICE' => 'nullable|numeric|digits_between:2,6',
+            'IF' => 'nullable|numeric|digits_between:2,6',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+
+            
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
@@ -103,7 +117,38 @@ class UserController extends Controller
             $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
         }
         $formFields['status'] = $status;
-        $user = User::create($formFields);
+            // $user = User::create($formFields);
+        // required denomination,address,city, state, country
+        
+        $entreprise = Entreprise::create([
+            'denomination' => $formFields['denomenation_u'],
+            'ICE' => $formFields['ICE'],
+            'RC' => $formFields['RC'],
+            'IF' => $formFields['IF'],
+            'address' => $formFields['address'],
+            'city' => $formFields['city'],
+            'state' => $formFields['state'],
+            'country' => $formFields['country'],
+        ]);
+
+        $user = User::create([
+                'first_name' => $formFields['first_name'],
+                'last_name' => $formFields['last_name'],
+                'email' => $formFields['email'],
+                'country_code' => $formFields['country_code'],
+                'phone' => $formFields['phone'],
+                'password' => $formFields ['password'],
+                // 'role_id' => $request->input('role'),
+                'address' => $formFields['addressuser'],
+                'city' => $formFields['cityuser'],
+                'state' => $formFields['stateuser'],
+                'country' => $formFields['countryuser'],
+                'dob' => $request->input('dob'),
+                'doj' => $request->input('doj'),
+                'photo' => $formFields['photo'],
+                'status' => $formFields['status'],
+                'entreprise_id' => $entreprise->id,
+            ]);
         $user->assignRole($request->input('role'));
         try {
             if ($require_ev == 1) {

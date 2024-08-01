@@ -43,6 +43,10 @@
             <form action="{{url('/users/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
                 <input type="hidden" name="redirect_url" value="/users">
                 @csrf
+
+                <!-- User Information Section -->
+                <h5 class="mb-4"><?= get_label('user_information', 'User Information') ?></h5>
+
                 <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="firstName" class="form-label"><?= get_label('first_name', 'First name') ?> <span class="asterisk">*</span></label>
@@ -74,6 +78,31 @@
                         <input class="form-control" type="password" id="password_confirmation" name="password_confirmation" placeholder="<?= get_label('please_re_enter_password', 'Please re enter password') ?>" autocomplete="off">
                     </div>
                     <div class="mb-3 col-md-6">
+                        <label class="form-label" for="role"><?= get_label('role', 'Role') ?> </label>
+                        <select class="form-select text-capitalize js-example-basic-multiple" id="role" name="role">
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                            @foreach ($roles as $role)
+                            <option value="{{$role->id}}" {{ old('role') == $role->id ? "selected" : "" }}>{{ ucfirst($role->name) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="addressuser" class="form-label"><?= get_label('address', 'Address') ?></label>
+                        <input class="form-control" type="text" id="addressuser" name="addressuser" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="cityuser" class="form-label"><?= get_label('city', 'City') ?></label>
+                        <input class="form-control" type="text" id="cityuser" name="cityuser" placeholder="<?= get_label('please_enter_city', 'Please enter city') ?>" value="{{ old('city') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="stateuser" class="form-label"><?= get_label('state', 'State') ?></label>
+                        <input class="form-control" type="text" id="stateuser" name="stateuser" placeholder="<?= get_label('please_enter_state', 'Please enter state') ?>" value="{{ old('state') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="countryuser" class="form-label"><?= get_label('country', 'Country') ?></label>
+                        <input class="form-control" type="text" id="countryuser" name="countryuser" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
                         <label for="dob" class="form-label"><?= get_label('date_of_birth', 'Date of birth') ?></label>
                         <input class="form-control" type="text" id="dob" name="dob" placeholder="<?= get_label('please_select', 'Please select') ?>" autocomplete="off">
                     </div>
@@ -81,16 +110,44 @@
                         <label for="doj" class="form-label"><?= get_label('date_of_join', 'Date of joining') ?></label>
                         <input class="form-control" type="text" id="doj" name="doj" placeholder="<?= get_label('please_select', 'Please select') ?>" autocomplete="off">
                     </div>
+                    
                     <div class="mb-3 col-md-6">
-                        <label class="form-label" for="role"><?= get_label('role', 'Role') ?> </label>
-                        <!-- <div class="input-group"> -->
-                        <select class="form-select text-capitalize js-example-basic-multiple" id="role" name="role">
-                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
-                            @foreach ($roles as $role)
-                            <option value="{{$role->id}}" {{ old('role') == $role->id ? "selected" : "" }}>{{ ucfirst($role->name) }}</option>
+                        <label for="photo" class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
+                        <input class="form-control" type="file" id="photo" name="profile">
+                        <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
+                    </div>
+                </div>
+
+                <!-- Enterprise Information Section -->
+                <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
+                
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
+                        <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ old('denomenation') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
+                        <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
+                            <option value="">Please select</option>
+                            @foreach ($formesJuridique as $forme)
+                                <option value="{{ $forme->id }}" {{ old('forme_juridique_id') == $forme->id ? "selected" : "" }}>
+                                    {{ ucfirst($forme->label) }}
+                                </option>
                             @endforeach
                         </select>
-                        <!-- </div> -->
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
+                        <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ old('ICE') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="RC" class="form-label"><?= get_label('REGISTRE_COMMERCE', "REGISTRE DU COMMERCE") ?></label>
+                        <input class="form-control" type="text" id="RC" name="RC" placeholder="<?= get_label('de', "REGISTRE DU COMMERCE") ?>" value="{{ old('RC') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="IF" class="form-label"><?= get_label('IDENTIFIANT_FISCALE', "IDENTIFIANT FISCALE") ?></label>
+                        <input class="form-control" type="text" id="IF" name="IF" placeholder="<?= get_label('dfg', "IDENTIFIANT FISCALE") ?>" value="{{ old('IF') }}">
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?></label>
@@ -107,15 +164,6 @@
                     <div class="mb-3 col-md-6">
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="zip" class="form-label"><?= get_label('zip_code', 'Zip code') ?></label>
-                        <input class="form-control" type="text" id="zip" name="zip" placeholder="<?= get_label('please_enter_zip_code', 'Please enter ZIP code') ?>" value="{{ old('zip') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="photo" class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
-                        <input class="form-control" type="file" id="photo" name="profile">
-                        <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
                     </div>
                     @if(isAdminOrHasAllDataAccess())
                     <div class="mb-3 col-md-6">
@@ -144,10 +192,11 @@
                         </div>
                     </div>
                     @endif
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
-                        <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
-                    </div>
+                </div>
+                    
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
+                    <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
                 </div>
             </form>
         </div>
