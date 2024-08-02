@@ -9,7 +9,7 @@ class ProdCategory extends Model
 {
     use HasFactory;
     protected $table = 'prod_categories';
-    protected $fillable = ['name'];
+    protected $fillable = ['name_cat'];
 
     public function products() {
         return $this->hasMany(Product::class);

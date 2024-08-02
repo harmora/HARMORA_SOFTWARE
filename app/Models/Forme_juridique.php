@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Forme_juridique extends Model
 {
     use HasFactory;
+    protected $table = "Forme_juridiques";
+
+    protected $guarded = ['id'];
 
     public function entreprise()
     {
