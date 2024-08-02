@@ -33,7 +33,14 @@
                 </div>
                 <hr class="my-0" />
                 <div class="card-body">
+                    <h5 class="mb-4"><?= get_label('user_information', 'User Information') ?></h5>
                     <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="email"><?= get_label('email', 'E-mail') ?></label>
+                            <div class="input-group input-group-merge">
+                                <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" value="{{$user->email}}" readonly="">
+                            </div>
+                        </div>
                         <div class="mb-3 col-md-6">
                             <label class="form-label"><?= get_label('country_code_and_phone_number', 'Country code and phone number') ?></label>
                             <div class="input-group">
@@ -41,12 +48,6 @@
                                 <input type="text" name="country_code" class="form-control country-code-input" placeholder="+1" value="{{$user->country_code??'--'}}" readonly>
                                 <!-- Mobile Number Input -->
                                 <input type="text" name="phone" class="form-control" placeholder="1234567890" value="{{$user->phone??'--'}}" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <label class="form-label" for="email"><?= get_label('email', 'E-mail') ?></label>
-                            <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" value="{{$user->email}}" readonly="">
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -98,9 +99,53 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                    <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>                
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="denomenation_u" class="form-label"><?= get_label('denomination', 'Denomination') ?></label>
+                            <div class="input-group input-group-merge">
+                                <input class="form-control" value="{{ $entreprise->denomination??'--' }}"readonly="">
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="forme" class="form-label"><?= get_label('Forme_juridique', "forme juridique") ?></label>
+                            <input class="form-control" value="{{ $formeJuridiqueName??'--' }}" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="ICE" class="form-label"><?= get_label('Identifiant_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
+                            <input class="form-control" value="{{ $entreprise->ICE??'--' }}" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="RC" class="form-label"><?= get_label('REGISTRE_COMMERCE', "REGISTRE DU COMMERCE") ?></label>
+                            <input class="form-control" value="{{ $entreprise->RC??'--' }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="IF" class="form-label"><?= get_label('IDENTIFIANT_FISCALE', "IDENTIFIANT FISCALE") ?></label>
+                            <input class="form-control"  value="{{ $entreprise->IF??'--' }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="address" class="form-label"><?= get_label('address', 'Address') ?></label>
+                            <input class="form-control" value="{{ $entreprise->address??'--' }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="city" class="form-label"><?= get_label('city', 'City') ?></label>
+                            <input class="form-control"  value="{{ $entreprise->city??'--' }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="state" class="form-label"><?= get_label('state', 'State') ?></label>
+                            <input class="form-control" value="{{ $entreprise->state??'--' }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
+                            <input class="form-control" value="{{ $entreprise->country??'--' }}" readonly>
+                        </div>     
+                   </div>    
             </div>
-        </div>
     </div>
     <!-- Tabs -->
     @if ($auth_user->can('manage_projects') || $auth_user->can('manage_tasks'))

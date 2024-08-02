@@ -68,9 +68,10 @@
                         <div class="input-group">
                             <select class="form-select text-capitalize js-example-basic-multiple" id="role" name="role">
                                 @foreach ($roles as $role)
-                                <option value="{{$role->id}}" <?php if ($user->getRoleNames()->first() == $role->name) {
-                                                                    echo 'selected';
-                                                                }  ?>>{{ ucfirst($role->name) }}</option>
+                                    <option value="{{$role->id}}" 
+                                        <?php if ($user->getRoleNames()->first() == $role->name) {
+                                                    echo 'selected'; }  ?>>{{ ucfirst($role->name) }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -118,25 +119,6 @@
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ $entreprise->denomination }}">
                     </div>
-                    {{-- <div class="mb-3 col-md-6">
-                        <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
-                        <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
-                            <option value="">Please select</option>
-                            @foreach ($formesJuridique as $forme)
-                                <option value="{{ $forme->id }}" {{ old('forme_juridique_id') == $forme->id ? "selected" : "" }}>
-                                    {{ ucfirst($forme->label) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-                    <!-- Debugging -->
-                    <p>Selected Forme ID: {{ $entreprise->forme_juridique_id }}</p>
-                    <p>Formes Juridiques:</p>
-                    <ul>
-                        @foreach ($formesJuridique as $forme)
-                            <li>{{ $forme->id }}: {{ $forme->label }}</li>
-                        @endforeach
-                    </ul>
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
                         <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
@@ -147,21 +129,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>                    
-                    {{-- <div class="mb-3 col-md-6">
-                        <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
-                        <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
-                            <option value="">Please select</option>
-                            @foreach ($formesJuridique as $forme)
-                                <option value="{{ $forme->id }}" 
-                                    {{ isset($entreprise) && $entreprise->forme_juridique_id == $forme->id ? 'selected' : '' }}>
-                                    {{ ucfirst($forme->label) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-                    
-                    
+                    </div>                          
                     <div class="mb-3 col-md-6">
                         <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
                         <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ $entreprise->ICE }}">
