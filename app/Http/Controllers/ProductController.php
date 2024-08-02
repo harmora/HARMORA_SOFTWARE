@@ -134,7 +134,7 @@ class ProductController extends Controller
 
 
 
-                $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $product->id . '" data-type="product">' .
+                $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $product->id . '" data-type="product-media">' .
                     '<i class="bx bx-trash text-danger mx-1"></i>' .
                     '</button>';
 

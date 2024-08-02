@@ -11,7 +11,7 @@ $(document).on('click', '.delete', function (e) {
     }
     var tableID = $(this).data('table') || 'table';
     var destroy = type == 'users' ? 'delete_user' : (type == 'contract-type' ? 'delete-contract-type' : (type == 'project-media' || type == 'task-media' ? 'delete-media' : (type == 'expense-type' ? 'delete-expense-type' : (type == 'milestone' ? 'delete-milestone' : 'destroy'))));
-    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'task-media' ? 'tasks' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
+    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'product-media' ? 'products' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
     $('#deleteModal').modal('show'); // show the confirmation modal
     $('#deleteModal').off('click', '#confirmDelete');
     $('#deleteModal').on('click', '#confirmDelete', function (e) {
