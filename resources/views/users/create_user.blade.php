@@ -129,7 +129,7 @@
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
                         <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
-                            <option value="">Please select</option>
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
                             @foreach ($formesJuridique as $forme)
                                 <option value="{{ $forme->id }}" {{ old('forme_juridique_id') == $forme->id ? "selected" : "" }}>
                                     {{ ucfirst($forme->label) }}

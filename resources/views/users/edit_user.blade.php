@@ -112,15 +112,13 @@
                         </div>
                     </div>
                     <!-- Enterprise Information Section -->
-                <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
-                
-     {{--                 <div class="row">
+                <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>                
+               <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ $denomination }}">
+                        <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ $entreprise->denomination }}">
                     </div>
-                </div>
-               <div class="mb-3 col-md-6">
+                    {{-- <div class="mb-3 col-md-6">
                         <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
                         <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
                             <option value="">Please select</option>
@@ -130,7 +128,40 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
+                    <!-- Debugging -->
+                    <p>Selected Forme ID: {{ $entreprise->forme_juridique_id }}</p>
+                    <p>Formes Juridiques:</p>
+                    <ul>
+                        @foreach ($formesJuridique as $forme)
+                            <li>{{ $forme->id }}: {{ $forme->label }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
+                        <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
+                            <option value="">Please select</option>
+                            @foreach ($formesJuridique as $forme)
+                                <option value="{{ $forme->id }}" {{ $entreprise->forme_juridique_id == $forme->id ? 'selected' : '' }}>
+                                    {{ ucfirst($forme->label) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>                    
+                    {{-- <div class="mb-3 col-md-6">
+                        <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
+                        <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
+                            <option value="">Please select</option>
+                            @foreach ($formesJuridique as $forme)
+                                <option value="{{ $forme->id }}" 
+                                    {{ isset($entreprise) && $entreprise->forme_juridique_id == $forme->id ? 'selected' : '' }}>
+                                    {{ ucfirst($forme->label) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div> --}}
+                    
+                    
                     <div class="mb-3 col-md-6">
                         <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
                         <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ $entreprise->ICE }}">
@@ -158,7 +189,7 @@
                     <div class="mb-3 col-md-6">
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ $entreprise->country }}">
-                    </div> --}}
+                    </div>
                 
                     @if(isAdminOrHasAllDataAccess() && $user->getRoleNames()->first() !== 'admin')
                     <div class="mb-3 col-md-6">

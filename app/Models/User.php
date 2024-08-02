@@ -131,18 +131,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 
-    public function can($ability, $arguments = [])
-    {
-        $isAdmin = $this->hasRole('admin'); // Check if the user has the 'admin' role
+    // public function can($ability, $arguments = [])
+    // {
+    //     $isAdmin = $this->hasRole('admin'); // Check if the user has the 'admin' role
 
-        // Check if the user is an admin or has the specific permission
-        if ($isAdmin || $this->hasPermissionTo($ability)) {
-            return true;
-        }
+    //     // Check if the user is an admin or has the specific permission
+    //     if ($isAdmin || $this->hasPermissionTo($ability)) {
+    //         return true;
+    //     }
 
-        // For other cases, use the original can() method
-        return parent::can($ability, $arguments);
-    }
+    //     // For other cases, use the original can() method
+    //     return parent::can($ability, $arguments);
+    // }
 
 
     public function getlink()
