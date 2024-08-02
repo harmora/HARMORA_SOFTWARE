@@ -6,6 +6,8 @@ use Throwable;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Forme_juridique;
+use App\Models\Entreprise;
 use App\Models\Project;
 use App\Models\TaskUser;
 use App\Models\Template;
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Contracts\Role as ContractsRole;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Validation\Rule;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class UserController extends Controller
@@ -52,7 +55,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::where('guard_name', 'web')->get();
-        return view('users.create_user', ['roles' => $roles]);
+        $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
+        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique
+    ]);
     }
 
     /**
@@ -70,13 +75,23 @@ class UserController extends Controller
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => 'required|min:6',
             'password_confirmation' => 'required|same:password',
-            'address' => 'nullable',
+            'addressuser' => 'nullable',
             'phone' => 'nullable',
             'country_code' => 'nullable',
-            'city' => 'nullable',
-            'state' => 'nullable',
-            'country' => 'nullable',
-            'zip' => 'nullable',
+            'cityuser' => 'nullable',
+            'stateuser' => 'nullable',
+            'countryuser' => 'nullable',
+            'denomenation_u' => 'nullable',
+            'forme_juridique_id' => 'nullable',
+            'RC' => 'nullable|numeric|digits_between:2,6',
+            'ICE' => 'nullable|numeric|digits_between:2,6',
+            'IF' => 'nullable|numeric|digits_between:2,6',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+
+            
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
@@ -103,7 +118,38 @@ class UserController extends Controller
             $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
         }
         $formFields['status'] = $status;
-        $user = User::create($formFields);
+            // $user = User::create($formFields);
+        // required denomination,address,city, state, country
+        
+        $entreprise = Entreprise::create([
+            'denomination' => $formFields['denomenation_u'],
+            'ICE' => $formFields['ICE'],
+            'RC' => $formFields['RC'],
+            'IF' => $formFields['IF'],
+            'address' => $formFields['address'],
+            'city' => $formFields['city'],
+            'state' => $formFields['state'],
+            'country' => $formFields['country'],
+            'forme_juridique_id'=> $formFields['forme_juridique_id'],
+        ]);
+
+        $user = User::create([
+                'first_name' => $formFields['first_name'],
+                'last_name' => $formFields['last_name'],
+                'email' => $formFields['email'],
+                'country_code' => $formFields['country_code'],
+                'phone' => $formFields['phone'],
+                'password' => $formFields ['password'],
+                'address' => $formFields['addressuser'],
+                'city' => $formFields['cityuser'],
+                'state' => $formFields['stateuser'],
+                'country' => $formFields['countryuser'],
+                'dob' => $request->input('dob'),
+                'doj' => $request->input('doj'),
+                'photo' => $formFields['photo'],
+                'status' => $formFields['status'],
+                'entreprise_id' => $entreprise->id,
+            ]);
         $user->assignRole($request->input('role'));
         try {
             if ($require_ev == 1) {
@@ -180,40 +226,74 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function edit_user($id)
-    {
-        $user = User::findOrFail($id);
-        $roles = Role::where('guard_name', 'web')->get();
-        return view('users.edit_user', ['user' => $user, 'roles' => $roles]);
-    }
+     public function edit_user($id)
+     {
+         $user = User::findOrFail($id);
+         $entreprise = Entreprise::findOrFail($user->entreprise_id);
+         $roles = Role::where('guard_name', 'web')->get();
+         $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
+         
+         // Debugging lines
+         // dd($user, $entreprise, $formesJuridique);
+         
+         return view('users.edit_user', [
+             'user' => $user,
+             'roles' => $roles,
+             'entreprise' => $entreprise,
+             'formesJuridique' => $formesJuridique
+         ]);
+     }
+     
 
     public function update_user(Request $request, $id)
     {
         $formFields = $request->validate([
             'first_name' => ['required'],
             'last_name' => ['required'],
+            'email' => [
+                'required',
+                Rule::unique('users')->ignore($id),
+            ],            
+            // 'password' => 'required|min:6',
+            // 'password_confirmation' => 'required|same:password',
+            'addressuser' => 'nullable',
             'phone' => 'nullable',
             'country_code' => 'nullable',
-            'address' => 'nullable',
-            'city' => 'nullable',
-            'state' => 'nullable',
-            'country' => 'nullable',
-            'zip' => 'nullable',
-            'dob' => 'nullable',
-            'doj' => 'nullable',
+            'cityuser' => 'nullable',
+            'stateuser' => 'nullable',
+            'countryuser' => 'nullable',
             'password' => 'nullable|min:6',
-            'password_confirmation' => 'required_with:password|same:password'
+            'password_confirmation' => 'required_with:password|same:password',
+            'denomenation_u' => 'nullable',
+            'forme_juridique_id'=> 'nullable',
+            // 'forme_juridique_id' => 'nullable|exists:formes_juridiques,id', // Ensure this field is validated
+            'RC' => 'nullable|numeric|digits_between:2,6',
+            'ICE' => 'nullable|numeric|digits_between:2,6',
+            'IF' => 'nullable|numeric|digits_between:2,6',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            //'dob' => 'nullable',
+            //'doj' => 'nullable',
+            //'role' => 'required'
         ]);
         $user = User::findOrFail($id);
+        $entreprise = Entreprise::findOrFail($user->entreprise_id);
         // $dob = $request->input('dob');
         // $doj = $request->input('doj');
         // $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
         // $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
+        
         if ($request->hasFile('upload')) {
             if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
                 Storage::disk('public')->delete($user->photo);
 
             $formFields['photo'] = $request->file('upload')->store('photos', 'public');
+        }
+        else {
+            // If no new photo is uploaded, keep the old one
+            $formFields['photo'] = $user->photo;
         }
 
         $status = isAdminOrHasAllDataAccess() && $request->has('status') ? $request->input('status') : $user->status;
@@ -224,8 +304,32 @@ class UserController extends Controller
         } else {
             unset($formFields['password']);
         }
-
-        $user->update($formFields);
+        $entreprise->update([
+            'denomination' => $formFields['denomenation_u'],
+            'ICE' => $formFields['ICE'],
+            'RC' => $formFields['RC'],
+            'IF' => $formFields['IF'],
+            'address' => $formFields['address'],
+            'city' => $formFields['city'],
+            'state' => $formFields['state'],
+            'country' => $formFields['country'],
+            'forme_juridique_id' => $formFields['forme_juridique_id'], // Update this field
+        ]);
+        $user->update([
+            'first_name' => $formFields['first_name'],
+            'last_name' => $formFields['last_name'],
+            'email' => $formFields['email'],
+            'country_code' => $formFields['country_code'],
+            'phone' => $formFields['phone'],
+            'address' => $formFields['addressuser'],
+            'city' => $formFields['cityuser'],
+            'state' => $formFields['stateuser'],
+            'country' => $formFields['countryuser'],
+            'dob' => $request->input('dob'),
+            'doj' => $request->input('doj'),
+            'photo' => $formFields['photo'],
+            'status' => $formFields['status'],
+        ]);
         $user->syncRoles($request->input('role'));
 
         Session::flash('message', 'Profile details updated successfully.');
@@ -248,7 +352,12 @@ class UserController extends Controller
 
     public function delete_user($id)
     {
+
         $user = User::findOrFail($id);
+        if ($user->entreprise_id) {
+            $entreprise = Entreprise::findOrFail($user->entreprise_id);
+            $entreprise->delete();
+        }
         $response = DeletionService::delete(User::class, $id, 'User');
         UserClientPreference::where('user_id', 'u_' . $id)->delete();
         $user->todos()->delete();

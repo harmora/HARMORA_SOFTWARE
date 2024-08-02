@@ -63,7 +63,7 @@
                         <input class="form-control" type="text" name="last_name" id="last_name" placeholder="<?= get_label('please_enter_last_name', 'Please enter last name') ?>" value="{{ old('last_name') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="denomenation" class="form-label">Denomenation <span class="asterisk">*</span></label>
+                        <label for="denomenation" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation" id="denomenation" placeholder="Denomenation" value="{{ old('denomenation') }}">
                     </div>
                     <div class="mb-3 col-md-6">
