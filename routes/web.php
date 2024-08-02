@@ -221,6 +221,10 @@ Route::middleware(['CheckInstallation'])->group(function () {
         // // });
         // Route::get('/workspaces/remove_participant', [WorkspacesController::class, 'remove_participant'])->middleware(['demo_restriction']);
 
+        //codes i added
+        Route::get('/commandes', [TodosController::class, 'index']);
+        //it ends here
+        
         //Todos-------------------------------------------------------------
         // Route::middleware(['has_workspace'])->group(function () {
 

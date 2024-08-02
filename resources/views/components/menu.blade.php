@@ -69,7 +69,16 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
 
 
-
+<!--codes i added-->
+        <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
+            <a href="/commandes" class="menu-link">
+                <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
+                <div><?= get_label('commandes', 'Commandes') ?>
+                   
+                </div>
+            </a>
+        </li>
+<!--it ends here-->
         <li class="menu-item {{ Request::is('todos') || Request::is('todos/*') ? 'active' : '' }}">
             <a href="/todos" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
