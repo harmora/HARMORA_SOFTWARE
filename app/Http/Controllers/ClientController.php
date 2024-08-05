@@ -127,7 +127,7 @@ class ClientController extends Controller
                 $client->update(['email_verification_mail_sent' => 0]);
             }
             // $workspace->clients()->attach($client->id);
-          
+
             if (!$internal_purpose && isEmailConfigured()) {
                 $account_creation_template = Template::where('type', 'email')
                     ->where('name', 'account_creation')
@@ -302,8 +302,7 @@ class ClientController extends Controller
     {
         $client = Client::findOrFail($id);
         $response = DeletionService::delete(Client::class, $id, 'Client');
-        UserClientPreference::where('user_id', 'c_' . $id)->delete();
-        $client->todos()->delete();
+        // UserClientPreference::where('user_id', 'c_' . $id)->delete();
         return $response;
     }
 

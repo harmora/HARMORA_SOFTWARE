@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Validation\Rule;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
+
 class UserController extends Controller
 {
     /**
@@ -91,7 +92,7 @@ class UserController extends Controller
             'state' => 'required|string|max:255',
             'country' => 'required|string|max:255',
 
-            
+
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
@@ -120,7 +121,7 @@ class UserController extends Controller
         $formFields['status'] = $status;
             // $user = User::create($formFields);
         // required denomination,address,city, state, country
-        
+
         $entreprise = Entreprise::create([
             'denomination' => $formFields['denomenation_u'],
             'ICE' => $formFields['ICE'],
@@ -232,10 +233,10 @@ class UserController extends Controller
          $entreprise = Entreprise::findOrFail($user->entreprise_id);
          $roles = Role::where('guard_name', 'web')->get();
          $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
-         
+
          // Debugging lines
          // dd($user, $entreprise, $formesJuridique);
-         
+
          return view('users.edit_user', [
              'user' => $user,
              'roles' => $roles,
@@ -243,7 +244,7 @@ class UserController extends Controller
              'formesJuridique' => $formesJuridique
          ]);
      }
-     
+
 
     public function update_user(Request $request, $id)
     {
@@ -253,7 +254,7 @@ class UserController extends Controller
             'email' => [
                 'required',
                 Rule::unique('users')->ignore($id),
-            ],            
+            ],
             // 'password' => 'required|min:6',
             // 'password_confirmation' => 'required|same:password',
             'addressuser' => 'nullable',
@@ -284,7 +285,7 @@ class UserController extends Controller
         // $doj = $request->input('doj');
         // $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
         // $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
-        
+
         if ($request->hasFile('upload')) {
             if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
                 Storage::disk('public')->delete($user->photo);
@@ -354,13 +355,15 @@ class UserController extends Controller
     {
 
         $user = User::findOrFail($id);
+        $user->todos()->delete();
+
+        $response = DeletionService::delete(User::class, $id, 'User');
         if ($user->entreprise_id) {
             $entreprise = Entreprise::findOrFail($user->entreprise_id);
             $entreprise->delete();
         }
-        $response = DeletionService::delete(User::class, $id, 'User');
-        UserClientPreference::where('user_id', 'u_' . $id)->delete();
-        $user->todos()->delete();
+        // UserClientPreference::where('user_id', 'u_' . $id)->delete();
+
         return $response;
     }
 
