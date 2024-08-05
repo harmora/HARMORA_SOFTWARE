@@ -363,7 +363,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </form>
     </div>
 </div>
-@endif
+@endif  
 <div class="modal fade" id="default_language_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
