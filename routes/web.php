@@ -169,6 +169,8 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/products/list', [ProductController::class, 'list']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
+        
+        Route::get('/products/info/{id}', [ProductController::class, 'show']);
 
 
 
