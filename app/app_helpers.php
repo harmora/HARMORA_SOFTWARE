@@ -307,16 +307,16 @@ if (!function_exists('duplicateRecord')) {
             $duplicateRecord->save();
 
             foreach ($relatedTables as $relatedTable) {
-                if ($relatedTable === 'tasks') {
-                    // Handle 'tasks' relationship separately
-                    foreach ($originalRecord->$relatedTable as $task) {
-                        // Duplicate the related task
-                        $duplicateTask = $task->replicate();
-                        $duplicateTask->project_id = $duplicateRecord->id;
-                        $duplicateTask->save();
-                        foreach ($task->users as $user) {
-                            // Attach the duplicated user to the duplicated task
-                            $duplicateTask->users()->attach($user->id);
+                if ($relatedTable === 'commandes') {
+                    // Handle 'commandes' relationship separately
+                    foreach ($originalRecord->$relatedTable as $commande) {
+                        // Duplicate the related commande
+                        $duplicateCommande = $commande->replicate();
+                        $duplicateCommande->project_id = $duplicateRecord->id;
+                        $duplicateCommande->save();
+                        foreach ($commande->users as $user) {
+                            // Attach the duplicated user to the duplicated commande
+                            $duplicateCommande->users()->attach($user->id);
                         }
                     }
                 }
@@ -616,10 +616,10 @@ if (!function_exists('getControllerNames')) {
         function processNotifications($data, $recipients)
         {
             // Define an array of types for which email notifications should be sent
-            $emailNotificationTypes = ['project_assignment', 'project_status_updation', 'task_assignment', 'task_status_updation', 'workspace_assignment', 'meeting_assignment', 'leave_request_creation', 'leave_request_status_updation', 'team_member_on_leave_alert'];
-            $smsNotificationTypes = ['project_assignment', 'project_status_updation', 'task_assignment', 'task_status_updation', 'workspace_assignment', 'meeting_assignment', 'leave_request_creation', 'leave_request_status_updation', 'team_member_on_leave_alert'];
+            $emailNotificationTypes = ['project_assignment', 'project_status_updation', 'commande_assignment', 'commande_status_updation', 'workspace_assignment', 'meeting_assignment', 'leave_request_creation', 'leave_request_status_updation', 'team_member_on_leave_alert'];
+            $smsNotificationTypes = ['project_assignment', 'project_status_updation', 'commande_assignment', 'commande_status_updation', 'workspace_assignment', 'meeting_assignment', 'leave_request_creation', 'leave_request_status_updation', 'team_member_on_leave_alert'];
             if (!empty($recipients)) {
-                $type = $data['type'] == 'task_status_updation' ? 'task' : ($data['type'] == 'project_status_updation' ? 'project' : ($data['type'] == 'leave_request_creation' || $data['type'] == 'leave_request_status_updation' || $data['type'] == 'team_member_on_leave_alert' ? 'leave_request' : $data['type']));
+                $type = $data['type'] == 'commande_status_updation' ? 'commande' : ($data['type'] == 'project_status_updation' ? 'project' : ($data['type'] == 'leave_request_creation' || $data['type'] == 'leave_request_status_updation' || $data['type'] == 'team_member_on_leave_alert' ? 'leave_request' : $data['type']));
                 $template = getNotificationTemplate($data['type'], 'system');
                 if (!$template || ($template->status !== 0)) {
                     $notification = Notification::create([
@@ -1049,33 +1049,33 @@ if (!function_exists('getControllerNames')) {
                         ];
                         $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of project {PROJECT_TITLE}, ID:#{PROJECT_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
                         break;
-                    case 'task':
+                    case 'commande':
                         $contentPlaceholders = [
-                            '{TASK_ID}' => $data['type_id'],
-                            '{TASK_TITLE}' => $data['type_title'],
+                            '{COMMANDE_ID}' => $data['type_id'],
+                            '{COMMANDE_TITLE}' => $data['type_title'],
                             '{FIRST_NAME}' => $recipient->first_name,
                             '{LAST_NAME}' => $recipient->last_name,
                             '{COMPANY_TITLE}' => $company_title,
-                            '{TASK_URL}' => $siteUrl . '/' . $data['access_url'],
+                            '{COMMANDE_URL}' => $siteUrl . '/' . $data['access_url'],
                             '{SITE_URL}' => $siteUrl
                         ];
-                        $templateContent = 'Hello, {FIRST_NAME} {LAST_NAME} You have been assigned a new task {TASK_TITLE}, ID:#{TASK_ID}.';
+                        $templateContent = 'Hello, {FIRST_NAME} {LAST_NAME} You have been assigned a new commande {COMMANDE_TITLE}, ID:#{COMMANDE_ID}.';
                         break;
-                    case 'task_status_updation':
+                    case 'commande_status_updation':
                         $contentPlaceholders = [
-                            '{TASK_ID}' => $data['type_id'],
-                            '{TASK_TITLE}' => $data['type_title'],
+                            '{COMMANDE_ID}' => $data['type_id'],
+                            '{COMMANDE_TITLE}' => $data['type_title'],
                             '{FIRST_NAME}' => $recipient->first_name,
                             '{LAST_NAME}' => $recipient->last_name,
                             '{UPDATER_FIRST_NAME}' => $data['updater_first_name'],
                             '{UPDATER_LAST_NAME}' => $data['updater_last_name'],
                             '{OLD_STATUS}' => $data['old_status'],
                             '{NEW_STATUS}' => $data['new_status'],
-                            '{TASK_URL}' => $siteUrl . '/' . $data['access_url'],
+                            '{COMMANDE_URL}' => $siteUrl . '/' . $data['access_url'],
                             '{SITE_URL}' => $siteUrl,
                             '{COMPANY_TITLE}' => $company_title
                         ];
-                        $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of task {TASK_TITLE}, ID:#{TASK_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
+                        $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of commande {COMMANDE_TITLE}, ID:#{COMMANDE_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
                         break;
                     case 'workspace':
                         $contentPlaceholders = [
@@ -1249,8 +1249,8 @@ if (!function_exists('getControllerNames')) {
                 case 'default_view':
                     if ($table == 'projects') {
                         return $result && $result->default_view && $result->default_view == 'list' ? 'projects/list' : 'projects';
-                    } elseif ($table == 'tasks') {
-                        return $result && $result->default_view && $result->default_view == 'draggable' ? 'tasks/draggable' : 'tasks';
+                    } elseif ($table == 'commandes') {
+                        return $result && $result->default_view && $result->default_view == 'draggable' ? 'commandes/draggable' : 'commandes';
                     }
                     break;
                 case 'visible_columns':
@@ -1328,10 +1328,10 @@ if (!function_exists('getControllerNames')) {
                         '{COMPANY_TITLE}' => $companyTitle
                     ];
                     break;
-                case 'task':
+                case 'commande':
                     $subjectPlaceholders = [
-                        '{TASK_ID}' => $data['type_id'],
-                        '{TASK_TITLE}' => $data['type_title'],
+                        '{COMMANDE_ID}' => $data['type_id'],
+                        '{COMMANDE_TITLE}' => $data['type_title'],
                         '{ASSIGNEE_FIRST_NAME}' => $authUser->first_name,
                         '{ASSIGNEE_LAST_NAME}' => $authUser->last_name,
                         '{COMPANY_TITLE}' => $companyTitle
@@ -1391,10 +1391,10 @@ if (!function_exists('getControllerNames')) {
                         '{COMPANY_TITLE}' => $companyTitle
                     ];
                     break;
-                case 'task_status_updation':
+                case 'commande_status_updation':
                     $subjectPlaceholders = [
-                        '{TASK_ID}' => $data['type_id'],
-                        '{TASK_TITLE}' => $data['type_title'],
+                        '{COMMANDE_ID}' => $data['type_id'],
+                        '{COMMANDE_TITLE}' => $data['type_title'],
                         '{UPDATER_FIRST_NAME}' => $data['updater_first_name'],
                         '{UPDATER_LAST_NAME}' => $data['updater_last_name'],
                         '{OLD_STATUS}' => $data['old_status'],
@@ -1414,8 +1414,8 @@ if (!function_exists('getControllerNames')) {
                     $subject = 'Team Member on Leave Alert';
                 } elseif ($data['type'] == 'project_status_updation') {
                     $subject = 'Project Status Updated';
-                } elseif ($data['type'] == 'task_status_updation') {
-                    $subject = 'Task Status Updated';
+                } elseif ($data['type'] == 'commande_status_updation') {
+                    $subject = 'Commande Status Updated';
                 } else {
                     $subject = 'New ' . ucfirst($data['type']) . ' Assigned';
                 }

@@ -235,7 +235,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         //codes i added
         //Route::get('/commandes', [CommandesController::class, 'index']);
-                //Route::get('/commandes/create', [CommandesController::class, 'duplicate']);
+                Route::get('/commandes/create', [CommandesController::class, 'create']);
        // Route::post('/commandes/store', [CommandesController::class, 'store']);
    
 

@@ -13,17 +13,13 @@ class Commande extends Model implements HasMedia
 
     protected $fillable = [
         'title',
-        'status_id',
-        'priority_id',
-        'product_id',
+        'description',
         'start_date',
         'due_date',
-        'description',
-        'note',
         'user_id',
         'client_id',
-        //'workspace_id',
-        'created_by'
+        'total_amount',
+        'status',
     ];
 
     public function registerMediaCollections(): void

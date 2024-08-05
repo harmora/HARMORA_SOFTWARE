@@ -1,8 +1,15 @@
-<div class="modal fade show" id="create_task_modal" tabindex="-1" style="display: block; padding-left: 0px;" aria-modal="true" role="dialog">
+<!-- resources/views/create_commande.blade.php -->
+
+@extends('layout')
+
+@section('title', 'Create Commande')
+
+@section('content')
+<div class="modal fade show" id="create_commande_modal" tabindex="-1" style="display: block; padding-left: 0px;" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-        <form action="https://taskify.taskhub.company/tasks/store" class="form-submit-event modal-content" method="POST">
+        <form action="https://taskify.taskhub.company/commandes/store" class="form-submit-event modal-content" method="POST">
                         <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel1">Create Task</h5>
+                <h5 class="modal-title" id="exampleModalLabel1">Create Commande</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <input type="hidden" name="_token" value="eJJt2myaoQD7kxaDWeND0sMkwjqPHBaKdhF6HTDi" autocomplete="off">            <div class="modal-body">
@@ -18,7 +25,7 @@
                                                                                                                 <option value="1" data-color="primary">Started (primary)</option>
                                                                                                                 <option value="2" data-color="info">On Going (info)</option>
                                                                                                                 <option value="59" data-color="warning">In Review (warning)</option>
-                                                                                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-23-cvrj" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-status_id-34-container" aria-controls="select2-status_id-34-container"><span class="select2-selection__rendered" id="select2-status_id-34-container" role="textbox" aria-readonly="true" title="Default (danger)"><span class="badge bg-label-danger">Default (danger)</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+
                         <div class="mt-2">
                             <a href="javascript:void(0);" class="openCreateStatusModal"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title=" Create Status"><i class="bx bx-plus"></i></button></a>
                             <a href="https://taskify.taskhub.company/status/manage" target="_blank"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Manage Statuses"><i class="bx bx-list-ul"></i></button></a>
@@ -37,28 +44,27 @@
                 </div>
                 <div class="row">
                                             <div class="mb-3">
-                            <label class="form-label" for="user_id">Select Project <span class="asterisk">*</span></label>
-                            <select class="form-control selectTaskProject select2-hidden-accessible" name="project" data-placeholder="Type to Search" data-select2-id="select2-data-27-qog0" tabindex="-1" aria-hidden="true">
+                            <label class="form-label" for="user_id">Select Product </label>
+                            <select class="form-control selectCommandeProduct select2-hidden-accessible" name="product" data-placeholder="Type to Search" data-select2-id="select2-data-27-qog0" tabindex="-1" aria-hidden="true">
                                 <option value="" data-select2-id="select2-data-29-6v9e"></option>
                                                                                                 
-                                                                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-28-u492" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-project-tx-container" aria-controls="select2-project-tx-container"><span class="select2-selection__rendered" id="select2-project-tx-container" role="textbox" aria-readonly="true" title="Type to Search"><span class="select2-selection__placeholder">Type to Search</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                                                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-28-u492" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-product-tx-container" aria-controls="select2-product-tx-container"><span class="select2-selection__rendered" id="select2-product-tx-container" role="textbox" aria-readonly="true" title="Type to Search"><span class="select2-selection__placeholder">Type to Search</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                         </div>
                                     </div>
-                <div class="row" id="selectTaskUsers">
+                <div class="row" id="selectCommandeUsers">
                     <div class="mb-3">
-                        <label class="form-label" for="user_id">Select Users <span id="users_associated_with_project"></span></label>
+                        <label class="form-label" for="user_id">Select Users <span id="users_associated_with_product"></span></label>
                         <select class="form-control js-example-basic-multiple select2-hidden-accessible" name="user_id[]" multiple="" data-placeholder="Type to Search" data-select2-id="select2-data-4-i908" tabindex="-1" aria-hidden="true">
-                                                    </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-5-cx5y" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--multiple" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1" aria-disabled="false"><ul class="select2-selection__rendered" id="select2-user_id-5u-container"></ul><span class="select2-search select2-search--inline"><textarea class="select2-search__field" type="search" tabindex="0" autocorrect="off" autocapitalize="none" spellcheck="false" role="searchbox" aria-autocomplete="list" autocomplete="off" aria-label="Search" aria-describedby="select2-user_id-5u-container" placeholder="Type to Search" style="width: 100%;"></textarea></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="start_date">Starts At</label>
-                        <input type="text" id="task_start_date" name="start_date" class="form-control" placeholder="Please Select" autocomplete="off">
+                        <input type="text" id="commande_start_date" name="start_date" class="form-control" placeholder="Please Select" autocomplete="off">
                     </div>
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="due_date">Ends At</label>
-                        <input type="text" id="task_end_date" name="due_date" class="form-control" placeholder="Please Select" autocomplete="off">
+                        <input type="text" id="commande_end_date" name="due_date" class="form-control" placeholder="Please Select" autocomplete="off">
                     </div>
                 </div>
                 <div class="row">
@@ -84,3 +90,4 @@
         </form>
     </div>
 </div>
+@endsection

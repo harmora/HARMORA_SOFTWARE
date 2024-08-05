@@ -147,6 +147,62 @@
                    </div>
             </div>
     </div>
-   
+    <!-- Tabs -->
+    @if ($auth_user->can('manage_projects') || $auth_user->can('manage_tasks'))
+    <div class="nav-align-top">
+        <ul class="nav nav-tabs" role="tablist">
+            @if ($auth_user->can('manage_projects'))
+            <li class="nav-item">
+                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-projects" aria-controls="navs-top-projects" aria-selected="true">
+                    <i class="menu-icon tf-icons bx bx-briefcase-alt-2 text-success"></i><?= get_label('projects', 'Projects') ?>
+                </button>
+            </li>
+            @endif
+            @if ($auth_user->can('manage_tasks'))
+            <li class="nav-item">
+                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-tasks" aria-controls="navs-top-tasks" aria-selected="false">
+                    <i class="menu-icon tf-icons bx bx-task text-primary"></i><?= get_label('tasks', 'Tasks') ?>
+                </button>
+            </li>
+            @endif
+        </ul>
+        <div class="tab-content">
+            @if ($auth_user->can('manage_projects'))
+            <div class="tab-pane fade active show" id="navs-top-projects" role="tabpanel">
+                <div class="d-flex justify-content-between">
+                    <h4 class="fw-bold">{{$user->first_name}}'s <?= get_label('projects', 'Projects') ?></h4>
+                </div>
+                @if (is_countable($projects) && count($projects) > 0)
+                <?php
+                $id = 'user_' . $user->id;
+                ?>
+                <x-projects-card :projects="$projects" :id="$id" :users="$users" :clients="$clients" />
+                @else
+                <?php
+                $type = 'Projects'; ?>
+                <x-empty-state-card :type="$type" />
+                @endif
+            </div>
+            @endif
+            @if ($auth_user->can('manage_tasks'))
+            <div class="tab-pane fade {{!$auth_user->can('manage_projects')?'active show':''}}" id="navs-top-tasks" role="tabpanel">
+                <div class="d-flex justify-content-between">
+                    <h4 class="fw-bold">{{$user->first_name}}'s <?= get_label('tasks', 'Tasks') ?></h4>
+                </div>
+                @if ($tasks > 0)
+                <?php
+                $id = 'user_' . $user->id;
+                ?>
+                <x-tasks-card :tasks="$tasks" :id="$id" :users="$users" :clients="$clients" :projects="$projects" />
+                @else
+                <?php
+                $type = 'Tasks'; ?>
+                <x-empty-state-card :type="$type" />
+                @endif
+            </div>
+            @endif
+        </div>
+    </div>
+    @endif
 </div>
 @endsection
