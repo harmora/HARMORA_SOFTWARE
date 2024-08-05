@@ -18,7 +18,7 @@ return [
         "cancelled" => "danger"
     ],
 
-    'task_status_labels' => [
+    'commande_status_labels' => [
         'completed' => "success",
         "onhold" => "warning",
         "started" => "primary",
@@ -42,7 +42,7 @@ return [
 
     'permissions' => [
         'Projects' =>  array('create_projects', 'manage_projects', 'edit_projects', 'delete_projects'),
-        'Tasks' =>  array('create_tasks', 'manage_tasks', 'edit_tasks', 'delete_tasks'),
+        'Commandes' =>  array('create_commandes', 'manacommandes', 'edcommandes', 'delecommandes'),
         'Users' =>  array('create_users', 'manage_users', 'edit_users', 'delete_users'),
         'Clients' =>  array('create_clients', 'manage_clients', 'edit_clients', 'delete_clients'),
         'Workspaces' =>  array('create_workspaces', 'manage_workspaces', 'edit_workspaces', 'delete_workspaces'),

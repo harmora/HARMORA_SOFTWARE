@@ -137,8 +137,8 @@
     <script>
         $(document).ready(function() {
             $('.js-example-basic-multiple').select2();
-            $('#task_status_filter').select2();
-            $('#task_priority_filter').select2();
+            $('#commande_status_filter').select2();
+            $('#commande_priority_filter').select2();
         });
     </script>
     <!-- Bootstrap-table -->

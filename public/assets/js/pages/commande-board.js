@@ -30,14 +30,14 @@ $(function () {
     });
 
     drake.on('drop', function (el, target) {
-        // Get the task ID and new status
-        var taskId = el.getAttribute('data-task-id');
+        // Get the commande ID and new status
+        var commandeId = el.getAttribute('data-commande-id');
         var newStatus = target.getAttribute('data-status');
 
-        // Make an AJAX call to update the task status
+        // Make an AJAX call to update the commande status
         $.ajax({
             method: "PUT",
-            url: "/tasks/" + taskId + "/update-status/" + newStatus,
+            url: "/commandes/" + commandeId + "/update-status/" + newStatus,
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 'flash_message_only': 1,
