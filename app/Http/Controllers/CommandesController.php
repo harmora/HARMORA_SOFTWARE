@@ -50,11 +50,17 @@ class CommandesController extends Controller
         $users = User::all();  // Fetch all users
         $clients = Client::all();  // Fetch all clients
         //$products = Product::all();  // Fetch all products
+        $commandes = Commande::all();
+        //dd($commandes); // this will dump and die the $commandes data
 
 
-        return view('commandes.commandes', compact('commandes'));
+        return view('commandes.commandes', ['commandes' => $commandes]);
     }
 
+    public function create()
+    {
+        return view('commandes.create_commande');
+    }
 
    /**
  * Store a newly created resource in storage.
@@ -480,6 +486,7 @@ class CommandesController extends Controller
         $total_commandes = $commandes->count();
         return view('commandes.board_view', ['product' => $product, 'commandes' => $commandes, 'total_commandes' => $total_commandes, 'products' => $products, 'toSelectCommandeUsers' => $toSelectCommandeUsers]);
     }
+
 
     public function updateStatus($id, $newStatus)
     {

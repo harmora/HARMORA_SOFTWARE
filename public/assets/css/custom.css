@@ -671,7 +671,7 @@ body.dark-mode .app-brand-link img {
     filter: brightness(0) invert(1); /* Invert logo colors for dark mode */
 }
 
-.modal-content {
+body.dark-mode .modal-content {
     position: relative;
     display: flex;
     flex-direction: column;
