@@ -148,24 +148,6 @@
             </div>
     </div>
     <!-- Tabs -->
-    @if ($auth_user->can('manage_projects') || $auth_user->can('manage_tasks'))
-    <div class="nav-align-top">
-        <ul class="nav nav-tabs" role="tablist">
-            @if ($auth_user->can('manage_projects'))
-            <li class="nav-item">
-                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-projects" aria-controls="navs-top-projects" aria-selected="true">
-                    <i class="menu-icon tf-icons bx bx-briefcase-alt-2 text-success"></i><?= get_label('projects', 'Projects') ?>
-                </button>
-            </li>
-            @endif
-            @if ($auth_user->can('manage_tasks'))
-            <li class="nav-item">
-                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-tasks" aria-controls="navs-top-tasks" aria-selected="false">
-                    <i class="menu-icon tf-icons bx bx-task text-primary"></i><?= get_label('tasks', 'Tasks') ?>
-                </button>
-            </li>
-            @endif
-        </ul>
         <div class="tab-content">
             @if ($auth_user->can('manage_projects'))
             <div class="tab-pane fade active show" id="navs-top-projects" role="tabpanel">

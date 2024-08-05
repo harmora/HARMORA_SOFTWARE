@@ -430,7 +430,7 @@ class ClientController extends Controller
                     'first_name' => $client->first_name,
                     'last_name' => $client->last_name,
                     'denomenation' => $client->denomenation,
-                    'company' => $client->company,
+                    // 'company' => $client->denomenation,
                     'email' => $client->email,
                     'phone' => $phone,
                     'profile' => $formattedHtml,
