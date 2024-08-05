@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\ProdCategory;
 use App\Models\Product;
 use App\Services\DeletionService;
@@ -143,7 +144,7 @@ class ProductController extends Controller
 
 
             $photoHtml = "<div class='avatar avatar-md pull-up' title='" . $product->name ."'>
-            <a href='/users/profile/" . $product->id . "'>
+            <a href='/products/info/" . $product->id . "'>
                 <img src='" . ( $product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
             </a>
           </div>";
@@ -196,7 +197,25 @@ class ProductController extends Controller
         $response = DeletionService::delete(Product::class, $id, 'product');
         return $response;
     }
+
+     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        // $workspace = Workspace::find(session()->get('workspace_id'));
+        $product = Product::join('prod_categories', 'products.product_category_id', '=', 'prod_categories.id')
+        ->where('products.id', $id)
+        ->select('products.*', 'prod_categories.name_cat as category_name')
+        ->firstOrFail();
+
+        return view('products.product_info', ['product' => $product, 'auth_user' => getAuthenticatedUser()]);
+    }
 }
+
 
 
 
