@@ -1,19 +1,14 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use PDO;
-use App\Models\Task;
+use App\Models\Commande;
 use App\Models\User;
 use App\Models\Client;
-use App\Models\Status;
+use App\Models\Product;
 use App\Models\Priority;
-use App\Models\Project;
-use App\Models\Workspace;
-use App\Models\UserClientPreference;
+use Illuminate\Http\Request;
 
 use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use App\Services\DeletionService;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
@@ -25,48 +20,48 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Exception;
 
-class TasksController extends Controller
+class CommandesController extends Controller
 {
-    protected $workspace;
     protected $user;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             // fetch session and use it in entire class with constructor
-            $this->workspace = Workspace::find(session()->get('workspace_id'));
+          //  $this->workspace = Workspace::find(session()->get('workspace_id'));
             $this->user = getAuthenticatedUser();
             return $next($request);
         });
     }
     /**
-     * Display a listing of the resource.
+     * Display a listing of the commandes.
      *
      * @return \Illuminate\Http\Response
      */
     public function index($id = '')
     {
-        $project = (object)[];
-        if ($id) {
-            $project = Project::findOrFail($id);
-            $tasks = isAdminOrHasAllDataAccess() ? $project->tasks : $this->user->project_tasks($id);
-            $toSelectTaskUsers = $project->users;
-        } else {
-            $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks : $this->user->tasks();
-            $toSelectTaskUsers = $this->workspace->users;
-        }
-        $tasks = $tasks->count();
-        $users = $this->workspace->users;
-        $clients = $this->workspace->clients;
-        $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects : $this->user->projects;
-        return view('tasks.tasks', ['project' => $project, 'tasks' => $tasks, 'users' => $users, 'clients' => $clients, 'projects' => $projects, 'toSelectTaskUsers' => $toSelectTaskUsers]);
+        $productId = isset($product->id) ? $product->id : (request()->has('product') ? request('product') : '');
+        $url = isset($productId) ? '/products/commandes/draggable/' . $productId : '/commandes/draggable';
+        $users = User::all();  // Default empty array for safety
+        $clients = []; // Default empty array for safety
+        $commandes = Commande::with('clients', 'users', 'products')->get();
+        $toSelectCommandeUsers = []; // Default empty array for safety
+
+    
+        $users = User::all();  // Fetch all users
+        $clients = Client::all();  // Fetch all clients
+        //$products = Product::all();  // Fetch all products
+
+
+        return view('commandes.commandes', compact('commandes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
+   /**
+ * Store a newly created resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+ */
     public function store(Request $request)
     {
         $formFields = $request->validate([
@@ -76,102 +71,97 @@ class TasksController extends Controller
             'start_date' => ['required', 'before_or_equal:due_date'],
             'due_date' => ['required'],
             'description' => ['nullable'],
-            'project' => ['required'],
-            'note' => ['nullable']
+            'product' => ['required']  // Updated to 'product'
         ], [
             'status_id.required' => 'The status field is required.'
         ]);
+
         $status = Status::findOrFail($request->input('status_id'));
+
         if (canSetStatus($status)) {
-            $project_id = $request->input('project');
+            $product_id = $request->input('product');  // Updated to 'product_id'
             $start_date = $request->input('start_date');
             $due_date = $request->input('due_date');
             $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
             $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
 
-            $formFields['workspace_id'] = $this->workspace->id;
             $formFields['created_by'] = $this->user->id;
-
-            $formFields['project_id'] = $project_id;
+            $formFields['product_id'] = $product_id;  // Updated to 'product_id'
             $userIds = $request->input('user_id', []);
 
-            $new_task = Task::create($formFields);
-            $task_id = $new_task->id;
-            $task = Task::find($task_id);
-            $task->users()->attach($userIds);
-
+            $new_commande = Commande::create($formFields);
+            $commande_id = $new_commande->id;
+            $commande = Commande::find($commande_id);
+            $commande->users()->attach($userIds);
 
             $notification_data = [
-                'type' => 'task',
-                'type_id' => $task_id,
-                'type_title' => $task->title,
-                'access_url' => 'tasks/information/' . $task->id,
+                'type' => 'commande',
+                'type_id' => $commande_id,
+                'type_title' => $commande->title,
+                'access_url' => 'commandes/information/' . $commande->id,
                 'action' => 'assigned'
             ];
-            // $clientIds = $project->clients()->pluck('clients.id')->toArray();
-            // $recipients = array_merge(
-            //     array_map(function ($userId) {
-            //         return 'u_' . $userId;
-            //     }, $userIds),
-            //     array_map(function ($clientId) {
-            //         return 'c_' . $clientId;
-            //     }, $clientIds)
-            // );
+
+            // Adjusted recipients processing
             $recipients = array_map(function ($userId) {
                 return 'u_' . $userId;
             }, $userIds);
             processNotifications($notification_data, $recipients);
-            return response()->json(['error' => false, 'id' => $new_task->id, 'parent_id' => $project_id, 'parent_type' => 'project', 'message' => 'Task created successfully.']);
+            return response()->json(['error' => false, 'id' => $new_commande->id, 'parent_id' => $product_id,  'parent_type' => 'product',  'message' => 'Commande created successfully.']);
         } else {
             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
         }
     }
 
+
     /**
-     * Display the specified resource.
+     * Display the specified commande.
      *
-     * @param  int  $id
+     * @param  \App\Models\Commande  $commande
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $task = Task::findOrFail($id);
-        return view('tasks.task_information', ['task' => $task, 'auth_user' => $this->user]);
+        $commande = Commande::findOrFail($id);
+        return view('commandes.commande_information', ['commande' => $commande, 'auth_user' => $this->user]);
     }
+
 
     public function get($id)
     {
-        $task = Task::with('users')->findOrFail($id);
-        $project = $task->project()->with('users')->firstOrFail();
+        $commande = Commande::with('users')->findOrFail($id);
+        $product = $commande->product()->with('users')->firstOrFail();
 
-        return response()->json(['error' => false, 'task' => $task, 'project' => $project]);
+        return response()->json(['error' => false, 'commande' => $commande, 'product' => $product]);
     }
 
+
     /**
-     * Update the specified resource in storage.
+     * Update the specified commande in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Commande  $commande
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
         $formFields = $request->validate([
-            'id' => 'required|exists:tasks,id',
+            'id' => 'required|exists:commandes,id',
             'title' => ['required'],
             'status_id' => ['required'],
             'priority_id' => ['nullable'],
             'start_date' => ['required', 'before_or_equal:due_date'],
             'due_date' => ['required'],
-            'description' => ['nullable'],
-            'note' => ['nullable']
+            'description' => ['nullable']
         ], [
             'status_id.required' => 'The status field is required.'
         ]);
+
         $status = Status::findOrFail($request->input('status_id'));
         $id = $request->input('id');
-        $task = Task::findOrFail($id);
-        $currentStatusId = $task->status_id;
+        $commande = Commande::findOrFail($id);
+        $currentStatusId = $commande->status_id;
 
         // Check if the status has changed
         if ($currentStatusId != $request->input('status_id')) {
@@ -187,25 +177,25 @@ class TasksController extends Controller
 
         $userIds = $request->input('user_id', []);
 
-        $task = Task::findOrFail($id);
-        $task->update($formFields);
+        $commande = Commande::findOrFail($id);
+        $commande->update($formFields);
 
-        // Get the current users associated with the task
-        $currentUsers = $task->users->pluck('id')->toArray();
-        $currentClients = $task->project->clients->pluck('id')->toArray();
+        // Get the current users associated with the commande
+        $currentUsers = $commande->users->pluck('id')->toArray();
+        $currentClients = $commande->product->clients->pluck('id')->toArray();
 
-        // Sync the users for the task
-        $task->users()->sync($userIds);
+        // Sync the users for the commande
+        $commande->users()->sync($userIds);
 
-        // Get the new users associated with the task
+        // Get the new users associated with the commande
         $newUsers = array_diff($userIds, $currentUsers);
 
         // Prepare notification data for new users
         $notification_data = [
-            'type' => 'task',
+            'type' => 'commande',
             'type_id' => $id,
-            'type_title' => $task->title,
-            'access_url' => 'tasks/information/' . $task->id,
+            'type_title' => $commande->title,
+            'access_url' => 'commandes/information/' . $commande->id,
             'action' => 'assigned'
         ];
 
@@ -222,14 +212,14 @@ class TasksController extends Controller
             $newStatus = Status::findOrFail($request->input('status_id'));
 
             $notification_data = [
-                'type' => 'task_status_updation',
+                'type' => 'commande_status_updation',
                 'type_id' => $id,
-                'type_title' => $task->title,
+                'type_title' => $commande->title,
                 'updater_first_name' => $this->user->first_name,
                 'updater_last_name' => $this->user->last_name,
                 'old_status' => $currentStatus->title,
                 'new_status' => $newStatus->title,
-                'access_url' => 'tasks/information/' . $id,
+                'access_url' => 'commandes/information/' . $id,
                 'action' => 'status_updated'
             ];
 
@@ -243,47 +233,49 @@ class TasksController extends Controller
             );
             processNotifications($notification_data, $currentRecipients);
         }
-        return response()->json(['error' => false, 'id' => $id, 'parent_id' => $task->project->id, 'parent_type' => 'project',  'message' => 'Task updated successfully.']);
+        return response()->json(['error' => false, 'id' => $id, 'parent_id' => $commande->product->id, 'parent_type' => 'product',  'message' => 'Commande updated successfully.']);
     }
 
-
+        
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified commande from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Commande  $commande
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $task = Task::find($id);
-        DeletionService::delete(Task::class, $id, 'Task');
-        return response()->json(['error' => false, 'message' => 'Task deleted successfully.', 'id' => $id, 'title' => $task->title, 'parent_id' => $task->project_id, 'parent_type' => 'project']);
+        $commande = Commande::find($id);
+        DeletionService::delete(Commande::class, $id, 'Commande');
+        return response()->json(['error' => false, 'message' => 'Commande deleted successfully.', 'id' => $id, 'title' => $commande->title, 'parent_id' => $commande->product_id, 'parent_type' => 'product']);
     }
+
 
     public function destroy_multiple(Request $request)
     {
         // Validate the incoming request
         $validatedData = $request->validate([
             'ids' => 'required|array', // Ensure 'ids' is present and an array
-            'ids.*' => 'integer|exists:tasks,id' // Ensure each ID in 'ids' is an integer and exists in the table
+            'ids.*' => 'integer|exists:commandes,id' // Ensure each ID in 'ids' is an integer and exists in the table
         ]);
 
         $ids = $validatedData['ids'];
-        $deletedTasks = [];
-        $deletedTaskTitles = [];
+        $deletedCommandes = [];
+        $deletedCommandeTitles = [];
         $parentIds = [];
         // Perform deletion using validated IDs
         foreach ($ids as $id) {
-            $task = Task::find($id);
-            if ($task) {
-                $deletedTaskTitles[] = $task->title;
-                DeletionService::delete(Task::class, $id, 'Task');
-                $deletedTasks[] = $id;
-                $parentIds[] = $task->project_id;
+            $commande = Commande::find($id);
+            if ($commande) {
+                $deletedCommandeTitles[] = $commande->title;
+                DeletionService::delete(Commande::class, $id, 'Commande');
+                $deletedCommandes[] = $id;
+                $parentIds[] = $commande->product_id;
             }
         }
 
-        return response()->json(['error' => false, 'message' => 'Task(s) deleted successfully.', 'id' => $deletedTasks, 'titles' => $deletedTaskTitles, 'parent_id' => $parentIds, 'parent_type' => 'project']);
+        return response()->json(['error' => false, 'message' => 'Commande(s) deleted successfully.', 'id' => $deletedCommandes, 'titles' => $deletedCommandeTitles, 'parent_id' => $parentIds, 'parent_type' => 'product']);
     }
 
 
@@ -296,11 +288,11 @@ class TasksController extends Controller
         $priority_ids = request('priority_ids', []);
         $user_ids = request('user_ids', []);
         $client_ids = request('client_ids', []);
-        $project_ids = request('project_ids', []);
-        $start_date_from = (request('task_start_date_from')) ? trim(request('task_start_date_from')) : "";
-        $start_date_to = (request('task_start_date_to')) ? trim(request('task_start_date_to')) : "";
-        $end_date_from = (request('task_end_date_from')) ? trim(request('task_end_date_from')) : "";
-        $end_date_to = (request('task_end_date_to')) ? trim(request('task_end_date_to')) : "";
+        $product_ids = request('product_ids', []);
+        $start_date_from = (request('commande_start_date_from')) ? trim(request('commande_start_date_from')) : "";
+        $start_date_to = (request('commande_start_date_to')) ? trim(request('commande_start_date_to')) : "";
+        $end_date_from = (request('commande_end_date_from')) ? trim(request('commande_end_date_from')) : "";
+        $end_date_to = (request('commande_end_date_to')) ? trim(request('commande_end_date_to')) : "";
 
         $where = [];
 
@@ -309,130 +301,130 @@ class TasksController extends Controller
             $id = explode('_', $id);
             $belongs_to = $id[0];
             $belongs_to_id = $id[1];
-            if ($belongs_to == 'project') {
-                $project = Project::find($belongs_to_id);
-                $tasks = $project->tasks();
+            if ($belongs_to == 'product') {
+                $product = Product::find($belongs_to_id);
+                $commandes = $product->commandes();
             } else {
                 $userOrClient = $belongs_to == 'user' ? User::find($belongs_to_id) : Client::find($belongs_to_id);
-                $tasks = isAdminOrHasAllDataAccess($belongs_to, $belongs_to_id) ? $this->workspace->tasks() : $userOrClient->tasks();
+                $commandes = isAdminOrHasAllDataAccess($belongs_to, $belongs_to_id) ? $this->commandes() : $userOrClient->commandes();
             }
         } else {
-            $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks() : $this->user->tasks();
+            $commandes = isAdminOrHasAllDataAccess() ? $this->commandes() : $this->user->commandes();
         }
         if (!empty($user_ids)) {
-            $taskIds = DB::table('task_user')
+            $commandeIds = DB::table('commande_user')
                 ->whereIn('user_id', $user_ids)
-                ->pluck('task_id')
+                ->pluck('commande_id')
                 ->toArray();
 
-            $tasks = $tasks->whereIn('id', $taskIds);
+            $commandes = $commandes->whereIn('id', $commandeIds);
         }
         if (!empty($client_ids)) {
-            $projectIds = DB::table('client_project')
+            $productIds = DB::table('client_product')
                 ->whereIn('client_id', $client_ids)
-                ->pluck('project_id')
+                ->pluck('product_id')
                 ->toArray();
 
-            $tasks = $tasks->whereIn('project_id', $projectIds);
+            $commandes = $commandes->whereIn('product_id', $productIds);
         }
 
-        if (!empty($project_ids)) {
-            $tasks->whereIn('project_id', $project_ids);
+        if (!empty($product_ids)) {
+            $commandes->whereIn('product_id', $product_ids);
         }
         if (!empty($status_ids)) {
-            $tasks->whereIn('status_id', $status_ids);
+            $commandes->whereIn('status_id', $status_ids);
         }
         if (!empty($priority_ids)) {
-            $tasks->whereIn('priority_id', $priority_ids);
+            $commandes->whereIn('priority_id', $priority_ids);
         }
         if ($start_date_from && $start_date_to) {
-            $tasks->whereBetween('start_date', [$start_date_from, $start_date_to]);
+            $commandes->whereBetween('start_date', [$start_date_from, $start_date_to]);
         }
         if ($end_date_from && $end_date_to) {
-            $tasks->whereBetween('due_date', [$end_date_from, $end_date_to]);
+            $commandes->whereBetween('due_date', [$end_date_from, $end_date_to]);
         }
         if ($search) {
-            $tasks = $tasks->where(function ($query) use ($search) {
+            $commandes = $commandes->where(function ($query) use ($search) {
                 $query->where('title', 'like', '%' . $search . '%')
                     ->orWhere('id', 'like', '%' . $search . '%');
             });
         }
-        // Apply where clause to $tasks
-        $tasks = $tasks->where($where);
+        // Apply where clause to $commandes
+        $commandes = $commandes->where($where);
 
-        // Count total tasks before pagination
-        $totaltasks = $tasks->count();
+        // Count total commandes before pagination
+        $totalcommandes = $commandes->count();
 
-        $canCreate = checkPermission('create_tasks');
-        $canEdit = checkPermission('edit_tasks');
-        $canDelete = checkPermission('delete_tasks');
+        $canCreate = checkPermission('create_commandes');
+        $canEdit = checkPermission('edit_commandes');
+        $canDelete = checkPermission('delete_commandes');
 
         $statuses = Status::all();
         $priorities = Priority::all();
-        // Paginate tasks and format them
-        $tasks = $tasks->orderBy($sort, $order)->paginate(request('limit'))->through(function ($task) use ($statuses, $priorities, $canEdit, $canDelete, $canCreate) {
+        // Paginate commandes and format them
+        $commandes = $commandes->orderBy($sort, $order)->paginate(request('limit'))->through(function ($commande) use ($statuses, $priorities, $canEdit, $canDelete, $canCreate) {
             $statusOptions = '';
             foreach ($statuses as $status) {
                 $disabled = canSetStatus($status)  ? '' : 'disabled';
-                $selected = $task->status_id == $status->id ? 'selected' : '';
+                $selected = $commande->status_id == $status->id ? 'selected' : '';
                 $statusOptions .= "<option value='{$status->id}' class='badge bg-label-{$status->color}' {$selected} {$disabled}>{$status->title}</option>";
             }
 
             $priorityOptions = '';
             foreach ($priorities as $priority) {
-                $selectedPriority = $task->priority_id == $priority->id ? 'selected' : '';
+                $selectedPriority = $commande->priority_id == $priority->id ? 'selected' : '';
                 $priorityOptions .= "<option value='{$priority->id}' class='badge bg-label-{$priority->color}' {$selectedPriority}>{$priority->title}</option>";
             }
 
             $actions = '';
 
             if ($canEdit) {
-                $actions .= '<a href="javascript:void(0);" class="edit-task" data-id="' . $task->id . '" title="' . get_label('update', 'Update') . '">' .
+                $actions .= '<a href="javascript:void(0);" class="edit-commande" data-id="' . $commande->id . '" title="' . get_label('update', 'Update') . '">' .
                     '<i class="bx bx-edit mx-1"></i>' .
                     '</a>';
             }
 
             if ($canDelete) {
-                $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $task->id . '" data-type="tasks" data-table="task_table">' .
+                $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes" data-table="commande_table">' .
                     '<i class="bx bx-trash text-danger mx-1"></i>' .
                     '</button>';
             }
 
             if ($canCreate) {
-                $actions .= '<a href="javascript:void(0);" class="duplicate" data-id="' . $task->id . '" data-title="' . $task->title . '" data-type="tasks" data-table="task_table" title="' . get_label('duplicate', 'Duplicate') . '">' .
+                $actions .= '<a href="javascript:void(0);" class="duplicate" data-id="' . $commande->id . '" data-title="' . $commande->title . '" data-type="commandes" data-table="commande_table" title="' . get_label('duplicate', 'Duplicate') . '">' .
                     '<i class="bx bx-copy text-warning mx-2"></i>' .
                     '</a>';
             }
 
-            $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $task->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
+            $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
                 '<i class="bx bx-info-circle mx-3"></i>' .
                 '</a>';
 
             $actions = $actions ?: '-';
 
             $userHtml = '';
-            if (!empty($task->users) && count($task->users) > 0) {
+            if (!empty($commande->users) && count($commande->users) > 0) {
                 $userHtml .= '<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
-                foreach ($task->users as $user) {
+                foreach ($commande->users as $user) {
                     $userHtml .= "<li class='avatar avatar-sm pull-up'><a href='/users/profile/{$user->id}' target='_blank' title='{$user->first_name} {$user->last_name}'><img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle' /></a></li>";
                 }
                 if ($canEdit) {
-                    $userHtml .= '<li title=' . get_label('update', 'Update') . '><a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-task update-users-clients" data-id="' . $task->id . '"><span class="bx bx-edit"></span></a></li>';
+                    $userHtml .= '<li title=' . get_label('update', 'Update') . '><a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="' . $commande->id . '"><span class="bx bx-edit"></span></a></li>';
                 }
                 $userHtml .= '</ul>';
             } else {
                 $userHtml = '<span class="badge bg-primary">' . get_label('not_assigned', 'Not Assigned') . '</span>';
                 if ($canEdit) {
-                    $userHtml .= '<a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-task update-users-clients" data-id="' . $task->id . '">' .
+                    $userHtml .= '<a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="' . $commande->id . '">' .
                         '<span class="bx bx-edit"></span>' .
                         '</a>';
                 }
             }
 
             $clientHtml = '';
-            if (!empty($task->project->clients) && count($task->project->clients) > 0) {
+            if (!empty($commande->product->clients) && count($commande->product->clients) > 0) {
                 $clientHtml .= '<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
-                foreach ($task->project->clients as $client) {
+                foreach ($commande->product->clients as $client) {
                     $clientHtml .= "<li class='avatar avatar-sm pull-up'><a href='/clients/profile/{$client->id}' target='_blank' title='{$client->first_name} {$client->last_name}'><img src='" . ($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle' /></a></li>";
                 }
                 $clientHtml .= '</ul>';
@@ -441,78 +433,78 @@ class TasksController extends Controller
             }
 
             return [
-                'id' => $task->id,
-                'title' => "<a href='/tasks/information/{$task->id}' target='_blank'><strong>{$task->title}</strong></a> <a href='" . url('/chat?type=task&id=' . $task->id) . "' class='mx-2' target='_blank'><i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussion', 'Discussion') . "'></i></a>",
-                'project_id' => "<a href='/projects/information/{$task->project->id}' target='_blank' title='{$task->project->description}'><strong>{$task->project->title}</strong></a> <a href='javascript:void(0);' class='mx-2'><i class='bx " . ($task->project->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning' data-favorite='{$task->project->is_favorite}' data-id='{$task->project->id}' title='" . ($task->project->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'></i></a>",
+                'id' => $commande->id,
+                'title' => "<a href='/commandes/information/{$commande->id}' target='_blank'><strong>{$commande->title}</strong></a> <a href='" . url('/chat?type=commande&id=' . $commande->id) . "' class='mx-2' target='_blank'><i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussion', 'Discussion') . "'></i></a>",
+                'product_id' => "<a href='/products/information/{$commande->product->id}' target='_blank' title='{$commande->product->description}'><strong>{$commande->product->title}</strong></a> <a href='javascript:void(0);' class='mx-2'><i class='bx " . ($commande->product->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning' data-favorite='{$commande->product->is_favorite}' data-id='{$commande->product->id}' title='" . ($commande->product->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'></i></a>",
                 'users' => $userHtml,
                 'clients' => $clientHtml,
-                'start_date' => format_date($task->start_date),
-                'end_date' => format_date($task->due_date),
-                'status_id' => "<select class='form-select form-select-sm select-bg-label-{$task->status->color}' id='statusSelect' data-id='{$task->id}' data-original-status-id='{$task->status->id}' data-original-color-class='select-bg-label-{$task->status->color}' data-type='task'>{$statusOptions}</select>",
-                'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$task->id}' data-original-priority-id='" . ($task->priority ? $task->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "' data-type='task'>{$priorityOptions}</select>",
-                'created_at' => format_date($task->created_at, true),
-                'updated_at' => format_date($task->updated_at, true),
+                'start_date' => format_date($commande->start_date),
+                'end_date' => format_date($commande->due_date),
+                'status_id' => "<select class='form-select form-select-sm select-bg-label-{$commande->status->color}' id='statusSelect' data-id='{$commande->id}' data-original-status-id='{$commande->status->id}' data-original-color-class='select-bg-label-{$commande->status->color}' data-type='commande'>{$statusOptions}</select>",
+                'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$commande->id}' data-original-priority-id='" . ($commande->priority ? $commande->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' data-type='commande'>{$priorityOptions}</select>",
+                'created_at' => format_date($commande->created_at, true),
+                'updated_at' => format_date($commande->updated_at, true),
                 'actions' => $actions
             ];
         });
 
-        // Return JSON response with formatted tasks and total count
+        // Return JSON response with formatted commandes and total count
         return response()->json([
-            "rows" => $tasks->items(),
-            "total" => $totaltasks,
+            "rows" => $commandes->items(),
+            "total" => $totalcommandes,
         ]);
     }
 
 
     public function dragula($id = '')
     {
-        $project = (object)[];
-        $projects = [];
+        $product = (object)[];
+        $products = [];
         if ($id) {
-            $project = Project::findOrFail($id);
-            $tasks = isAdminOrHasAllDataAccess() ? $project->tasks : $this->user->project_tasks($id);
-            $toSelectTaskUsers = $project->users;
+            $product = Product::findOrFail($id);
+            $commandes = isAdminOrHasAllDataAccess() ? $product->commandes : $this->user->product_commandes($id);
+            $toSelectCommandeUsers = $product->users;
         } else {
-            $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects : $this->user->projects;
-            $toSelectTaskUsers = $this->workspace->users;
-            $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks : $this->user->tasks()->get();
+            $products = isAdminOrHasAllDataAccess() ? $this->products : $this->user->products;
+            $toSelectCommandeUsers = $this->user;
+            $commandes = isAdminOrHasAllDataAccess() ? $this->commandes : $this->user->commandes()->get();
         }
         if (request()->has('status')) {
-            $tasks = $tasks->where('status_id', request()->status);
+            $commandes = $commandes->where('status_id', request()->status);
         }
-        if (request()->has('project')) {
-            $project = Project::findOrFail(request()->project);
-            $tasks = $tasks->where('project_id', request()->project);
-            $toSelectTaskUsers = $project->users;
+        if (request()->has('product')) {
+            $product = Product::findOrFail(request()->product);
+            $commandes = $commandes->where('product_id', request()->product);
+            $toSelectCommandeUsers = $product->users;
         }
-        $total_tasks = $tasks->count();
-        return view('tasks.board_view', ['project' => $project, 'tasks' => $tasks, 'total_tasks' => $total_tasks, 'projects' => $projects, 'toSelectTaskUsers' => $toSelectTaskUsers]);
+        $total_commandes = $commandes->count();
+        return view('commandes.board_view', ['product' => $product, 'commandes' => $commandes, 'total_commandes' => $total_commandes, 'products' => $products, 'toSelectCommandeUsers' => $toSelectCommandeUsers]);
     }
 
     public function updateStatus($id, $newStatus)
     {
         $status = Status::findOrFail($newStatus);
         if (canSetStatus($status)) {
-            $task = Task::findOrFail($id);
-            $current_status = $task->status->title;
-            $task->status_id = $newStatus;
-            if ($task->save()) {
-                $task->refresh();
-                $new_status = $task->status->title;
+            $commande = Commande::findOrFail($id);
+            $current_status = $commande->status->title;
+            $commande->status_id = $newStatus;
+            if ($commande->save()) {
+                $commande->refresh();
+                $new_status = $commande->status->title;
 
                 $notification_data = [
-                    'type' => 'task_status_updation',
+                    'type' => 'commande_status_updation',
                     'type_id' => $id,
-                    'type_title' => $task->title,
+                    'type_title' => $commande->title,
                     'updater_first_name' => $this->user->first_name,
                     'updater_last_name' => $this->user->last_name,
                     'old_status' => $current_status,
                     'new_status' => $new_status,
-                    'access_url' => 'tasks/information/' . $id,
+                    'access_url' => 'commandes/information/' . $id,
                     'action' => 'status_updated'
                 ];
-                $userIds = $task->users->pluck('id')->toArray();
-                $clientIds = $task->project->clients->pluck('id')->toArray();
+                $userIds = $commande->users->pluck('id')->toArray();
+                $clientIds = $commande->product->clients->pluck('id')->toArray();
                 $recipients = array_merge(
                     array_map(function ($userId) {
                         return 'u_' . $userId;
@@ -523,9 +515,9 @@ class TasksController extends Controller
                 );
                 processNotifications($notification_data, $recipients);
 
-                return response()->json(['error' => false, 'message' => 'Task status updated successfully.', 'id' => $id, 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated task status from ' . $current_status . ' to ' . $new_status]);
+                return response()->json(['error' => false, 'message' => 'Commande status updated successfully.', 'id' => $id, 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $current_status . ' to ' . $new_status]);
             } else {
-                return response()->json(['error' => true, 'message' => 'Task status couldn\'t updated.']);
+                return response()->json(['error' => true, 'message' => 'Commande status couldn\'t updated.']);
             }
         } else {
             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
@@ -543,27 +535,27 @@ class TasksController extends Controller
         $statusId = $request->statusId;
         $status = Status::findOrFail($statusId);
         if (canSetStatus($status)) {
-            $task = Task::findOrFail($id);
-            $currentStatus = $task->status->title;
-            $task->status_id = $statusId;
-            $task->note = $request->note;
-            if ($task->save()) {
-                $task = $task->fresh();
-                $newStatus = $task->status->title;
+            $commande = Commande::findOrFail($id);
+            $currentStatus = $commande->status->title;
+            $commande->status_id = $statusId;
+            $commande->note = $request->note;
+            if ($commande->save()) {
+                $commande = $commande->fresh();
+                $newStatus = $commande->status->title;
 
                 $notification_data = [
-                    'type' => 'task_status_updation',
+                    'type' => 'commande_status_updation',
                     'type_id' => $id,
-                    'type_title' => $task->title,
+                    'type_title' => $commande->title,
                     'updater_first_name' => $this->user->first_name,
                     'updater_last_name' => $this->user->last_name,
                     'old_status' => $currentStatus,
                     'new_status' => $newStatus,
-                    'access_url' => 'tasks/information/' . $id,
+                    'access_url' => 'commandes/information/' . $id,
                     'action' => 'status_updated'
                 ];
-                $userIds = $task->users->pluck('id')->toArray();
-                $clientIds = $task->project->clients->pluck('id')->toArray();
+                $userIds = $commande->users->pluck('id')->toArray();
+                $clientIds = $commande->product->clients->pluck('id')->toArray();
                 $recipients = array_merge(
                     array_map(function ($userId) {
                         return 'u_' . $userId;
@@ -575,7 +567,7 @@ class TasksController extends Controller
                 processNotifications($notification_data, $recipients);
 
 
-                return response()->json(['error' => false, 'message' => 'Status updated successfully.', 'id' => $id, 'type' => 'task', 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated task status from ' . $currentStatus . ' to ' . $newStatus]);
+                return response()->json(['error' => false, 'message' => 'Status updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $currentStatus . ' to ' . $newStatus]);
             } else {
                 return response()->json(['error' => true, 'message' => 'Status couldn\'t updated.']);
             }
@@ -591,33 +583,33 @@ class TasksController extends Controller
 
         // Use the general duplicateRecord function
         $title = (request()->has('title') && !empty(trim(request()->title))) ? request()->title : '';
-        $duplicate = duplicateRecord(Task::class, $id, $relatedTables, $title);
+        $duplicate = duplicateRecord(Commande::class, $id, $relatedTables, $title);
 
         if (!$duplicate) {
-            return response()->json(['error' => true, 'message' => 'Task duplication failed.']);
+            return response()->json(['error' => true, 'message' => 'Commande duplication failed.']);
         }
         if (request()->has('reload') && request()->input('reload') === 'true') {
-            Session::flash('message', 'Task duplicated successfully.');
+            Session::flash('message', 'Commande duplicated successfully.');
         }
-        return response()->json(['error' => false, 'message' => 'Task duplicated successfully.', 'id' => $id, 'parent_id' => $duplicate->project->id, 'parent_type' => 'project']);
+        return response()->json(['error' => false, 'message' => 'Commande duplicated successfully.', 'id' => $id, 'parent_id' => $duplicate->product->id, 'parent_type' => 'product']);
     }
 
     public function upload_media(Request $request)
     {
         try {
             $validatedData = $request->validate([
-                'id' => 'integer|exists:tasks,id'
+                'id' => 'integer|exists:commandes,id'
             ]);
 
             $mediaIds = [];
 
             if ($request->hasFile('media_files')) {
-                $task = Task::find($validatedData['id']);
+                $commande = Commande::find($validatedData['id']);
                 $mediaFiles = $request->file('media_files');
 
                 foreach ($mediaFiles as $mediaFile) {
-                    $mediaItem = $task->addMedia($mediaFile)
-                        ->sanitizingFileName(function ($fileName) use ($task) {
+                    $mediaItem = $commande->addMedia($mediaFile)
+                        ->sanitizingFileName(function ($fileName) use ($commande) {
                             // Replace special characters and spaces with hyphens
                             $sanitizedFileName = strtolower(str_replace(['#', '/', '\\', ' '], '-', $fileName));
 
@@ -629,11 +621,11 @@ class TasksController extends Controller
 
                             return "{$baseName}-{$uniqueId}.{$extension}";
                         })
-                        ->toMediaCollection('task-media');
+                        ->toMediaCollection('commande-media');
 
                     $mediaIds[] = $mediaItem->id;
                 }
-                return response()->json(['error' => false, 'message' => 'File(s) uploaded successfully.', 'id' => $mediaIds, 'type' => 'media', 'parent_type' => 'task', 'parent_id' => $task->id]);
+                return response()->json(['error' => false, 'message' => 'File(s) uploaded successfully.', 'id' => $mediaIds, 'type' => 'media', 'parent_type' => 'commande', 'parent_id' => $commande->id]);
             } else {
                 return response()->json(['error' => true, 'message' => 'No file(s) chosen.']);
             }
@@ -649,8 +641,8 @@ class TasksController extends Controller
         $search = request('search');
         $sort = (request('sort')) ? request('sort') : "id";
         $order = (request('order')) ? request('order') : "DESC";
-        $task = Task::findOrFail($id);
-        $media = $task->getMedia('task-media');
+        $commande = Commande::findOrFail($id);
+        $media = $commande->getMedia('commande-media');
 
         if ($search) {
             $media = $media->filter(function ($mediaItem) use ($search) {
@@ -672,7 +664,7 @@ class TasksController extends Controller
 
             // Generate file URL based on disk visibility
             $fileUrl = $isPublicDisk
-                ? asset('storage/task-media/' . $mediaItem->file_name)
+                ? asset('storage/commande-media/' . $mediaItem->file_name)
                 : $mediaItem->getFullUrl();
 
 
@@ -683,7 +675,7 @@ class TasksController extends Controller
             $isImage = in_array(strtolower($fileExtension), $imageExtensions);
 
             if ($isImage) {
-                $html = '<a href="' . $fileUrl . '" data-lightbox="task-media">';
+                $html = '<a href="' . $fileUrl . '" data-lightbox="commande-media">';
                 $html .= '<img src="' . $fileUrl . '" alt="' . $mediaItem->file_name . '" width="50">';
                 $html .= '</a>';
             } else {
@@ -701,7 +693,7 @@ class TasksController extends Controller
                     '<a href="' . $fileUrl . '" title="' . get_label('download', 'Download') . '" download>' .
                         '<i class="bx bx-download bx-sm"></i>' .
                         '</a>' .
-                        '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $mediaItem->id . '" data-type="task-media">' .
+                        '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $mediaItem->id . '" data-type="commande-media">' .
                         '<i class="bx bx-trash text-danger"></i>' .
                         '</button>'
                 ],
@@ -734,7 +726,7 @@ class TasksController extends Controller
         // Delete media item from the database and disk
         $mediaItem->delete();
 
-        return response()->json(['error' => false, 'message' => 'File deleted successfully.', 'id' => $mediaId, 'title' => $mediaItem->file_name, 'parent_id' => $mediaItem->model_id,  'type' => 'media', 'parent_type' => 'task']);
+        return response()->json(['error' => false, 'message' => 'File deleted successfully.', 'id' => $mediaId, 'title' => $mediaItem->file_name, 'parent_id' => $mediaItem->model_id,  'type' => 'media', 'parent_type' => 'commande']);
     }
 
     public function delete_multiple_media(Request $request)
@@ -760,7 +752,7 @@ class TasksController extends Controller
             }
         }
 
-        return response()->json(['error' => false, 'message' => 'Files(s) deleted successfully.', 'id' => $deletedIds, 'titles' => $deletedTitles, 'parent_id' => $parentIds, 'type' => 'media', 'parent_type' => 'task']);
+        return response()->json(['error' => false, 'message' => 'Files(s) deleted successfully.', 'id' => $deletedIds, 'titles' => $deletedTitles, 'parent_id' => $parentIds, 'type' => 'media', 'parent_type' => 'commande']);
     }
 
     public function update_priority(Request $request)
@@ -772,16 +764,16 @@ class TasksController extends Controller
         ]);
         $id = $request->id;
         $priorityId = $request->priorityId;
-        $task = Task::findOrFail($id);
-        $currentPriority = $task->priority ? $task->priority->title : 'Default';
-        $task->priority_id = $priorityId;
-        $task->note = $request->note;
-        if ($task->save()) {
-            // Reload the task to get updated priority information
-            $task = $task->fresh();
-            $newPriority = $task->priority ? $task->priority->title : 'Default';
-            $message = $this->user->first_name . ' ' . $this->user->last_name . ' updated task priority from ' . $currentPriority . ' to ' . $newPriority;
-            return response()->json(['error' => false, 'message' => 'Priority updated successfully.', 'id' => $id, 'type' => 'task', 'activity_message' => $message]);
+        $commande = Commande::findOrFail($id);
+        $currentPriority = $commande->priority ? $commande->priority->title : 'Default';
+        $commande->priority_id = $priorityId;
+        $commande->note = $request->note;
+        if ($commande->save()) {
+            // Reload the commande to get updated priority information
+            $commande = $commande->fresh();
+            $newPriority = $commande->priority ? $commande->priority->title : 'Default';
+            $message = $this->user->first_name . ' ' . $this->user->last_name . ' updated commande priority from ' . $currentPriority . ' to ' . $newPriority;
+            return response()->json(['error' => false, 'message' => 'Priority updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $message]);
         } else {
             return response()->json(['error' => true, 'message' => 'Priority couldn\'t updated.']);
         }
@@ -792,9 +784,11 @@ class TasksController extends Controller
         $view = $request->input('view');
         $prefix = isClient() ? 'c_' : 'u_';
         UserClientPreference::updateOrCreate(
-            ['user_id' => $prefix . $this->user->id, 'table_name' => 'tasks'],
+            ['user_id' => $prefix . $this->user->id, 'table_name' => 'commandes'],
             ['default_view' => $view]
         );
         return response()->json(['error' => false, 'message' => 'Default View Set Successfully.']);
     }
 }
+
+?>

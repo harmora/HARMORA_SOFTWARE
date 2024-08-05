@@ -925,29 +925,29 @@ if (!function_exists('getControllerNames')) {
                         ];
                         $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of project {PROJECT_TITLE}, ID:#{PROJECT_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
                         break;
-                    case 'task':
+                    case 'commande':
                         $contentPlaceholders = [
-                            '{TASK_ID}' => $data['type_id'],
-                            '{TASK_TITLE}' => $data['type_title'],
+                            '{COMMANDE_ID}' => $data['type_id'],
+                            '{COMMANDE_TITLE}' => $data['type_title'],
                             '{ASSIGNEE_FIRST_NAME}' => $authUser->first_name,
                             '{ASSIGNEE_LAST_NAME}' => $authUser->last_name,
                             '{COMPANY_TITLE}' => $company_title,
-                            '{TASK_URL}' => $siteUrl . '/' . $data['access_url']
+                            '{COMMANDE_URL}' => $siteUrl . '/' . $data['access_url']
                         ];
-                        $templateContent = '{ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} assigned you new task: {TASK_TITLE}, ID:#{TASK_ID}.';
+                        $templateContent = '{ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} assigned you new commande: {COMMANDE_TITLE}, ID:#{COMMANDE_ID}.';
                         break;
-                    case 'task_status_updation':
+                    case 'commande_status_updation':
                         $contentPlaceholders = [
-                            '{TASK_ID}' => $data['type_id'],
-                            '{TASK_TITLE}' => $data['type_title'],
+                            '{COMMANDE_ID}' => $data['type_id'],
+                            '{COMMANDE_TITLE}' => $data['type_title'],
                             '{UPDATER_FIRST_NAME}' => $data['updater_first_name'],
                             '{UPDATER_LAST_NAME}' => $data['updater_last_name'],
                             '{OLD_STATUS}' => $data['old_status'],
                             '{NEW_STATUS}' => $data['new_status'],
-                            '{TASK_URL}' => $siteUrl . '/' . $data['access_url'],
+                            '{COMMANDE_URL}' => $siteUrl . '/' . $data['access_url'],
                             '{COMPANY_TITLE}' => $company_title
                         ];
-                        $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of task {TASK_TITLE}, ID:#{TASK_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
+                        $templateContent = '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of commande {COMMANDE_TITLE}, ID:#{COMMANDE_ID}, from {OLD_STATUS} to {NEW_STATUS}.';
                         break;
                     case 'workspace':
                         $contentPlaceholders = [

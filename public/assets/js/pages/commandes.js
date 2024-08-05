@@ -31,17 +31,17 @@ function actionFormatterClients(value, row, index) {
     ]
 }
 
-function queryParamsTasks(p) {
+function queryParamsCommandes(p) {
     return {
-        "status_ids": $('#task_status_filter').val(),
-        "priority_ids": $('#task_priority_filter').val(),
-        "user_ids": $('#tasks_user_filter').val(),
-        "client_ids": $('#tasks_client_filter').val(),
-        "project_ids": $('#tasks_project_filter').val(),
-        "task_start_date_from": $('#task_start_date_from').val(),
-        "task_start_date_to": $('#task_start_date_to').val(),
-        "task_end_date_from": $('#task_end_date_from').val(),
-        "task_end_date_to": $('#task_end_date_to').val(),
+        "status_ids": $('#commande_status_filter').val(),
+        "priority_ids": $('#commande_priority_filter').val(),
+        "user_ids": $('#commandes_user_filter').val(),
+        "client_ids": $('#commandes_client_filter').val(),
+        "product_ids": $('#commandes_product_filter').val(),
+        "commande_start_date_from": $('#commande_start_date_from').val(),
+        "commande_start_date_to": $('#commande_start_date_to').val(),
+        "commande_end_date_from": $('#commande_end_date_from').val(),
+        "commande_end_date_to": $('#commande_end_date_to').val(),
         page: p.offset / p.limit + 1,
         limit: p.limit,
         sort: p.sort,
@@ -50,10 +50,10 @@ function queryParamsTasks(p) {
         search: p.search
     };
 }
-$('#task_status_filter, #task_priority_filter, #tasks_user_filter, #tasks_client_filter, #tasks_project_filter').on('change', function (e, refreshTable) {
+$('#commande_status_filter, #commande_priority_filter, #commandes_user_filter, #commandes_client_filter, #commandes_product_filter').on('change', function (e, refreshTable) {
     e.preventDefault();
     if (typeof refreshTable === 'undefined' || refreshTable) {
-        $('#task_table').bootstrapTable('refresh');
+        $('#commande_table').bootstrapTable('refresh');
     }
 });
 
@@ -74,8 +74,8 @@ function clientFormatter(value, row, index) {
 }
 
 function assignedFormatter(value, row, index) {
-    return '<div class="d-flex justify-content-start align-items-center"><div class="text-center mx-4"><span class="badge rounded-pill bg-primary" >' + row.projects + '</span><div>' + label_projects + '</div></div>' +
-        '<div class="text-center"><span class="badge rounded-pill bg-primary" >' + row.tasks + '</span><div>' + label_tasks + '</div></div></div>'
+    return '<div class="d-flex justify-content-start align-items-center"><div class="text-center mx-4"><span class="badge rounded-pill bg-primary" >' + row.products + '</span><div>' + label_products + '</div></div>' +
+        '<div class="text-center"><span class="badge rounded-pill bg-primary" >' + row.commandes + '</span><div>' + label_commandes + '</div></div></div>'
 }
 
 function queryParamsUsersClients(p) {
@@ -93,16 +93,16 @@ function queryParamsUsersClients(p) {
 
 $(document).on('click', '.clear-filters', function (e) {
     e.preventDefault();
-    $('#task_start_date_between').val('');
-    $('#task_end_date_between').val('');
-    $('#task_start_date_from').val('');
-    $('#task_start_date_to').val('');
-    $('#task_end_date_from').val('');
-    $('#task_end_date_to').val('');
-    $('#tasks_project_filter').val('').trigger('change', [0]);
-    $('#tasks_user_filter').val('').trigger('change', [0]);
-    $('#tasks_client_filter').val('').trigger('change', [0]);
-    $('#task_status_filter').val('').trigger('change', [0]);
-    $('#task_priority_filter').val('').trigger('change', [0]);
-    $('#task_table').bootstrapTable('refresh');
+    $('#commande_start_date_between').val('');
+    $('#commande_end_date_between').val('');
+    $('#commande_start_date_from').val('');
+    $('#commande_start_date_to').val('');
+    $('#commande_end_date_from').val('');
+    $('#commande_end_date_to').val('');
+    $('#commandes_product_filter').val('').trigger('change', [0]);
+    $('#commandes_user_filter').val('').trigger('change', [0]);
+    $('#commandes_client_filter').val('').trigger('change', [0]);
+    $('#commande_status_filter').val('').trigger('change', [0]);
+    $('#commande_priority_filter').val('').trigger('change', [0]);
+    $('#commande_table').bootstrapTable('refresh');
 })

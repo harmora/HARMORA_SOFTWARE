@@ -838,4 +838,10 @@
 'team_member_on_leave_alert_whatsapp_will_not_sent' => 'If Deactive, Team Member on Leave Alert WhatsApp Notification Won\'t be Sent',
 'internal_client' => 'Is this a client for internal purpose only?',
 'internal_purpose' => 'Internal Purpose',
+'create_commande' => 'Create Commande',
+'commande_list' => 'Commande List',
+'commande' => 'Commande',
+'commandes' => 'Commandes',
+'update_commande' => 'update Commande',
+'commandes_not_found' => 'Commandes Not Found!',
 ];

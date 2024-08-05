@@ -3,7 +3,7 @@
  */
 'use strict';
 
-function queryParamsTaskMedia(p) {
+function queryParamsCommandeMedia(p) {
     return {
         page: p.offset / p.limit + 1,
         limit: p.limit,
@@ -19,7 +19,7 @@ function queryParams(p) {
         "user_id": $('#user_filter').val(),
         "client_id": $('#client_filter').val(),
         "activity": $('#activity_filter').val(),
-        "type": 'task',
+        "type": 'commande',
         "type_id": $('#type_id').val(),
         "date_from": $('#activity_log_between_date_from').val(),
         "date_to": $('#activity_log_between_date_to').val(),

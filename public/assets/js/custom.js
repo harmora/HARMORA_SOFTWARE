@@ -10,7 +10,7 @@ $(document).on('click', '.delete', function (e) {
         reload = false;
     }
     var tableID = $(this).data('table') || 'table';
-    var destroy = type == 'users' ? 'delete_user' : (type == 'contract-type' ? 'delete-contract-type' : (type == 'project-media' || type == 'task-media' ? 'delete-media' : (type == 'expense-type' ? 'delete-expense-type' : (type == 'milestone' ? 'delete-milestone' : 'destroy'))));
+    var destroy = type == 'users' ? 'delete_user' : (type == 'contract-type' ? 'delete-contract-type' : (type == 'project-media' || type == 'commande-media' ? 'delete-media' : (type == 'expense-type' ? 'delete-expense-type' : (type == 'milestone' ? 'delete-milestone' : 'destroy'))));
     type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'product-media' ? 'products' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
     $('#deleteModal').modal('show'); // show the confirmation modal
     $('#deleteModal').off('click', '#confirmDelete');
@@ -53,8 +53,8 @@ $(document).on('click', '.delete-selected', function (e) {
     e.preventDefault();
     var table = $(this).data('table');
     var type = $(this).data('type');
-    var destroy = type == 'users' ? 'delete_multiple_user' : (type == 'contract-type' ? 'delete-multiple-contract-type' : (type == 'project-media' || type == 'task-media' ? 'delete-multiple-media' : (type == 'expense-type' ? 'delete-multiple-expense-type' : (type == 'milestone' ? 'delete-multiple-milestone' : 'destroy_multiple'))));
-    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'task-media' ? 'tasks' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
+    var destroy = type == 'users' ? 'delete_multiple_user' : (type == 'contract-type' ? 'delete-multiple-contract-type' : (type == 'project-media' || type == 'commande-media' ? 'delete-multiple-media' : (type == 'expense-type' ? 'delete-multiple-expense-type' : (type == 'milestone' ? 'delete-multiple-milestone' : 'destroy_multiple'))));
+    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'commande-media' ? 'commandes' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
     var selections = $('#' + table).bootstrapTable('getSelections');
     var selectedIds = selections.map(function (row) {
         return row.id; // Replace 'id' with the field containing the unique ID
@@ -557,7 +557,7 @@ function resetDateFields($form) {
 
 $(document).ready(function () {
     // Define the IDs you want to process
-    var idsToProcess = ['#start_date', '#end_date', '#update_start_date', '#update_end_date', '#lr_end_date', '#meeting_end_date', '#expense_date', '#update_expense_date', '#payment_date', '#update_payment_date', '#update_milestone_start_date', '#update_milestone_end_date', '#task_start_date', '#task_end_date'];
+    var idsToProcess = ['#start_date', '#end_date', '#update_start_date', '#update_end_date', '#lr_end_date', '#meeting_end_date', '#expense_date', '#update_expense_date', '#payment_date', '#update_payment_date', '#update_milestone_start_date', '#update_milestone_end_date', '#commande_start_date', '#commande_end_date'];
 
     // Loop through the IDs
     for (var i = 0; i < idsToProcess.length; i++) {
@@ -668,7 +668,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
 
-    $('#start_date_between,#end_date_between,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#expense_from_date_between,#payment_date_between').daterangepicker({
+    $('#start_date_between,#end_date_between,#project_start_date_between,#project_end_date_between,#commande_start_date_between,#commande_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#expense_from_date_between,#payment_date_between').daterangepicker({
         alwaysShowCalendars: true,
         showCustomRangeLabel: true,
         singleDatePicker: false,
@@ -679,7 +679,7 @@ $(document).ready(function () {
             format: js_date_format
         },
     });
-    $('#start_date_between,#end_date_between,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#expense_from_date_between,#payment_date_between').on('apply.daterangepicker', function (ev, picker) {
+    $('#start_date_between,#end_date_between,#project_start_date_between,#project_end_date_between,#commande_start_date_between,#commande_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#expense_from_date_between,#payment_date_between').on('apply.daterangepicker', function (ev, picker) {
         $(this).val(picker.startDate.format(js_date_format) + ' To ' + picker.endDate.format(js_date_format));
     });
 });
@@ -720,39 +720,39 @@ if ($("#project_start_date_between").length) {
     });
 }
 
-if ($("#task_start_date_between").length) {
+if ($("#commande_start_date_between").length) {
 
-    $('#task_start_date_between').on('apply.daterangepicker', function (ev, picker) {
+    $('#commande_start_date_between').on('apply.daterangepicker', function (ev, picker) {
         var startDate = picker.startDate.format('YYYY-MM-DD');
         var endDate = picker.endDate.format('YYYY-MM-DD');
 
-        $('#task_start_date_from').val(startDate);
-        $('#task_start_date_to').val(endDate);
+        $('#commande_start_date_from').val(startDate);
+        $('#commande_start_date_to').val(endDate);
 
-        $('#task_table').bootstrapTable('refresh');
+        $('#commande_table').bootstrapTable('refresh');
     });
 
-    $('#task_start_date_between').on('cancel.daterangepicker', function (ev, picker) {
-        $('#task_start_date_from').val('');
-        $('#task_start_date_to').val('');
-        $('#task_table').bootstrapTable('refresh');
-        $('#task_start_date_between').val('');
+    $('#commande_start_date_between').on('cancel.daterangepicker', function (ev, picker) {
+        $('#commande_start_date_from').val('');
+        $('#commande_start_date_to').val('');
+        $('#commande_table').bootstrapTable('refresh');
+        $('#commande_start_date_between').val('');
     });
 
-    $('#task_end_date_between').on('apply.daterangepicker', function (ev, picker) {
+    $('#commande_end_date_between').on('apply.daterangepicker', function (ev, picker) {
         var startDate = picker.startDate.format('YYYY-MM-DD');
         var endDate = picker.endDate.format('YYYY-MM-DD');
 
-        $('#task_end_date_from').val(startDate);
-        $('#task_end_date_to').val(endDate);
+        $('#commande_end_date_from').val(startDate);
+        $('#commande_end_date_to').val(endDate);
 
-        $('#task_table').bootstrapTable('refresh');
+        $('#commande_table').bootstrapTable('refresh');
     });
-    $('#task_end_date_between').on('cancel.daterangepicker', function (ev, picker) {
-        $('#task_end_date_from').val('');
-        $('#task_end_date_to').val('');
-        $('#task_table').bootstrapTable('refresh');
-        $('#task_end_date_between').val('');
+    $('#commande_end_date_between').on('cancel.daterangepicker', function (ev, picker) {
+        $('#commande_end_date_from').val('');
+        $('#commande_end_date_to').val('');
+        $('#commande_table').bootstrapTable('refresh');
+        $('#commande_end_date_between').val('');
     });
 }
 
@@ -913,7 +913,7 @@ $(document).on('submit', '.form-submit-event', function (e) {
                                     var openModalId = dropdownSelector.closest('.modal.fade.show').attr('id');
 
                                     // List of all possible modal IDs
-                                    var modalIds = ['#create_project_modal', '#edit_project_modal', '#create_task_modal', '#edit_task_modal'];
+                                    var modalIds = ['#create_project_modal', '#edit_project_modal', '#create_commande_modal', '#edit_commande_modal'];
 
                                     // Iterate through each modal ID
                                     modalIds.forEach(function (modalId) {
@@ -948,7 +948,7 @@ $(document).on('submit', '.form-submit-event', function (e) {
                                     var openModalId = dropdownSelector.closest('.modal.fade.show').attr('id');
 
                                     // List of all possible modal IDs
-                                    var modalIds = ['#create_project_modal', '#edit_project_modal', '#create_task_modal', '#edit_task_modal'];
+                                    var modalIds = ['#create_project_modal', '#edit_project_modal', '#create_commande_modal', '#edit_commande_modal'];
 
                                     // Iterate through each modal ID
                                     modalIds.forEach(function (modalId) {
@@ -1462,8 +1462,8 @@ if (document.getElementById("media-upload-dropzone")) {
                 $('#project_media_table').bootstrapTable('refresh');
             }
 
-            if ($('#task_media_table').length) {
-                $('#task_media_table').bootstrapTable('refresh');
+            if ($('#commande_media_table').length) {
+                $('#commande_media_table').bootstrapTable('refresh');
             }
             toastr.success(response.message);
         } else {
@@ -1593,7 +1593,7 @@ $(document).ready(function () {
             // Add the "Delete selected" button before the first element in the toolbar
             $toolbar.prepend($deleteButton);
 
-            if (data_type == 'tasks') {
+            if (data_type == 'commandes') {
                 // Create the "Clear Filters" button
                 var $clearFiltersButton = $('<div class="columns columns-left btn-group float-left">' +
                     '<button type="button" class="btn btn-outline-secondary clear-filters">' +
@@ -1723,8 +1723,8 @@ function determineRedirectUrl(type, typeId) {
         case 'project':
             redirectUrl = '/projects/information/' + typeId;
             break;
-        case 'task':
-            redirectUrl = '/tasks/information/' + typeId;
+        case 'commande':
+            redirectUrl = '/commandes/information/' + typeId;
             break;
         case 'workspace':
             redirectUrl = '/workspaces';
@@ -1771,7 +1771,7 @@ if (typeof manage_notifications !== 'undefined' && manage_notifications == 'true
 }
 
 
-$('textarea#email_verify_email,textarea#email_account_creation,textarea#email_forgot_password,textarea#email_project_assignment,textarea#email_task_assignment,textarea#email_workspace_assignment,textarea#email_meeting_assignment,textarea#email_leave_request_creation,textarea#email_leave_request_status_updation,textarea#email_project_status_updation,textarea#email_task_status_updation,textarea#email_team_member_on_leave_alert').tinymce({
+$('textarea#email_verify_email,textarea#email_account_creation,textarea#email_forgot_password,textarea#email_project_assignment,textarea#email_commande_assignment,textarea#email_workspace_assignment,textarea#email_meeting_assignment,textarea#email_leave_request_creation,textarea#email_leave_request_status_updation,textarea#email_project_status_updation,textarea#email_commande_status_updation,textarea#email_team_member_on_leave_alert').tinymce({
     height: 821,
     menubar: true,
     plugins: [
@@ -1893,8 +1893,8 @@ $('.modal').on('hidden.bs.modal', function () {
     }
     colorSelect.removeClass(currentColorClass).addClass('select-bg-label-' + defaultColor)
     $form.find('.js-example-basic-multiple').trigger('change');
-    if ($('.selectTaskProject[name="project"]').length) {
-        $form.find($('.selectTaskProject[name="project"]')).trigger('change');
+    if ($('.selectCommandeProject[name="project"]').length) {
+        $form.find($('.selectCommandeProject[name="project"]')).trigger('change');
     }
     if ($('.selectLruser[name="user_id"]').length) {
         $form.find($('.selectLruser[name="user_id"]')).trigger('change');
@@ -1902,14 +1902,14 @@ $('.modal').on('hidden.bs.modal', function () {
     if ($('#users_associated_with_project').length) {
         $('#users_associated_with_project').text('');
     }
-    if ($('#task_update_users_associated_with_project').length) {
-        $('#task_update_users_associated_with_project').text('');
+    if ($('#commande_update_users_associated_with_project').length) {
+        $('#commande_update_users_associated_with_project').text('');
     }
     resetDateFields($form); // Pass the form as an argument to resetDateFields()
 });
 
 $(document).ready(function () {
-    $('.selectTaskProject[name="project"]').on('change', function (e) {
+    $('.selectCommandeProject[name="project"]').on('change', function (e) {
         var projectId = $(this).val();
         if (projectId) {
             $.ajax({
@@ -1919,7 +1919,7 @@ $(document).ready(function () {
                     $('#users_associated_with_project').html('(' + label_users_associated_with_project + ' <strong>' + response.project.title + '</strong>)');
                     var usersSelect = $('.js-example-basic-multiple[name="user_id[]"]');
                     usersSelect.empty(); // Clear existing options
-                    // Check if task_accessibility is 'project_users'
+                    // Check if commande_accessibility is 'project_users'
                     $.each(response.users, function (index, user) {
                         var option = $('<option>', {
                             value: user.id,
@@ -1927,9 +1927,9 @@ $(document).ready(function () {
                         });
                         usersSelect.append(option);
                     });
-                    if (response.project.task_accessibility == 'project_users') {
-                        var taskUsers = response.users.map(user => user.id);
-                        usersSelect.val(taskUsers);
+                    if (response.project.commande_accessibility == 'project_users') {
+                        var commandeUsers = response.users.map(user => user.id);
+                        usersSelect.val(commandeUsers);
                     } else {
                         usersSelect.val(authUserId);
                     }
@@ -1944,35 +1944,35 @@ $(document).ready(function () {
 });
 
 
-$(document).on('click', '.edit-task', function () {
+$(document).on('click', '.edit-commande', function () {
     var id = $(this).data('id');
-    $('#edit_task_modal').modal('show');
+    $('#edit_commande_modal').modal('show');
     $.ajax({
-        url: "/tasks/get/" + id,
+        url: "/commandes/get/" + id,
         type: 'get',
         headers: {
             'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
         },
         dataType: 'json',
         success: function (response) {
-            var formattedStartDate = moment(response.task.start_date).format(js_date_format);
-            var formattedEndDate = moment(response.task.end_date).format(js_date_format);
-            $('#task_update_users_associated_with_project').html('(' + label_users_associated_with_project + ' <strong>' + response.project.title + '</strong>)');
-            $('#id').val(response.task.id)
-            $('#title').val(response.task.title)
-            $('#project_status_id').val(response.task.status_id).trigger('change')
-            $('#priority_id').val(response.task.priority_id ? response.task.priority_id : 0)
+            var formattedStartDate = moment(response.commande.start_date).format(js_date_format);
+            var formattedEndDate = moment(response.commande.end_date).format(js_date_format);
+            $('#commande_update_users_associated_with_project').html('(' + label_users_associated_with_project + ' <strong>' + response.project.title + '</strong>)');
+            $('#id').val(response.commande.id)
+            $('#title').val(response.commande.title)
+            $('#project_status_id').val(response.commande.status_id).trigger('change')
+            $('#priority_id').val(response.commande.priority_id ? response.commande.priority_id : 0)
             $('#update_start_date').val(formattedStartDate);
             $('#update_end_date').val(formattedEndDate);
             initializeDateRangePicker('#update_start_date, #update_end_date');
             $('#update_project_title').val(response.project.title);
-            var description = response.task.description !== null ? response.task.description : '';
-            $('#edit_task_modal').find('#task_description').val(description);
-            $('#taskNote').val(response.task.note);
+            var description = response.commande.description !== null ? response.commande.description : '';
+            $('#edit_commande_modal').find('#commande_description').val(description);
+            $('#commandeNote').val(response.commande.note);
 
 
             // Populate project users in the multi-select dropdown
-            var usersSelect = $('#edit_task_modal').find('.js-example-basic-multiple[name="user_id[]"]');
+            var usersSelect = $('#edit_commande_modal').find('.js-example-basic-multiple[name="user_id[]"]');
             usersSelect.empty(); // Clear existing options
             $.each(response.project.users, function (index, user) {
                 var option = $('<option>', {
@@ -1983,9 +1983,9 @@ $(document).on('click', '.edit-task', function () {
                 usersSelect.append(option);
             });
 
-            // Preselect task users if they exist
-            var taskUsers = response.task.users.map(user => user.id);
-            usersSelect.val(taskUsers);
+            // Preselect commande users if they exist
+            var commandeUsers = response.commande.users.map(user => user.id);
+            usersSelect.val(commandeUsers);
             usersSelect.trigger('change'); // Trigger change event to update select2
         },
         error: function (xhr, status, error) {
@@ -2015,7 +2015,7 @@ $(document).on('click', '.edit-project', function () {
             $('#update_start_date').val(formattedStartDate);
             $('#update_end_date').val(formattedEndDate);
             initializeDateRangePicker('#update_start_date, #update_end_date');
-            $('#task_accessiblity').val(response.project.task_accessiblity);
+            $('#commande_accessiblity').val(response.project.commande_accessiblity);
             $('#projectNote').val(response.project.note);
             var description = response.project.description !== null ? response.project.description : '';
             $('#edit_project_modal').find('#project_description').val(description);
@@ -2169,9 +2169,9 @@ $(document).on('change', '#statusSelect', function (e) {
             if (response.error == false) {
                 $('#confirmUpdateStatusModal').modal('show'); // show the confirmation modal
                 $('#confirmUpdateStatusModal').off('click', '#confirmUpdateStatus');
-                if (type == 'task' && response.task) {
-                    $('#statusNote').val(response.task.note);
-                    originalStatusId = response.task.status_id;
+                if (type == 'commande' && response.commande) {
+                    $('#statusNote').val(response.commande.note);
+                    originalStatusId = response.commande.status_id;
                 } else if (type == 'project' && response.project) {
                     $('#statusNote').val(response.project.note);
                     originalStatusId = response.project.status_id;
@@ -2199,7 +2199,7 @@ $(document).on('change', '#statusSelect', function (e) {
                                     }
                                 }, 3000);
                                 $('#confirmUpdateStatusModal').modal('hide');
-                                var tableSelector = type == 'project' ? 'projects_table' : 'task_table';
+                                var tableSelector = type == 'project' ? 'projects_table' : 'commande_table';
                                 var $table = $('#' + tableSelector);
 
                                 if ($table.length) {
@@ -2285,7 +2285,7 @@ $(document).on('change', '#prioritySelect', function (e) {
                     $('#confirmUpdatePriorityModal').modal('hide');
                     toastr.success(response.message);
 
-                    var tableSelector = type == 'project' ? 'projects_table' : 'task_table';
+                    var tableSelector = type == 'project' ? 'projects_table' : 'commande_table';
                     var $table = $('#' + tableSelector);
 
                     if ($table.length) {
@@ -2320,7 +2320,7 @@ $(document).on('change', '#prioritySelect', function (e) {
 $(document).on('click', '.quick-view', function (e) {
     e.preventDefault();
     var id = $(this).data('id');
-    var type = $(this).data('type') || 'task';
+    var type = $(this).data('type') || 'commande';
     $('#type').val(type);
     $('#typeId').val(id);
     $.ajax({
@@ -2329,14 +2329,14 @@ $(document).on('click', '.quick-view', function (e) {
         success: function (response) {
             if (response.error == false) {
                 $('#quickViewModal').modal('show');
-                if (type == 'task' && response.task) {
-                    $('#quickViewTitlePlaceholder').text(response.task.title);
-                    $('#quickViewDescPlaceholder').html(response.task.description);
+                if (type == 'commande' && response.commande) {
+                    $('#quickViewTitlePlaceholder').text(response.commande.title);
+                    $('#quickViewDescPlaceholder').html(response.commande.description);
                 } else if (type == 'project' && response.project) {
                     $('#quickViewTitlePlaceholder').text(response.project.title);
                     $('#quickViewDescPlaceholder').html(response.project.description);
                 }
-                $('#typePlaceholder').text(type == 'task' ? label_task : label_project);
+                $('#typePlaceholder').text(type == 'commande' ? label_commande : label_project);
                 $('#usersTable').bootstrapTable('refresh');
                 $('#clientsTable').bootstrapTable('refresh');
 
@@ -2800,24 +2800,24 @@ $(document).on('click', '.save-column-visibility', function (e) {
 $(document).on('click', '.viewAssigned', function (e) {
     e.preventDefault();
     var projectsUrl = '/projects/listing';
-    var tasksUrl = '/tasks/list';
+    var commandesUrl = '/commandes/list';
     var id = $(this).data('id');
     var type = $(this).data('type');
     var user = $(this).data('user');
     projectsUrl = projectsUrl + (id ? '/' + id : '');
-    tasksUrl = tasksUrl + (id ? '/' + id : '');
+    commandesUrl = commandesUrl + (id ? '/' + id : '');
     $('#viewAssignedModal').modal('show');
     var projectsTable = $('#viewAssignedModal').find('#projects_table');
-    var tasksTable = $('#viewAssignedModal').find('#task_table');
-    if (type === 'tasks') {
-        $('.nav-link[data-bs-target="#navs-top-view-assigned-tasks"]').tab('show');
+    var commandesTable = $('#viewAssignedModal').find('#commande_table');
+    if (type === 'commandes') {
+        $('.nav-link[data-bs-target="#navs-top-view-assigned-commandes"]').tab('show');
         $('.nav-link[data-bs-target="#navs-top-view-assigned-projects"]').removeClass('active');
         $('#navs-top-view-assigned-projects').removeClass('show active');
-        $('#navs-top-view-assigned-tasks').addClass('show active');
+        $('#navs-top-view-assigned-commandes').addClass('show active');
     } else {
         $('.nav-link[data-bs-target="#navs-top-view-assigned-projects"]').tab('show');
-        $('.nav-link[data-bs-target="#navs-top-view-assigned-tasks"]').removeClass('active');
-        $('#navs-top-view-assigned-tasks').removeClass('show active');
+        $('.nav-link[data-bs-target="#navs-top-view-assigned-commandes"]').removeClass('active');
+        $('#navs-top-view-assigned-commandes').removeClass('show active');
         $('#navs-top-view-assigned-projects').addClass('show active');
     }
     $('#userPlaceholder').text(user);
@@ -2825,8 +2825,8 @@ $(document).on('click', '.viewAssigned', function (e) {
     $(projectsTable).bootstrapTable('refresh', {
         url: projectsUrl
     });
-    $(tasksTable).bootstrapTable('refresh', {
-        url: tasksUrl
+    $(commandesTable).bootstrapTable('refresh', {
+        url: commandesUrl
     });
 
 });
@@ -2905,7 +2905,7 @@ $(document).ready(function () {
         });
     });
 
-    $('.selectTaskProject,.selectLruser').each(function () {
+    $('.selectCommandeProject,.selectLruser').each(function () {
         var $this = $(this);
         $this.select2({
             dropdownParent: $this.closest('.modal')

@@ -86,10 +86,10 @@ class UserController extends Controller
             'RC' => 'nullable|numeric|digits_between:2,6',
             'ICE' => 'nullable|numeric|digits_between:2,6',
             'IF' => 'nullable|numeric|digits_between:2,6',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
 
             
             //'dob' => 'nullable',
@@ -270,10 +270,10 @@ class UserController extends Controller
             'RC' => 'nullable|numeric|digits_between:2,6',
             'ICE' => 'nullable|numeric|digits_between:2,6',
             'IF' => 'nullable|numeric|digits_between:2,6',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
@@ -468,8 +468,9 @@ class UserController extends Controller
         // $tasks = isAdminOrHasAllDataAccess() ? $workspace->tasks->count() : $user->tasks->count();
         $users = User::all();
         $clients = Client::all();
-
-        return view('users.user_profile', ['user' => $user, 'users' => $users, 'clients' => $clients, 'auth_user' => getAuthenticatedUser()]);
+        $entreprise = Entreprise::findOrFail($user->entreprise_id);
+        $formeJuridiqueName = $entreprise->forme_juridique->label; // Assuming 'label' is the column name for the name
+        return view('users.user_profile', ['user' => $user, 'users' => $users, 'clients' => $clients,'entreprise' => $entreprise,'formeJuridiqueName'=>$formeJuridiqueName, 'auth_user' => getAuthenticatedUser()]);
     }
 
     public function list()

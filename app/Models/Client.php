@@ -189,4 +189,9 @@ class Client extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Entreprise::class);
     }
+
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class);
+    }
 }

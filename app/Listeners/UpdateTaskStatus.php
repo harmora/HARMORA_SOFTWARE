@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\Task;
 
-class UpdateTaskStatus
+class UpdateCommandeStatus
 {
     /**
      * Create the event listener.

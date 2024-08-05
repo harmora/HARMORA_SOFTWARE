@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-<?= get_label('task_details', 'Task details') ?>
+<?= get_label('commande_details', 'Commande details') ?>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -12,11 +12,13 @@
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{url('/'.getUserPreferences('tasks', 'default_view'))}}"><?= get_label('tasks', 'Tasks') ?></a>
+                        <a href="{{url('/'.getUserPreferences('commandes', 'default_view'))}}"><?= get_label('commandes', 'Commandes') ?></a>
                     </li>
+                    @foreach($commandes as $commande)
                     <li class="breadcrumb-item active">
-                        {{$task->title}}
+                        {{$commande->title}}
                     </li>
+                    @endforeach
                 </ol>
             </nav>
         </div>
@@ -29,28 +31,42 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <h2 class="fw-bold">{{ $task->title }}
-                            <a href="{{ url('/chat?type=task&id=' . $task->id) }}" class="mx-2" target="_blank">
-                                    <i class='bx bx-message-rounded-dots text-danger' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{get_label('discussion', 'Discussion')}}"></i>
-                                </a>
-                            </h2>
+                            
+                            
+                              
                             <div class="row">
                                 <div class="col-md-6 mt-3 mb-3">
                                     <label class="form-label" for="start_date"><?= get_label('users', 'Users') ?></label>
                                     <?php
-                                    $users = $task->users;
-                                    $clients = $task->project->clients;
-                                    if (count($users) > 0) { ?>
+                                    // $clients = $commande->product->clients;
+                                    $users = $commande->users;
+
+                                    // Check if $users is not null and is an array or a collection
+                                    if (is_array($users) || $users instanceof Countable) {
+                                        $usersCount = count($users);
+                                    } else {
+                                        $usersCount = 0;
+                                    }
+
+                                    if ($usersCount > 0) { ?>
+
                                         <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center flex-wrap">
-                                            @foreach($users as $user)
-                                            <li class="avatar avatar-sm pull-up" title="{{$user->first_name}} {{$user->last_name}}"><a href="/users/profile/{{$user->id}}" target="_blank">
-                                                    <img src="{{$user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')}}" class="rounded-circle" alt="{{$user->first_name}} {{$user->last_name}}">
-                                                </a></li>
+
+                                             @foreach($users as $user)
+                                                <li class="avatar avatar-sm pull-up" title="{{$user->first_name}} {{$user->last_name}}">
+                                                    <a href="/users/profile/{{$user->id}}" target="_blank">
+                                                        <img src="{{$user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')}}" class="rounded-circle" alt="{{$user->first_name}} {{$user->last_name}}">
+                                                    </a>
+                                                </li>
                                             @endforeach
-                                            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-task update-users-clients" data-id="{{$task->id}}"><span class="bx bx-edit"></span></a>
+
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="{{$commande->id}}">
+                                                <span class="bx bx-edit"></span>
+                                            </a>
+
                                         </ul>
                                     <?php } else { ?>
-                                        <p><span class="badge bg-primary"><?= get_label('not_assigned', 'Not assigned') ?></span><a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-task update-users-clients" data-id="{{$task->id}}"><span class="bx bx-edit"></span></a></p>
+                                        <p><span class="badge bg-primary"><?= get_label('not_assigned', 'Not assigned') ?></span><a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="{{$commande->id}}"><span class="bx bx-edit"></span></a></p>
                                     <?php } ?>
                                 </div>
                                 <div class="col-md-6  mt-3 mb-3">
@@ -71,12 +87,12 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= get_label('status', 'Status') ?></label>
                                     <div class="input-group">
-                                        <select class="form-select form-select-sm select-bg-label-{{$task->status->color}}" id="statusSelect" data-id="{{ $task->id }}" data-original-status-id="{{ $task->status->id }}" data-original-color-class="select-bg-label-{{$task->status->color}}" data-type="task">
+                                        <select class="form-select form-select-sm select-bg-label-{{$commande->status->color}}" id="statusSelect" data-id="{{ $commande->id }}" data-original-status-id="{{ $commande->status->id }}" data-original-color-class="select-bg-label-{{$commande->status->color}}" data-type="commande">
                                             @foreach($statuses as $status)
                                             @php
                                             $disabled = canSetStatus($status) ? '' : 'disabled';
                                             @endphp
-                                            <option value="{{ $status->id }}" class="badge bg-label-{{ $status->color }}" {{ $task->status->id == $status->id ? 'selected' : '' }} {{ $disabled }}>
+                                            <option value="{{ $status->id }}" class="badge bg-label-{{ $status->color }}" {{ $commande->status->id == $status->id ? 'selected' : '' }} {{ $disabled }}>
                                                 {{ $status->title }}
                                             </option>
                                             @endforeach
@@ -86,9 +102,9 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="prioritySelect" class="form-label"><?= get_label('priority', 'Priority') ?></label>
                                     <div class="input-group">
-                                        <select class="form-select form-select-sm select-bg-label-{{$task->priority?$task->priority->color:'secondary'}}" id="prioritySelect" data-id="{{ $task->id }}" data-original-priority-id="{{ $task->priority ? $task->priority->id : '' }}" data-original-color-class="select-bg-label-{{$task->priority?$task->priority->color:'secondary'}}" data-type="task">
+                                        <select class="form-select form-select-sm select-bg-label-{{$commande->priority?$commande->priority->color:'secondary'}}" id="prioritySelect" data-id="{{ $commande->id }}" data-original-priority-id="{{ $commande->priority ? $commande->priority->id : '' }}" data-original-color-class="select-bg-label-{{$commande->priority?$commande->priority->color:'secondary'}}" data-type="commande">
                                             @foreach($priorities as $priority)
-                                            <option value="{{ $priority->id }}" class="badge bg-label-{{ $priority->color }}" {{ $task->priority && $task->priority->id == $priority->id ? 'selected' : '' }}>
+                                            <option value="{{ $priority->id }}" class="badge bg-label-{{ $priority->color }}" {{ $commande->priority && $commande->priority->id == $priority->id ? 'selected' : '' }}>
                                                 {{ $priority->title }}
                                             </option>
                                             @endforeach
@@ -103,12 +119,12 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="mb-3 col-md-12">
-                            <label class="form-label" for="project"><?= get_label('project', 'Project') ?></label>
+                            <label class="form-label" for="product"><?= get_label('product', 'Product') ?></label>
                             <div class="input-group input-group-merge">
                                 @php
-                                $project = $task->project;
+                                $product = $commande->product;
                                 @endphp
-                                <input class="form-control px-2" type="text" id="project" value="{{$project->title}}" readonly="">
+                                <input class="form-control px-2" type="text" id="product" value="{{$product->title}}" readonly="">
                             </div>
                         </div>
                     </div>
@@ -116,7 +132,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="description"><?= get_label('description', 'Description') ?></label>
                             <div class="input-group input-group-merge">
-                                <div class="form-control" rows="5" readonly>{!! $task->description !!}</div>
+                                <div class="form-control" rows="5" readonly>{!! $commande->description !!}</div>
                             </div>
                         </div>
                     </div>
@@ -124,19 +140,19 @@
                         <div class="mb-3 col-md-6">
                             <label class="form-label" for="start_date"><?= get_label('starts_at', 'Starts at') ?></label>
                             <div class="input-group input-group-merge">
-                                <input type="text" name="start_date" class="form-control" placeholder="" value="{{ format_date($task->start_date)}}" readonly />
+                                <input type="text" name="start_date" class="form-control" placeholder="" value="{{ format_date($commande->start_date)}}" readonly />
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label class="form-label" for="due-date"><?= get_label('ends_at', 'Ends at') ?></label>
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" name="due_date" placeholder="" value="{{ format_date($task->due_date)}}" readonly="">
+                                <input class="form-control" type="text" name="due_date" placeholder="" value="{{ format_date($commande->due_date)}}" readonly="">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="media_type_id" value="{{$task->id}}">
+            <input type="hidden" id="media_type_id" value="{{$commande->id}}">
         </div>
         <div class="nav-align-top mt-2">
             <ul class="nav nav-tabs" role="tablist">
@@ -165,13 +181,13 @@
                             </a>
                         </div>
                         @php
-                        $visibleColumns = getUserPreferences('task_media');
+                        $visibleColumns = getUserPreferences('commande_media');
                         @endphp
                         <div class="table-responsive text-nowrap">
-                            <input type="hidden" id="data_type" value="task-media">
-                            <input type="hidden" id="data_table" value="task_media_table">
+                            <input type="hidden" id="data_type" value="commande-media">
+                            <input type="hidden" id="data_table" value="commande_media_table">
                             <input type="hidden" id="save_column_visibility">
-                            <table id="task_media_table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/tasks/get-media/{{$task->id}}" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParamsTaskMedia">
+                            <table id="commande_media_table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/commandes/get-media/{{$commande->id}}" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParamsCommandeMedia">
                                 <thead>
                                     <tr>
                                         <th data-checkbox="true"></th>
@@ -234,7 +250,7 @@
                             <input type="hidden" id="activity_log_between_date_to">
                             <input type="hidden" id="data_type" value="activity-log">
                             <input type="hidden" id="data_table" value="activity_log_table">
-                            <input type="hidden" id="type_id" value="{{$task->id}}">
+                            <input type="hidden" id="type_id" value="{{$commande->id}}">
                             <input type="hidden" id="save_column_visibility">
                             <table id="activity_log_table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/activity-log/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                                 <thead>
@@ -266,7 +282,7 @@
         </div>
         <div class="modal fade" id="add_media_modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <form class="modal-content form-horizontal" id="media-upload" action="{{url('/tasks/upload-media')}}" method="POST" enctype="multipart/form-data">
+                <form class="modal-content form-horizontal" id="media-upload" action="{{url('/commandes/upload-media')}}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel1"><?= get_label('add_media', 'Add Media') ?></h5>
@@ -296,5 +312,5 @@
                 <script>
                     var label_delete = '<?= get_label('delete', 'Delete') ?>';
                 </script>
-                <script src="{{asset('assets/js/pages/task-information.js')}}"></script>
+                <script src="{{asset('assets/js/pages/commande-information.js')}}"></script>
                 @endsection

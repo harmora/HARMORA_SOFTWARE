@@ -76,7 +76,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 
-@if (Request::is('projects') || Request::is('projects/*') || Request::is('tasks') || Request::is('tasks/*') || Request::is('status/manage') || Request::is('users') || Request::is('clients'))
+@if (Request::is('projects') || Request::is('projects/*') || Request::is('commandes') || Request::is('commandes/*') || Request::is('status/manage') || Request::is('users') || Request::is('clients'))
 <div class="modal fade" id="create_status_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form class="modal-content form-submit-event" action="{{url('/status/store')}}" method="POST">
@@ -197,7 +197,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     </div>
 </div>
 @endif
-@if (Request::is('projects') || Request::is('projects/*') || Request::is('tasks') || Request::is('tasks/*') || Request::is('priority/manage') || Request::is('users') || Request::is('clients'))
+@if (Request::is('projects') || Request::is('projects/*') || Request::is('commandes') || Request::is('commandes/*') || Request::is('priority/manage') || Request::is('users') || Request::is('clients'))
 <div class="modal fade" id="create_priority_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form class="modal-content form-submit-event" action="{{url('/priority/store')}}" method="POST">
@@ -832,17 +832,17 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     </div>
 </div>
 
-@if (Request::is('tasks') || Request::is('tasks/draggable') || Request::is('projects/tasks/draggable/*') || Request::is('projects/tasks/list/*') || Request::is('tasks/information/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*') || Request::is('projects/information/*') || Request::is('users') || Request::is('clients'))
-<div class="modal fade" id="edit_task_modal" tabindex="-1" aria-hidden="true">
+@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('projects/commandes/draggable/*') || Request::is('projects/commandes/list/*') || Request::is('commandes/information/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*') || Request::is('projects/information/*') || Request::is('users') || Request::is('clients'))
+<div class="modal fade" id="edit_commande_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-        <form action="/tasks/update" class="form-submit-event modal-content" method="POST">
+        <form action="/commandes/update" class="form-submit-event modal-content" method="POST">
             <input type="hidden" name="id" id="id">
-            @if (!Request::is('projects/tasks/draggable/*') && !Request::is('tasks/draggable') && !Request::is('tasks/information/*'))
+            @if (!Request::is('projects/commandes/draggable/*') && !Request::is('commandes/draggable') && !Request::is('commandes/information/*'))
             <input type="hidden" name="dnr">
-            <input type="hidden" name="table" value="task_table">
+            <input type="hidden" name="table" value="commande_table">
             @endif
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel1"><?= get_label('update_task', 'Update Task') ?></h5>
+                <h5 class="modal-title" id="exampleModalLabel1"><?= get_label('update_commande', 'Update Commande') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             @csrf
@@ -855,7 +855,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="status"><?= get_label('status', 'Status') ?> <span class="asterisk">*</span></label>
                         <div class="input-group">
-                            <select class="form-select statusDropdown" name="status_id" id="task_status_id">
+                            <select class="form-select statusDropdown" name="status_id" id="commande_status_id">
                                 @isset($statuses)
                                 @foreach($statuses as $status)
                                 <option value="{{$status->id}}" data-color="{{$status->color}}" {{ old('status') == $status->id ? "selected" : "" }}>{{$status->title}} ({{$status->color}})</option>
@@ -903,7 +903,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 </div>
                 <div class="row">
                     <div class="mb-3">
-                        <label class="form-label" for="user_id"><?= get_label('select_users', 'Select users') ?> <span id="task_update_users_associated_with_project"></span></label>
+                        <label class="form-label" for="user_id"><?= get_label('select_users', 'Select users') ?> <span id="commande_update_users_associated_with_project"></span></label>
                         <div class="input-group">
                             <select class="form-control js-example-basic-multiple" name="user_id[]" multiple="multiple" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
                             </select>
@@ -913,13 +913,13 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <div class="row">
                     <div class="mb-3">
                         <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
-                        <textarea class="form-control description" id="task_description" rows="5" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>">{{ old('description') }}</textarea>
+                        <textarea class="form-control description" id="commande_description" rows="5" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>">{{ old('description') }}</textarea>
                     </div>
                 </div>
                 <div class="row">
                     <div class="mb-3">
                         <label class="form-label"><?= get_label('note', 'Note') ?></label>
-                        <textarea class="form-control" name="note" rows="3" id="taskNote" placeholder="<?= get_label('optional_note', 'Optional Note') ?>"></textarea>
+                        <textarea class="form-control" name="note" rows="3" id="commandeNote" placeholder="<?= get_label('optional_note', 'Optional Note') ?>"></textarea>
                     </div>
                 </div>
             </div>
@@ -1047,11 +1047,11 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="">
-                            <?= get_label('task_accessibility', 'Task Accessibility') ?>
-                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<b>{{get_label('assigned_users','Assigned Users')}}:</b> {{get_label('assigned_users_info','You Will Need to Manually Select Task Users When Creating Tasks Under This Project.')}} <br><b>{{get_label('project_users','Project Users')}}:</b> {{get_label('project_users_info','When Creating Tasks Under This Project, the Task Users Selection Will Be Automatically Filled With Project Users.')}}" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                            <?= get_label('commande_accessibility', 'Commande Accessibility') ?>
+                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<b>{{get_label('assigned_users','Assigned Users')}}:</b> {{get_label('assigned_users_info','You Will Need to Manually Select Commande Users When Creating Commandes Under This Project.')}} <br><b>{{get_label('project_users','Project Users')}}:</b> {{get_label('project_users_info','When Creating Commandes Under This Project, the Commande Users Selection Will Be Automatically Filled With Project Users.')}}" data-bs-toggle="tooltip" data-bs-placement="top"></i>
                         </label>
                         <div class="input-group">
-                            <select class="form-select" name="task_accessibility">
+                            <select class="form-select" name="commande_accessibility">
                                 <option value="assigned_users"><?= get_label('assigned_users', 'Assigned Users') ?></option>
                                 <option value="project_users"><?= get_label('project_users', 'Project Users') ?></option>
                             </select>
@@ -1206,11 +1206,11 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="">
-                            <?= get_label('task_accessibility', 'Task Accessibility') ?>
-                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<b>{{get_label('assigned_users', 'Assigned Users')}}:</b> {{get_label('assigned_users_info','You Will Need to Manually Select Task Users When Creating Tasks Under This Project.')}}<br><b>{{get_label('project_users', 'Project Users')}}:</b> {{get_label('project_users_info','When Creating Tasks Under This Project, the Task Users Selection Will Be Automatically Filled With Project Users.')}}" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                            <?= get_label('commande_accessibility', 'Commande Accessibility') ?>
+                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<b>{{get_label('assigned_users', 'Assigned Users')}}:</b> {{get_label('assigned_users_info','You Will Need to Manually Select Commande Users When Creating Commandes Under This Project.')}}<br><b>{{get_label('project_users', 'Project Users')}}:</b> {{get_label('project_users_info','When Creating Commandes Under This Project, the Commande Users Selection Will Be Automatically Filled With Project Users.')}}" data-bs-toggle="tooltip" data-bs-placement="top"></i>
                         </label>
                         <div class="input-group">
-                            <select class="form-select" name="task_accessibility" id="task_accessibility">
+                            <select class="form-select" name="commande_accessibility" id="commande_accessibility">
                                 <option value="assigned_users"><?= get_label('assigned_users', 'Assigned Users') ?></option>
                                 <option value="project_users"><?= get_label('project_users', 'Project Users') ?></option>
                             </select>
@@ -1288,7 +1288,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     </div>
 </div>
 @endif
-@if (Request::is('projects') || Request::is('projects/list') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*') || Request::is('tasks') || Request::is('tasks/draggable') || Request::is('projects/information/*'))
+@if (Request::is('projects') || Request::is('projects/list') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*') || Request::is('commandes') || Request::is('commandes/draggable') || Request::is('projects/information/*'))
 <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -1599,7 +1599,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     </div>
 </div>
 @endif
-@if (Request::is('users') || Request::is('clients') || Request::is('projects/list') || Request::is('projects') || Request::is('tasks') || Request::is('tasks/draggable'))
+@if (Request::is('users') || Request::is('clients') || Request::is('projects/list') || Request::is('projects') || Request::is('commandes') || Request::is('commandes/draggable'))
 <div class="modal fade" id="viewAssignedModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -1616,8 +1616,8 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-view-assigned-tasks" aria-controls="navs-top-view-assigned-tasks">
-                                <i class="menu-icon tf-icons bx bx-task text-primary"></i><?= get_label('tasks', 'Tasks') ?>
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-view-assigned-commandes" aria-controls="navs-top-view-assigned-commandes">
+                                <i class="menu-icon tf-icons bx bx-commande text-primary"></i><?= get_label('commandes', 'Commandes') ?>
                             </button>
                         </li>
                     </ul>
@@ -1625,7 +1625,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <div class="tab-pane fade active show" id="navs-top-view-assigned-projects" role="tabpanel">
 
                         </div>
-                        <div class="tab-pane fade" id="navs-top-view-assigned-tasks" role="tabpanel">
+                        <div class="tab-pane fade" id="navs-top-view-assigned-commandes" role="tabpanel">
 
                         </div>
                     </div>
