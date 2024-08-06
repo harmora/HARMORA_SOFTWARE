@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disponibility;
+use App\Services\DeletionService;
 use Illuminate\Http\Request;
 
 class DisponibiliteController extends Controller
@@ -20,15 +21,19 @@ class DisponibiliteController extends Controller
     {
         // $meetings = isAdminOrHasAllDataAccess() ? $this->workspace->meetings : $this->user->meetings;
 
+        $visibleColumns = getUserPreferences('disponibilities'); // Adjust this based on how you get user preferences
 
-        return view('disponibility.disponibility');
+        $disponibilities = $this->user->entreprise->disponibility;
+        return view('disponibility.disponibility',['disponibilities'=>$disponibilities],compact('visibleColumns'));
+
+
     }
     public function calendar()
     {
         $currentDate = today();
 
         $events = [];
-        $reservations = Disponibility::all();
+        $reservations =  $this->user->entreprise->disponibility;
 
         foreach ($reservations as $disp) {
                 // Format the start date in the required format for FullCalendar
@@ -134,6 +139,90 @@ class DisponibiliteController extends Controller
 //         processNotifications($notification_data, $recipients);
 //         return response()->json(['error' => false, 'id' => $meeting_id, 'message' => 'Meeting created successfully.']);
 //     }
+
+
+
+public function destroy($id)
+{
+    $response = DeletionService::delete(Disponibility::class, $id, 'disponibility');
+    return $response;
+}
+
+
+
+public function list()
+{
+    $search = request('search');
+    $sort = request('sort') ?: 'id';
+    $order = request('order') ?: 'DESC';
+    $category = request('category', '');
+    $limit = request('limit') ?: 10;
+
+    // Get the authenticated user's entreprise
+    $entreprise = auth()->user()->entreprise;
+
+    // Ensure entreprise is available
+    if (!$entreprise) {
+        return response()->json([
+            "rows" => [],
+            "total" => 0,
+            "message" => "No entreprise associated with the user."
+        ], 400);
+    }
+
+    $query = Disponibility::where('entreprise_id', $entreprise->id);
+
+    // Search functionality
+    if ($search) {
+
+        $query->where(function ($query) use ($search) {
+            $query->where('activity_name', 'like', '%' . $search . '%')
+                  ->orWhere('details', 'like', '%' . $search . '%');
+        });
+    }
+
+    // Status filtering
+    if ($category !== '') {
+        $query->where('category_id', $category);
+    }
+
+    $totalDisponibilities = $query->count();
+
+    $disponibilities = $query->orderBy($sort, $order)
+                              ->paginate($limit);
+
+    $disponibilities = $disponibilities->through(function ($disponibility) {
+        $actions = '';
+
+        $actions .= '<a href="/disponibilities/edit/' . $disponibility->id . '" title="Update">' .
+                    '<i class="bx bx-edit mx-1"></i>' .
+                    '</a>';
+
+        $actions .= '<button title="Delete" type="button" class="btn delete" data-id="' . $disponibility->id . '" data-type="disponibility">' .
+                    '<i class="bx bx-trash text-danger mx-1"></i>' .
+                    '</button>';
+
+        $actions = $actions ?: '-';
+
+        return [
+            'id' => $disponibility->id,
+            'activity_name' => $disponibility->activity_name,
+            'details' => $disponibility->details,
+            'start_date_time' => $disponibility->start_date_time,
+            'end_date_time' => $disponibility->end_date_time,
+            'created_at' => $disponibility->created_at,
+            'updated_at' => $disponibility->updated_at,
+            'actions' => $actions
+        ];
+    });
+
+    return response()->json([
+        "rows" => $disponibilities->items(),
+        "total" => $totalDisponibilities,
+    ]);
+}
+
+
  }
 
 

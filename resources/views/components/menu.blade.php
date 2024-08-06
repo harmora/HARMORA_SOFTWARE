@@ -72,16 +72,16 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 <!--codes i added-->
         <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
             <a href="/commandes" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
+                <i class='menu-icon tf-icons bx bx-command text-info'></i>
                 <div><?= get_label('commandes', 'Commandes') ?>
-                   
+
                 </div>
             </a>
         </li>
 <!--it ends here-->
         <li class="menu-item {{ Request::is('todos') || Request::is('todos/*') ? 'active' : '' }}">
             <a href="/todos" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
+                <i class='menu-icon tf-icons bx bx-list-check text-warning'></i>
                 <div><?= get_label('todos', 'Todos') ?>
                     @if($pending_todos_count > 0)
                     <span class="flex-shrink-0 badge badge-center bg-danger w-px-20 h-px-20">{{$pending_todos_count}}</span>
@@ -118,8 +118,8 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
         <li class="menu-item">
             <a href="/products" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-calendar text-info'></i>
-                <div><?= get_label('products', 'Products')  ?></div>
+                <i class='menu-icon tf-icons bx bx-box text-success'></i>
+                <div><?= get_label('stock', 'Stock')  ?></div>
             </a>
         </li>
 
@@ -145,7 +145,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
          {{--    @role('admin')  --}}
         <li class="menu-item {{ Request::is('settings') || Request::is('roles/*') || Request::is('settings/*') ? 'active open' : '' }}">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box text-success"></i>
+                <i class="menu-icon tf-icons bx bx-box text-dark"></i>
                 <div data-i18n="User interface"><?= get_label('settings', 'Settings') ?></div>
             </a>
             <ul class="menu-sub">

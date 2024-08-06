@@ -51,6 +51,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
+use App\Models\Disponibility;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -162,6 +163,9 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/disponibility/calendar', [DisponibiliteController::class, 'calendar']);
         Route::get('/disponibility/get/{id}', [DisponibiliteController::class, 'show']);
         Route::get('/disponibility/store', [DisponibiliteController::class, 'store']);
+        Route::get('/disponibilities/list', [DisponibiliteController::class, 'list']);
+        Route::delete('/disponibilities/destroy/{id}', [DisponibiliteController::class, 'destroy']);
+
 
 
         Route::get('/products', [ProductController::class, 'index']);
@@ -170,7 +174,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/products/list', [ProductController::class, 'list']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
-        
+
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
 
 
@@ -237,49 +241,49 @@ Route::middleware(['CheckInstallation'])->group(function () {
         //Route::get('/commandes', [CommandesController::class, 'index']);
                 Route::get('/commandes/create', [CommandesController::class, 'create']);
        // Route::post('/commandes/store', [CommandesController::class, 'store']);
-   
+
 
                 Route::get('/commandes', [CommandesController::class, 'index']);
-    
+
                 Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
-    
+
                 Route::post('/commandes/store', [CommandesController::class, 'store']);
-    
+
                 Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
-    
+
                 Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
-    
+
                 Route::post('/commandes/update', [CommandesController::class, 'update']);
-    
-    
+
+
                 Route::post('/commandes/upload-media', [CommandesController::class, 'upload_media']);
-    
+
                 Route::get('/commandes/get-media/{id}', [CommandesController::class, 'get_media']);
-    
+
                 Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
-    
-    
+
+
                 Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
-    
+
                 Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
-    
-    
+
+
                 Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
-    
+
                 Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
-    
+
                 Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
-    
+
                 Route::put('/commandes/{id}/update-status/{status}', [CommandesController::class, 'updateStatus']);
-    
+
                 Route::post('update-commande-status', [CommandesController::class, 'update_status']);
-    
+
                 Route::post('update-commande-priority', [CommandesController::class, 'update_priority']);
-    
+
                 Route::put('/save-commandes-view-preference', [CommandesController::class, 'saveViewPreference']);
            // });
         //it ends here
-        
+
         //Todos-------------------------------------------------------------
         // Route::middleware(['has_workspace'])->group(function () {
 

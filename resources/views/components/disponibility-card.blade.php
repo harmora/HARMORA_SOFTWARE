@@ -23,10 +23,33 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="navs-top-upcoming-birthdays-list" role="tabpanel">
-                    <!-- Content for the "List" tab under "Upcoming birthdays" -->
-
-                    {{-- <x-upcoming-birthdays-card :users="[]" /> --}}
-                   <span class="info"><b>---------------> TABLE OF RESERVATIONS ADDED <----------------</b></span>
+                    @if (is_countable($disponibilities) && count($disponibilities) > 0)
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive text-nowrap">
+                                <input type="hidden" id="data_type" value="disponibilities">
+                                <input type="hidden" id="save_column_visibility">
+                                <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/disponibilities/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
+                                    <thead>
+                                        <tr>
+                                            <th data-checkbox="true"></th>
+                                            <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">ID</th>
+                                            <th data-field="activity_name" data-visible="{{ (in_array('activity_name', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Activity Name</th>
+                                            <th data-field="details" data-visible="{{ (in_array('details', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Details</th>
+                                            <th data-field="start_date_time" data-visible="{{ (in_array('start_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Start Date Time</th>
+                                            <th data-field="end_date_time" data-visible="{{ (in_array('end_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">End Date Time</th>
+                                            <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">Created At</th>
+                                            <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">Updated At</th>
+                                            <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Actions</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    <x-empty-state-card type="Disponibilities" />
+                    @endif
                 </div>
                 <div class="tab-pane fade" id="navs-top-upcoming-birthdays-calendar" role="tabpanel">
                     <!-- Content for the "Calendar" tab under "Upcoming birthdays" -->

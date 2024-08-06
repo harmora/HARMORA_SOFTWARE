@@ -11,7 +11,7 @@ $(document).on('click', '.delete', function (e) {
     }
     var tableID = $(this).data('table') || 'table';
     var destroy = type == 'users' ? 'delete_user' : (type == 'contract-type' ? 'delete-contract-type' : (type == 'project-media' || type == 'commande-media' ? 'delete-media' : (type == 'expense-type' ? 'delete-expense-type' : (type == 'milestone' ? 'delete-milestone' : 'destroy'))));
-    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'product-media' ? 'products' : (type == 'expense-type' ? 'expenses' : (type == 'milestone' ? 'projects' : type))));
+    type = type == 'contract-type' ? 'contracts' : (type == 'project-media' ? 'projects' : (type == 'product-media' ? 'products' : (type == 'disponibility' ? 'disponibilities' : (type == 'milestone' ? 'projects' : type))));
     $('#deleteModal').modal('show'); // show the confirmation modal
     $('#deleteModal').off('click', '#confirmDelete');
     $('#deleteModal').on('click', '#confirmDelete', function (e) {
@@ -2490,11 +2490,33 @@ function initializeUpcomingBDCalendar() {
                       success: function(data) {
                         // Populate the modal with the data from the server
 
-                        document.getElementById('namedisp').innerText = "";
-                        document.getElementById('descdisp').innerText = "";
 
-                        document.getElementById('namedisp').innerText += data.activity_name;
-                        document.getElementById('descdisp').innerText += data.details;
+                        document.getElementById('namedisp').value = data.activity_name;
+                        document.getElementById('descdisp').value = data.details;
+
+                        function formatDateTime(dateTime) {
+                            const date = new Date(dateTime);
+                            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+                            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+
+                            const formattedDate = date.toLocaleDateString(undefined, options);
+                            const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+                            return { formattedDate, formattedTime };
+                        }
+
+                        // Format start date and time
+                        const start = formatDateTime(data.start_date_time);
+                        const end = formatDateTime(data.end_date_time);
+
+                        // Update the inputs
+                        document.getElementById('start_date').value = start.formattedDate;
+                        document.getElementById('start_time').value = start.formattedTime;
+                        document.getElementById('end_date').value = end.formattedDate;
+                        document.getElementById('end_time').value = end.formattedTime;
+                        
+                        // Set the state
+                        document.getElementById('state').value = data.state;
                         // Open the modal
                         $('#eventModal').modal('show');
                       },
