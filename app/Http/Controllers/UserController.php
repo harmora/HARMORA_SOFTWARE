@@ -222,10 +222,7 @@ class UserController extends Controller
         //  else
         $entreprise = Entreprise::all();
         $roles = Role::where('guard_name', 'web')->get();
-        $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
-
-         // Debugging lines
-         // dd($user, $entreprise, $formesJuridique);
+        $formesJuridique = Forme_juridique::all();
 
          return view('users.edit_user', [
              'user' => $user,
