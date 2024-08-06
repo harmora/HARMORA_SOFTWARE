@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disponibility;
+use App\Models\Entreprise;
 use App\Services\DeletionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class DisponibiliteController extends Controller
 {
@@ -72,74 +74,50 @@ class DisponibiliteController extends Controller
             return response()->json(['error' => 'Event not found'], 404);
         }
     }
-//     public function store(Request $request)
-//     {
-//         $formFields = $request->validate([
-//             'title' => ['required'],
-//             'description' => ['nullable'],
-//             'start_date' => ['required', 'before_or_equal:end_date'],
-//             'end_date' => ['required', 'after_or_equal:start_date'],
-//             'start_time' => ['required'],
-//             'end_time' => ['required'],
 
-//         ]);
+    public function store(Request $request)
+    {
+        ini_set('max_execution_time', 300);
 
-//         $start_date = $request->input('start_date');
-//         $start_time = $request->input('start_time');
-//         $end_date = $request->input('end_date');
-//         $end_time = $request->input('end_time');
+        // Validate input
+        $formFields = $request->validate([
+            'activity_name' => 'required',
+            'details' => 'nullable',
+            'start_date' => ['required', 'date', 'before_or_equal:end_date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i'],
+        ]);
 
-//         $formFields['start_date_time'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d', false) . ' ' . $start_time;
-//         $formFields['end_date_time'] = format_date($end_date, false, app('php_date_format'), 'Y-m-d', false) . ' ' . $end_time;
+        // Combine date and time
+        $start_date = $request->input('start_date');
+        $start_time = $request->input('start_time');
+        $end_date = $request->input('end_date');
+        $end_time = $request->input('end_time');
 
-//         $formFields['user_id'] =  $this->user->id;
+        $formFields['start_date_time'] = $start_date . ' ' . $start_time;
+        $formFields['end_date_time'] = $end_date . ' ' . $end_time;
 
-//         $formFields['created_by'] =  $this->user->id;
+        try {
+            // Create the new disponibility
+            $new_disponibility = Disponibility::create($formFields);
 
-//         $userIds = $request->input('user_ids') ?? [];
-//         $clientIds = $request->input('client_ids') ?? [];
+            // Attach disponibility to the entreprise
+            $entreprise = $this->user->entreprise;
+            $entreprise->disponibility()->save($new_disponibility);
 
-//         // Set creator as a participant automatically
+            // Flash success message
+            return response()->json(['error' => false, 'id' => $new_disponibility->id, 'message' => 'Reservation created successfully.']);
 
-//         // if (Auth::guard('client')->check() && !in_array($this->user->id, $clientIds)) {
-//         //     array_splice($clientIds, 0, 0, $this->user->id);
-//         // } else if (Auth::guard('web')->check() && !in_array($this->user->id, $userIds)) {
-//         //     array_splice($userIds, 0, 0, $this->user->id);
-//         // }
-
-
-
-
-//         $new_meeting = Meeting::create($formFields);
-
-//         $meeting_id = $new_meeting->id;
-//         $meeting = Meeting::find($meeting_id);
-//         $meeting->users()->attach($userIds);
-//         $meeting->clients()->attach($clientIds);
-
-//         // Prepare notification data
-//         $notification_data = [
-//             'type' => 'meeting',
-//             'type_id' => $meeting_id,
-//             'type_title' => $meeting->title,
-//             'action' => 'assigned'
-//         ];
-
-//         // Combine user and client IDs for notification recipients
-//         $recipients = array_merge(
-//             array_map(function ($userId) {
-//                 return 'u_' . $userId;
-//             }, $userIds),
-//             array_map(function ($clientId) {
-//                 return 'c_' . $clientId;
-//             }, $clientIds)
-//         );
-
-//         // Process notifications
-//         processNotifications($notification_data, $recipients);
-//         return response()->json(['error' => false, 'id' => $meeting_id, 'message' => 'Meeting created successfully.']);
-//     }
-
+        } catch (\Throwable $e) {
+            // Handle exceptions and rollback changes
+            if (isset($new_disponibility)) {
+                $new_disponibility->delete();
+            }
+            // Return error response
+            return response()->json(['error' => true, 'message' => 'Reservation couldn\'t be created, please try again.']);
+        }
+    }
 
 
 public function destroy($id)

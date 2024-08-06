@@ -162,10 +162,10 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/disponibility', [DisponibiliteController::class, 'index']);
         Route::get('/disponibility/calendar', [DisponibiliteController::class, 'calendar']);
         Route::get('/disponibility/get/{id}', [DisponibiliteController::class, 'show']);
-        Route::get('/disponibility/store', [DisponibiliteController::class, 'store']);
+        Route::post('/disponibility/store', [DisponibiliteController::class, 'store']);
         Route::get('/disponibilities/list', [DisponibiliteController::class, 'list']);
         Route::delete('/disponibilities/destroy/{id}', [DisponibiliteController::class, 'destroy']);
-
+  
 
 
         Route::get('/products', [ProductController::class, 'index']);

@@ -6,63 +6,63 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 {{-- <!-- add disp MODAL  -->   add langs !!!!!!!!!!!1 --}}
-<div class="modal fade" id="createMeetingModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="createreservationmodal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{get_label('create_meeting', 'Create Meeting')}}</h5>
+                <h5 class="modal-title">{{ get_label('add_reservation', 'Add Reservation') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{url('/meetings/store')}}" class="form-submit-event" method="POST">
+            <form action="{{ url('/disponibility/store') }}" method="POST" class="form-submit-event">
+                @csrf
                 <input type="hidden" name="dnr">
-                <input type="hidden" name="table" value="meetings_table">
+                <input type="hidden" name="table" value="disponibilities">
                 <div class="modal-body">
                     <div class="row">
                         <div class="mb-3">
-                            <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
-                            <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>">
+                            <label for="activity_name" class="form-label">{{ get_label('activity_name', 'Activity Name') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" id="activity_name" type="text" name="activity_name" placeholder="{{ get_label('please_enter_activity_name', 'Please enter activity name') }}">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-md-4">
-                            <label class="form-label" for=""><?= get_label('starts_at', 'Starts at') ?> <span class="asterisk">*</span></label>
-                            <input type="text" id="start_date" name="start_date" class="form-control" value="">
-                        </div>
-                        <div class="mb-3 col-md-2">
-                            <label class="form-label" for=""><?= get_label('time', 'Time') ?> <span class="asterisk">*</span></label>
-                            <input type="time" name="start_time" class="form-control">
-                        </div>
-                        <div class="mb-3 col-md-4">
-                            <label class="form-label" for="end_date_time"><?= get_label('ends_at', 'Ends at') ?> <span class="asterisk">*</span></label>
-                            <input type="text" id="end_date" name="end_date" class="form-control" value="">
-                        </div>
-                        <div class="mb-3 col-md-2">
-                            <label class="form-label" for=""><?= get_label('time', 'Time') ?> <span class="asterisk">*</span></label>
-                            <input type="time" name="end_time" class="form-control">
+                        <div class="col mb-3">
+                            <label for="details" class="form-label">{{ get_label('description', 'Description') }}</label>
+                            <textarea class="form-control" id="details" name="details" placeholder="{{ get_label('please_enter_description', 'Please enter description') }}"></textarea>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3">
-                            @include('partials.select', ['label' => get_label('select_users', 'Select users'), 'name' => 'user_ids[]', 'items' => $users??[], 'authUserId' => $auth_user->id])
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="start_date">{{ get_label('starts_at', 'Starts at') }} <span class="asterisk">*</span></label>
+                            <input type="date" id="start_date" name="start_date" class="form-control">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="start_time">{{ get_label('time', 'Time') }} <span class="asterisk">*</span></label>
+                            <input type="time" id="start_time" name="start_time" class="form-control">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3">
-                            @include('partials.select', ['label' => get_label('select_clients', 'Select clients'), 'name' => 'client_ids[]', 'items' => $clients??[], 'authUserId' => $auth_user->id, 'for' => 'clients'])
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="end_date">{{ get_label('ends_at', 'Ends at') }} <span class="asterisk">*</span></label>
+                            <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="end_time">{{ get_label('time', 'Time') }} <span class="asterisk">*</span></label>
+                            <input type="time" id="end_time" name="end_time" class="form-control">
                         </div>
                     </div>
                     <div class="alert alert-primary alert-dismissible" role="alert">
-                        <?= get_label('you_will_be_meeting_participant_automatically', 'You will be meeting participant automatically.') ?>
+                        {{ get_label('hello_world', 'Reservations added here will appear automatically in the calendar') }}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><?= get_label('close', 'Close') ?></button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
                     <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('create', 'Create') ?></button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 
 

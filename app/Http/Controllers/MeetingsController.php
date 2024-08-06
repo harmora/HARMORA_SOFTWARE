@@ -43,6 +43,7 @@ class MeetingsController extends Controller
             'start_time' => ['required'],
             'end_time' => ['required'],
         ]);
+        
         $start_date = $request->input('start_date');
         $start_time = $request->input('start_time');
         $end_date = $request->input('end_date');
@@ -66,7 +67,7 @@ class MeetingsController extends Controller
         //     array_splice($userIds, 0, 0, $this->user->id);
         // }
 
-   
+
 
 
         $new_meeting = Meeting::create($formFields);
