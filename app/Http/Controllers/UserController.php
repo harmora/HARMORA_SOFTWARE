@@ -57,8 +57,8 @@ class UserController extends Controller
     {
         $roles = Role::where('guard_name', 'web')->get();
         $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
-        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique
-    ]);
+        $entreprises= Entreprise::all();
+        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises]);
     }
 
     /**
@@ -82,17 +82,7 @@ class UserController extends Controller
             'cityuser' => 'nullable',
             'stateuser' => 'nullable',
             'countryuser' => 'nullable',
-            'denomenation_u' => 'nullable',
-            'forme_juridique_id' => 'nullable',
-            'RC' => 'nullable|numeric|digits_between:2,6',
-            'ICE' => 'nullable|numeric|digits_between:2,6',
-            'IF' => 'nullable|numeric|digits_between:2,6',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-
-
+            'entreprise_id' => 'nullable',
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
@@ -121,19 +111,6 @@ class UserController extends Controller
         $formFields['status'] = $status;
             // $user = User::create($formFields);
         // required denomination,address,city, state, country
-
-        $entreprise = Entreprise::create([
-            'denomination' => $formFields['denomenation_u'],
-            'ICE' => $formFields['ICE'],
-            'RC' => $formFields['RC'],
-            'IF' => $formFields['IF'],
-            'address' => $formFields['address'],
-            'city' => $formFields['city'],
-            'state' => $formFields['state'],
-            'country' => $formFields['country'],
-            'forme_juridique_id'=> $formFields['forme_juridique_id'],
-        ]);
-
         $user = User::create([
                 'first_name' => $formFields['first_name'],
                 'last_name' => $formFields['last_name'],
@@ -149,7 +126,7 @@ class UserController extends Controller
                 'doj' => $request->input('doj'),
                 'photo' => $formFields['photo'],
                 'status' => $formFields['status'],
-                'entreprise_id' => $entreprise->id,
+                'entreprise_id' => $formFields['entreprise_id'],
             ]);
         $user->assignRole($request->input('role'));
         try {
@@ -227,12 +204,25 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function edit_user($id)
+     public function edit($id)
      {
          $user = User::findOrFail($id);
-         $entreprise = Entreprise::findOrFail($user->entreprise_id);
-         $roles = Role::where('guard_name', 'web')->get();
-         $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
+        //  if($user->entreprise_id == null)
+        //     $entreprise = [
+        //         'denomination' => '',
+        //         'ICE' => '',
+        //         'RC' => '',
+        //         'IF' => '',
+        //         'address' => '',
+        //         'city' => '',
+        //         'state' => '',
+        //         'country' => '',
+        //         'forme_juridique_id' => '', // Update this field
+        //     ];  
+        //  else
+        $entreprise = Entreprise::all();
+        $roles = Role::where('guard_name', 'web')->get();
+        $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
 
          // Debugging lines
          // dd($user, $entreprise, $formesJuridique);
@@ -241,7 +231,7 @@ class UserController extends Controller
              'user' => $user,
              'roles' => $roles,
              'entreprise' => $entreprise,
-             'formesJuridique' => $formesJuridique
+             'formesJuridique' => $formesJuridique,
          ]);
      }
 
@@ -265,27 +255,12 @@ class UserController extends Controller
             'countryuser' => 'nullable',
             'password' => 'nullable|min:6',
             'password_confirmation' => 'required_with:password|same:password',
-            'denomenation_u' => 'nullable',
-            'forme_juridique_id'=> 'nullable',
-            // 'forme_juridique_id' => 'nullable|exists:formes_juridiques,id', // Ensure this field is validated
-            'RC' => 'nullable|numeric|digits_between:2,6',
-            'ICE' => 'nullable|numeric|digits_between:2,6',
-            'IF' => 'nullable|numeric|digits_between:2,6',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
+            'entreprise_id' => 'nullable',
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             //'role' => 'required'
         ]);
         $user = User::findOrFail($id);
-        $entreprise = Entreprise::findOrFail($user->entreprise_id);
-        // $dob = $request->input('dob');
-        // $doj = $request->input('doj');
-        // $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
-        // $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
-
         if ($request->hasFile('upload')) {
             if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
                 Storage::disk('public')->delete($user->photo);
@@ -305,17 +280,17 @@ class UserController extends Controller
         } else {
             unset($formFields['password']);
         }
-        $entreprise->update([
-            'denomination' => $formFields['denomenation_u'],
-            'ICE' => $formFields['ICE'],
-            'RC' => $formFields['RC'],
-            'IF' => $formFields['IF'],
-            'address' => $formFields['address'],
-            'city' => $formFields['city'],
-            'state' => $formFields['state'],
-            'country' => $formFields['country'],
-            'forme_juridique_id' => $formFields['forme_juridique_id'], // Update this field
-        ]);
+        // $entreprise->update([
+        //     'denomination' => $formFields['denomenation_u'],
+        //     'ICE' => $formFields['ICE'],
+        //     'RC' => $formFields['RC'],
+        //     'IF' => $formFields['IF'],
+        //     'address' => $formFields['address'],
+        //     'city' => $formFields['city'],
+        //     'state' => $formFields['state'],
+        //     'country' => $formFields['country'],
+        //     'forme_juridique_id' => $formFields['forme_juridique_id'], // Update this field
+        // ]);
         $user->update([
             'first_name' => $formFields['first_name'],
             'last_name' => $formFields['last_name'],
@@ -330,6 +305,7 @@ class UserController extends Controller
             'doj' => $request->input('doj'),
             'photo' => $formFields['photo'],
             'status' => $formFields['status'],
+            'entreprise_id' => $formFields['entreprise_id'],
         ]);
         $user->syncRoles($request->input('role'));
 
@@ -358,10 +334,6 @@ class UserController extends Controller
         $user->todos()->delete();
 
         $response = DeletionService::delete(User::class, $id, 'User');
-        if ($user->entreprise_id) {
-            $entreprise = Entreprise::findOrFail($user->entreprise_id);
-            $entreprise->delete();
-        }
         // UserClientPreference::where('user_id', 'u_' . $id)->delete();
 
         return $response;

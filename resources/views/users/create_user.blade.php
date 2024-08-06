@@ -120,7 +120,20 @@
 
                 <!-- Enterprise Information Section -->
                 <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
-                
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="entreprise_id"><?= get_label('entreprise', 'Entreprise') ?></label>
+                        <select class="form-select" id="entreprise_id" name="entreprise_id">
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                            @foreach ($entreprises as $etp)
+                                <option value="{{ $etp->id }}" {{ old('entreprise_id') == $etp->id ? "selected" : "" }}>
+                                    {{ ucfirst($etp->denomination) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div> 
+                {{-- 
                 <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
@@ -164,7 +177,7 @@
                     <div class="mb-3 col-md-6">
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
-                    </div>
+                    </div> --}}
                     @if(isAdminOrHasAllDataAccess())
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('deactivated_user_login_restricted', 'If Deactivated, the User Won\'t Be Able to Log In to Their Account') ?></small>)</label>

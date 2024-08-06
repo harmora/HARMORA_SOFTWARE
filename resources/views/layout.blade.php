@@ -42,6 +42,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('fullcalendarr/timegrid/main.css') }}">
     <link rel="stylesheet" href="{{ asset('fullcalendarr/list/main.css') }}">
     <link rel="stylesheet" href="{{ asset('fullcalendarr/interaction/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->

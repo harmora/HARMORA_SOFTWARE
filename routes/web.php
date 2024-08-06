@@ -51,7 +51,6 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
-use App\Models\Disponibility;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -335,7 +334,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
             Route::get('/users/profile/{id}', [UserController::class, 'show'])->name('users.profile');
 
-            Route::get('/users/edit/{id}', [UserController::class, 'edit_user']);
+            Route::get('/users/edit/{id}', [UserController::class, 'edit']);
 
             Route::put('/users/update_user/{user}', [UserController::class, 'update_user']);
 
@@ -344,7 +343,19 @@ Route::middleware(['CheckInstallation'])->group(function () {
             Route::post('/users/delete_multiple_user', [UserController::class, 'delete_multiple_user']);
 
             Route::get('/users/list', [UserController::class, 'list']);
-        // });
+
+                    // Entreprises-------------------------------------------------------------
+
+                    Route::get('/entreprises', [EntrepriseController::class, 'index']);
+                    Route::get('/entreprises/create', [EntrepriseController::class, 'create']);
+                    Route::post('/entreprises/store', [EntrepriseController::class, 'store']);
+                    Route::get('/entreprises/profile/{id}', [EntrepriseController::class, 'show']);
+                    Route::get('/entreprises/edit/{id}', [EntrepriseController::class, 'edit']);
+                    Route::put('/entreprises/update_entreprise/{entreprise}', [EntrepriseController::class, 'update_entreprise']);
+                    Route::get('/entreprises/list', [EntrepriseController::class, 'list']);
+                    Route::delete('/entreprise/destroy/{id}', [EntrepriseController::class, 'destroy']);
+
+                    // });
 
         //Clients-------------------------------------------------------------
 
@@ -370,6 +381,8 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
             Route::get('/clients/list', [ClientController::class, 'list']);
         // });
+
+
 
         //Settings-------------------------------------------------------------
         Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);

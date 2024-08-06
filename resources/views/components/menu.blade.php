@@ -50,29 +50,10 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('dashboard', 'Dashboard') ?></div>
             </a>
         </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!--codes i added-->
         <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
             <a href="/commandes" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-command text-info'></i>
+                <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
                 <div><?= get_label('commandes', 'Commandes') ?>
 
                 </div>
@@ -105,6 +86,13 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             <a href="/users" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-group text-primary"></i>
                 <div><?= get_label('users', 'Users') ?></div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('entreprises') || Request::is('entreprises/*') ? 'active' : '' }}">
+            <a href="/entreprises" class="menu-link">
+                <i class="menu-icon fas fa-building bx-group text-primary" style="font-size:20px"></i>
+                <div><?= get_label('entreprises', 'Entreprises') ?></div>
             </a>
         </li>
 
