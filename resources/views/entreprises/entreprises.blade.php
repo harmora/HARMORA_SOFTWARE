@@ -29,17 +29,10 @@ $visibleColumns = getUserPreferences('Entreprises');
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <select class="form-select" id="client_status_filter" aria-label="Default select example">
+                    <select class="form-select" id="forme_juridique_filter" aria-label="Default select example">
                         <option value=""><?= get_label('select_status', 'Select status') ?></option>
                         <option value="1">{{get_label('active','Active')}}</option>
-                        <option value="0">{{get_label('deactive','Deactive')}}</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <select class="form-select" id="client_internal_purpose_filter" aria-label="Default select example">
-                        <option value=""><?= get_label('all', 'All') ?></option>
-                        <option value="0">{{get_label('normal','Normal')}}</option>
-                        <option value="1">{{get_label('internal_purpose','Internal Purpose')}}</option>
+                        <option value="2">{{get_label('deactive','Deactive')}}</option>
                     </select>
                 </div>
             </div>

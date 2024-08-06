@@ -37,7 +37,8 @@ class EntrepriseController extends Controller
     {
 
         $entreprises = Entreprise::all();
-        return view('entreprises.entreprises', ['entreprises' => $entreprises]);
+        $formesjuridique= Forme_juridique::all();
+        return view('entreprises.entreprises', ['entreprises' => $entreprises,'fomesJuridique'=> $formesjuridique]);
     }
 
     /**
@@ -139,7 +140,7 @@ class EntrepriseController extends Controller
          $search = request('search');
          $sort = request('sort') ?: 'id';
          $order = request('order') ?: 'DESC';
-        //  $status = request('status', '');
+         $forme_juridique_filter = request('forme_juridique_filter', '');
  
          $query = Entreprise::query();
  
@@ -153,10 +154,10 @@ class EntrepriseController extends Controller
              });
          }
  
-         // Status filtering
-        //  if ($status !== '') {
-        //      $query->where('status', $status);
-        //  }
+        //  Status filtering
+         if ($forme_juridique_filter !== '') {
+             $query->where('forme_juridique_id', $forme_juridique_filter);
+         }
  
          // Role filtering
         //  if (!empty($role_ids)) {
