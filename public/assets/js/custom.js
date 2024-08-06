@@ -2496,15 +2496,20 @@ function initializeUpcomingBDCalendar() {
 
                         function formatDateTime(dateTime) {
                             const date = new Date(dateTime);
-                            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-                            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
 
-                            const formattedDate = date.toLocaleDateString(undefined, options);
-                            const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+                            // Format date as YYYY-MM-DD
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const formattedDate = `${year}-${month}-${day}`;
+
+                            // Format time as HH:MM
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const formattedTime = `${hours}:${minutes}`;
 
                             return { formattedDate, formattedTime };
                         }
-
                         // Format start date and time
                         const start = formatDateTime(data.start_date_time);
                         const end = formatDateTime(data.end_date_time);
@@ -2514,7 +2519,7 @@ function initializeUpcomingBDCalendar() {
                         document.getElementById('start_time').value = start.formattedTime;
                         document.getElementById('end_date').value = end.formattedDate;
                         document.getElementById('end_time').value = end.formattedTime;
-                        
+
                         // Set the state
                         document.getElementById('state').value = data.state;
                         // Open the modal

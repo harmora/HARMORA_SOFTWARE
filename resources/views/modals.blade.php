@@ -6,14 +6,14 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 {{-- <!-- add disp MODAL  -->   add langs !!!!!!!!!!!1 --}}
-<div class="modal fade" id="createreservationmodal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+<div class="modal fade" id="createMeetingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        {{-- <div class="modal-content">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{get_label('add_reservation', 'Add Reservation')}}</h5>
+                <h5 class="modal-title">{{get_label('create_meeting', 'Create Meeting')}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{url('/disponibility/store')}}" class="form-submit-event" method="POST">
+            <form action="{{url('/meetings/store')}}" class="form-submit-event" method="POST">
                 <input type="hidden" name="dnr">
                 <input type="hidden" name="table" value="meetings_table">
                 <div class="modal-body">
@@ -21,12 +21,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <div class="mb-3">
                             <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
                             <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label for="nameBasic" class="form-label"><?= get_label('description', 'Description') ?></label>
-                            <textarea class="form-control description" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -47,9 +41,18 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <input type="time" name="end_time" class="form-control">
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="mb-3">
+                            @include('partials.select', ['label' => get_label('select_users', 'Select users'), 'name' => 'user_ids[]', 'items' => $users??[], 'authUserId' => $auth_user->id])
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            @include('partials.select', ['label' => get_label('select_clients', 'Select clients'), 'name' => 'client_ids[]', 'items' => $clients??[], 'authUserId' => $auth_user->id, 'for' => 'clients'])
+                        </div>
+                    </div>
                     <div class="alert alert-primary alert-dismissible" role="alert">
-                        <?= get_label('Hello world', 'Reservations Added here, will apear automatically in the calendar') ?>
+                        <?= get_label('you_will_be_meeting_participant_automatically', 'You will be meeting participant automatically.') ?>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -57,10 +60,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('create', 'Create') ?></button>
                 </div>
             </form>
-        </div> --}}
+        </div>
     </div>
 </div>
-
 
 
 
@@ -363,7 +365,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </form>
     </div>
 </div>
-@endif  
+@endif
 <div class="modal fade" id="default_language_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">

@@ -51,6 +51,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
+use App\Http\Controllers\EntrepriseController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
