@@ -1642,7 +1642,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 @endif
 
 
-@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('projects/commandes/list/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*'))
+@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('commandes/list/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*'))
 <div class="modal fade" id="create_commande_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form action="/commandes/store" class="form-submit-event modal-content" method="POST">
@@ -1662,21 +1662,15 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>" value="{{ old('title') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label class="form-label" for="status"><?= get_label('status', 'Status') ?> <span class="asterisk">*</span></label>
+                        <label class="form-label" for="status"><?= get_label('status', 'Status') ?></span></label>
                         <div class="input-group">
-                            <select class="form-select statusDropdown" name="status_id">
-                                @isset($statuses)
-                                @foreach($statuses as $status)
-                                @if (canSetStatus($status))
-                                <option value="{{$status->id}}" data-color="{{$status->color}}" {{ old('status') == $status->id ? "selected" : "" }}>{{$status->title}} ({{$status->color}})</option>
-                                @endif
-                                @endforeach
-                                @endisset
+                            <select class="form-select statusDropdown" name="status">
+                            <option value="" disabled selected><?= get_label('select_status', 'Select Status') ?></option>
+                            <option value="Pending">pending</option>
+                            <option value="Default">default</option>
+                            <option value="Starting">starting</option>
+                            <option value="Ended">ended</option>
                             </select>
-                        </div>
-                        <div class="mt-2">
-                            <a href="javascript:void(0);" class="openCreateStatusModal"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title=" <?= get_label('create_status', 'Create status') ?>"><i class="bx bx-plus"></i></button></a>
-                            <a href="/status/manage" target="_blank"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('manage_statuses', 'Manage statuses') ?>"><i class="bx bx-list-ul"></i></button></a>
                         </div>
                     </div>
                     <div class="mb-3 col-md-6">
@@ -1732,6 +1726,18 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </div>
                     <?php } ?>
                 </div>
+                <div class="mb-3">
+                    <label class="form-select" for="client_id"><?= get_label('select_client', 'Select Client') ?></label>
+                        <div class="input-group">
+                            <select class="form-control" name="client_id" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                                <option value=""></option>
+                                @foreach($clients as $client)
+                                    <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                </div>
+
                 <div class="row" id="selectCommandeUsers">
                     <div class="mb-3">
                         <label class="form-label" for="user_id"><?= get_label('select_users', 'Select users') ?> <span id="users_associated_with_product"></span><?php if (!empty($product_id)) { ?> (<?= get_label('users_associated_with_product', 'Users associated with product') ?> <b>{{$product->title}}</b>)

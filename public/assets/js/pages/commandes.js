@@ -106,3 +106,64 @@ $(document).on('click', '.clear-filters', function (e) {
     $('#commande_priority_filter').val('').trigger('change', [0]);
     $('#commande_table').bootstrapTable('refresh');
 })
+
+$(document).on('submit', '#commandeForm', function (e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+    var currentForm = $(this);
+    var submit_btn = $(this).find('#submit_btn');
+    var btn_html = submit_btn.html();
+    var btn_val = submit_btn.val();
+    var button_text = (btn_html != '' || btn_html != 'undefined') ? btn_html : btn_val;
+
+    $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        beforeSend: function () {
+            submit_btn.html('Please wait...');
+            submit_btn.attr('disabled', true);
+        },
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function (result) {
+            submit_btn.html(button_text);
+            submit_btn.attr('disabled', false);
+            if (result['error'] == true) {
+                toastr.error(result['message']);
+            } else {
+                var modalWithClass = $('#create_commande_modal');
+                if (modalWithClass.length > 0) {
+                    modalWithClass.modal('hide');
+                    $('#commandeTable').bootstrapTable('refresh'); // Refresh the specific table
+                    currentForm[0].reset();
+                }
+                toastr.success(result['message']);
+            }
+        },
+        error: function (xhr, status, error) {
+            submit_btn.html(button_text);
+            submit_btn.attr('disabled', false);
+            if (xhr.status === 422) {
+                var response = xhr.responseJSON;
+                var errors = response.errors;
+                
+                for (var field in errors) {
+                    var inputField = currentForm.find('[name="' + field + '"]');
+                    var errorMessage = errors[field][0];
+                    
+                    inputField.after('<span class="text-danger">' + errorMessage + '</span>');
+                }
+                toastr.error('Please correct the errors and try again.');
+            } else {
+                toastr.error(error);
+            }
+        }
+    });
+});

@@ -54,7 +54,7 @@ class CommandesController extends Controller
         //dd($commandes); // this will dump and die the $commandes data
 
 
-        return view('commandes.commandes', ['commandes' => $commandes]);
+        return view('commandes.commandes', compact('clients'), compact('commandes'));
     }
 
 
@@ -79,21 +79,27 @@ class CommandesController extends Controller
             'due_date' => 'required|date',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
+            'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
         ]);
+
+
+
 
         // Create a new commande
         $commande = Commande::create([
             
-            'client_id' => $request->client,
+            'client_id' => $request->client_id, // Ensure client_id is provided
             'title' => $request->title,
             'description' => $request->description,
             'start_date' => $request->start_date,
             'due_date' => $request->due_date,
             'total_amount' => 0, // Placeholder for total amount logic
-            'status' => $request->status,
+            'status' => "pending",
             'created_at' => now(),
             'updated_at' => now(),
+            'user_id' => $request->user_id, 
         ]);
+
 
         // If user IDs are provided, attach them to the commande
          if ($request->has('user_id')) {
@@ -102,7 +108,7 @@ class CommandesController extends Controller
 
 
         return response()->json(['error' => false,'message' => 'Commande created successfully.']);
-        return redirect()->route('commandes.commande_informations')->with('success', 'Commande created successfully!');
+        //return redirect()->route('commandes.commande_informations')->with('success', 'Commande created successfully!');
     }
 
 
