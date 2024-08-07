@@ -81,7 +81,7 @@ class FournisseurController extends Controller
 
             $fournisseur->update($formFields);
             Session::flash('message', 'Fournisseur updated successfully.');
-            return response()->json(['error' => false, 'id' => $fournisseur->id]);
+            return response()->json(['error' => false]);
         }
 
         public function list()
