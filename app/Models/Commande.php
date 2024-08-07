@@ -34,11 +34,12 @@ class Commande extends Model implements HasMedia
     }
 
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function clients()
+    
+    public function client()
     {
         return $this->belongsTo(Client::class);
     }
