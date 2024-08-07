@@ -37,15 +37,15 @@ $visibleColumns = getUserPreferences('fournisseurs');
                 </div>
             </div>
             <div class="table-responsive text-nowrap">
-                <input type="hidden" id="data_type" value="users">
+                <input type="hidden" id="data_type" value="fournisseurs">
                 <input type="hidden" id="save_column_visibility">
-                <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/users/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
+                <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/fournisseurs/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                     <thead>
                         <tr>
                             <th data-checkbox="true"></th>
                             <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
-                            <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('users', 'Users') ?></th>
-                            <th data-field="entreprise" data-visible="{{ (in_array('role', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('entreprise', 'Entreprise') ?></th>
+                            <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('fournisseurs', 'Fournisseurs') ?></th>
+                            {{-- <th data-field="entreprise" data-visible="{{ (in_array('role', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('entreprise', 'Entreprise') ?></th> --}}
                             <th data-field="phone" data-visible="{{ (in_array('phone', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('phone_number', 'Phone number') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
