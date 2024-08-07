@@ -1730,6 +1730,10 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <label class="form-select" for="client_id"><?= get_label('select_client', 'Select Client') ?></label>
                         <div class="input-group">
                             <select class="form-control" name="client_id" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                            <option value=""></option>
+                                @foreach($clients as $client)
+                                    <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                 </div>
