@@ -53,6 +53,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
+use App\Http\Controllers\FournisseurController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -250,49 +251,36 @@ Route::middleware(['CheckInstallation'])->group(function () {
         // Route::get('/workspaces/remove_participant', [WorkspacesController::class, 'remove_participant'])->middleware(['demo_restriction']);
 
         //codes i added
-        //Route::get('/commandes', [CommandesController::class, 'index']);
-                Route::get('/commandes/create', [CommandesController::class, 'create']);
-       // Route::post('/commandes/store', [CommandesController::class, 'store']);
+        Route::get('/commandes', [CommandesController::class, 'index']);
+    
+        Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
+
+        Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
+
+        Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
+
+        Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
+
+        Route::post('/commandes/update', [CommandesController::class, 'update']);
 
 
-                Route::get('/commandes', [CommandesController::class, 'index']);
+        Route::post('/commandes/upload-media', [CommandesController::class, 'upload_media']);
 
-                Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
+        Route::get('/commandes/get-media/{id}', [CommandesController::class, 'get_media']);
 
-                Route::post('/commandes/store', [CommandesController::class, 'store']);
-
-                Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
-
-                Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
-
-                Route::post('/commandes/update', [CommandesController::class, 'update']);
+        Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
 
 
-                Route::post('/commandes/upload-media', [CommandesController::class, 'upload_media']);
+        Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
 
-                Route::get('/commandes/get-media/{id}', [CommandesController::class, 'get_media']);
-
-                Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
+        Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
 
 
-                Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
+        Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
 
-                Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
+        Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
 
-
-                Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
-
-                Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
-
-                Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
-
-                Route::put('/commandes/{id}/update-status/{status}', [CommandesController::class, 'updateStatus']);
-
-                Route::post('update-commande-status', [CommandesController::class, 'update_status']);
-
-                Route::post('update-commande-priority', [CommandesController::class, 'update_priority']);
-
-                Route::put('/save-commandes-view-preference', [CommandesController::class, 'saveViewPreference']);
+        Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
            // });
         //it ends here
 
@@ -368,7 +356,15 @@ Route::middleware(['CheckInstallation'])->group(function () {
                     Route::get('/entreprises/list', [EntrepriseController::class, 'list']);
                     Route::delete('/entreprise/destroy/{id}', [EntrepriseController::class, 'destroy']);
 
+
                     // });
+
+        // fournisseurs-------------------------------------------------------------
+            Route::get('/fournisseurs', [FournisseurController::class, 'index']);
+            Route::get('fournisseurs/create', [FournisseurController::class,'create']);
+            Route::post('fournisseurs/store', [FournisseurController::class,'store']);
+
+
 
         //Clients-------------------------------------------------------------
 

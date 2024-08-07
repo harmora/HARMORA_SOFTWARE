@@ -37,7 +37,7 @@ $visibleColumns = getUserPreferences('Entreprises');
                 </div>
             </div>
             <div class="table-responsive text-nowrap">
-                <input type="hidden" id="data_type" value="clients">
+                <input type="hidden" id="data_type" value="entreprises">
                 <input type="hidden" id="save_column_visibility">
                 <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/entreprises/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                     <thead>
@@ -45,8 +45,8 @@ $visibleColumns = getUserPreferences('Entreprises');
                             {{-- <th data-checkbox="true"></th> --}}
                             <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
                             <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('entreprises', 'Entreprises') ?></th>
-                            <th data-field="formej" data-visible="{{ (in_array('phone', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('forme_juridique', 'Forme juridique') ?></th>
-                            <th data-field="city" data-visible="{{ (in_array('phone', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('city', 'City') ?></th>
+                            <th data-field="formej" data-visible="{{ (in_array('formej', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" ><?= get_label('forme_juridique', 'Forme juridique') ?></th>
+                            <th data-field="city" data-visible="{{ (in_array('city', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('city', 'City') ?></th>
                             <th data-field="country" data-visible="{{ (in_array('assigned', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('country', 'Country') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
