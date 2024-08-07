@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-<?= get_label('products', 'Products') ?>
+<?= get_label('stock', 'Stock') ?>
 @endsection
 @php
 $visibleColumns = getUserPreferences('products');
@@ -15,19 +15,28 @@ $visibleColumns = getUserPreferences('products');
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item active">
-                        <?= get_label('product', 'Products') ?>
+                        <?= get_label('stock', 'Stock') ?>
                     </li>
                 </ol>
             </nav>
         </div>
         <div>
-            <a href="{{url('/products/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_product', 'Create Product') ?>"><i class='bx bx-plus'></i></button></a>
+            <a href="{{url('/products/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_stock', 'Add Stock') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>
     @if (is_countable($products) && count($products) > 0)
     <div class="card">
         <div class="card-body">
+
             <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <a href="{{ route('products.movements') }}" class="btn btn-primary">
+                        <i class="bx bx-box"></i> <?= get_label('Stock_Mouvements', ' Stock Mouvements') ?>
+                    </a>
+
+            </div>
+
                 <div class="col-md-4 mb-3">
                     <select class="form-select" id="category_filter" aria-label="Default select example">
                         <option value=""><?= get_label('select_status', 'Select status') ?></option>

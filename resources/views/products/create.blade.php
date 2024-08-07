@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-<?= get_label('create_product', 'Create Product') ?>
+<?= get_label('add_stock', 'Add Stock') ?>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -12,7 +12,7 @@
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{url('/products')}}"><?= get_label('products', 'Products') ?></a>
+                        <a href="{{url('/products')}}"><?= get_label('stock', 'Stock') ?></a>
                     </li>
                     <li class="breadcrumb-item active">
                         <?= get_label('create', 'Create') ?>

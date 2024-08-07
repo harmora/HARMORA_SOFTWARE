@@ -51,6 +51,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
@@ -166,17 +167,28 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::post('/disponibility/store', [DisponibiliteController::class, 'store']);
         Route::get('/disponibilities/list', [DisponibiliteController::class, 'list']);
         Route::delete('/disponibilities/destroy/{id}', [DisponibiliteController::class, 'destroy']);
-  
+
 
 
         Route::get('/products', [ProductController::class, 'index']);
+       // web.php
+
+        Route::get('/products/movements', [ProductController::class, 'render_mv'])->name('products.movements');
+
         Route::get('/products/get/{id}', [ProductController::class, 'show']);
         Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
         Route::get('/products/list', [ProductController::class, 'list']);
+        Route::get('/mouvements/list', [ProductController::class, 'list_mv']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
 
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
+
+
+
+
+        Route::get('/documents', [DocsController::class, 'index']);
+        Route::get('/documents/list', [DocsController::class, 'list']);
 
 
 
@@ -351,6 +363,9 @@ Route::middleware(['CheckInstallation'])->group(function () {
             Route::get('/fournisseurs', [FournisseurController::class, 'index']);
             Route::get('fournisseurs/create', [FournisseurController::class,'create']);
             Route::post('fournisseurs/store', [FournisseurController::class,'store']);
+            Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
+            Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
+            Route::get('fournisseurs/list', [FournisseurController::class,'list']);
 
 
 

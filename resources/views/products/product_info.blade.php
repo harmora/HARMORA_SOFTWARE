@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-<?= get_label('product_info', 'Product Information') ?>
+<?= get_label('stock_info', 'Stock Info') ?>
 @endsection
 @section('content')
 <div class="container-fluid">
