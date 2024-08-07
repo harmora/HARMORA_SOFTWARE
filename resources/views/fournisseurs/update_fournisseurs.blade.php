@@ -25,6 +25,7 @@
     <div class="card">
         <div class="card-body">
             <form action="{{url('/fournisseurs/update/' . $fournisseur->id)}}" class="form-submit-event" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="redirect_url" value="/fournisseurs">
                 @csrf
                 @method('PUT')
 
@@ -89,7 +90,7 @@
                             @endforeach
                         </select>
                     </div>
-                </div> 
+                </div>
 
                 <!-- Additional Information Section -->
 

@@ -103,6 +103,12 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('clients', 'Clients') ?></div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('fournisseurs') || Request::is('fournisseurs/*') ? 'active' : '' }}">
+            <a href="/fournisseurs" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-group text-secondary"></i>
+                <div><?= get_label('fournisseurs', 'Fournisseurs') ?></div>
+            </a>
+        </li>
 
         <li class="menu-item {{ Request::is('products') || Request::is('products/*') ? 'active open' : '' }}">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
