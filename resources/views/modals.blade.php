@@ -363,7 +363,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </form>
     </div>
 </div>
-@endif  
+@endif
 <div class="modal fade" id="default_language_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -1640,3 +1640,141 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     </div>
 </div>
 @endif
+
+
+@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('projects/commandes/list/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*'))
+<div class="modal fade" id="create_commande_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form action="/commandes/store" class="form-submit-event modal-content" method="POST">
+            @if (!Request::is('commandes/draggable/*') && !Request::is('commandes/draggable') && !Request::is('products/information/*'))
+            <input type="hidden" name="dnr">
+            <input type="hidden" name="table" value="commande_table">
+            @endif
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1"><?= get_label('create_commande', 'Create Commande') ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @csrf
+            <div class="modal-body">
+                <div class="row">
+                    <div class="mb-3 col-md-12">
+                        <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>" value="{{ old('title') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="status"><?= get_label('status', 'Status') ?> <span class="asterisk">*</span></label>
+                        <div class="input-group">
+                            <select class="form-select statusDropdown" name="status_id">
+                                @isset($statuses)
+                                @foreach($statuses as $status)
+                                @if (canSetStatus($status))
+                                <option value="{{$status->id}}" data-color="{{$status->color}}" {{ old('status') == $status->id ? "selected" : "" }}>{{$status->title}} ({{$status->color}})</option>
+                                @endif
+                                @endforeach
+                                @endisset
+                            </select>
+                        </div>
+                        <div class="mt-2">
+                            <a href="javascript:void(0);" class="openCreateStatusModal"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title=" <?= get_label('create_status', 'Create status') ?>"><i class="bx bx-plus"></i></button></a>
+                            <a href="/status/manage" target="_blank"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('manage_statuses', 'Manage statuses') ?>"><i class="bx bx-list-ul"></i></button></a>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label"><?= get_label('priority', 'Priority') ?></label>
+                        <div class="input-group">
+                            <select class="form-select" name="priority_id">
+                                @isset($priorities)
+                                @foreach($priorities as $priority)
+                                <option value="{{$priority->id}}" class="badge bg-label-{{$priority->color}}" {{ old('priority') == $priority->id ? "selected" : "" }}>{{$priority->title}} ({{$priority->color}})</option>
+                                @endforeach
+                                @endisset
+                            </select>
+                        </div>
+                        <div class="mt-2">
+                            <a href="javascript:void(0);" class="openCreatePriorityModal"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title=" <?= get_label('create_priority', 'Create Priority') ?>"><i class="bx bx-plus"></i></button></a>
+                            <a href="/priority/manage" target="_blank"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('manage_priorities', 'Manage Priorities') ?>"><i class="bx bx-list-ul"></i></button></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="start_date"><?= get_label('starts_at', 'Starts at') ?> <span class="asterisk">*</span></label>
+                        <input type="text" id="commande_start_date" name="start_date" class="form-control" value="">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="due_date"><?= get_label('ends_at', 'Ends at') ?> <span class="asterisk">*</span></label>
+                        <input type="text" id="commande_end_date" name="due_date" class="form-control" value="">
+                    </div>
+                </div>
+                <div class="row">
+                    <?php $product_id = 0;
+                    if (!isset($product->id)) {
+                    ?>
+                        <div class="mb-3">
+                            <label class="form-label" for="user_id"><?= get_label('select_product', 'Select product') ?></label>
+                            <div class="input-group">
+                                <select class="form-control selectCommandeProduct" name="product" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                                    <option value=""></option>
+                                    @isset($products)
+                                    @foreach($products as $product)
+                                    <option value="{{$product->id}}" {{ old('product') == $product->id ? 'selected' : '' }}>{{$product->title}}</option>
+                                    @endforeach
+                                    @endisset
+                                </select>
+                            </div>
+                        </div>
+                    <?php } else {
+                        $product_id = $product->id ?>
+                        <input type="hidden" name="product" value="{{$product_id}}">
+                        <div class="mb-3">
+                            <label for="product_title" class="form-label"><?= get_label('product', 'Product') ?> <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" value="{{ $product->title }}" readonly>
+                        </div>
+                    <?php } ?>
+                </div>
+                <div class="row" id="selectCommandeUsers">
+                    <div class="mb-3">
+                        <label class="form-label" for="user_id"><?= get_label('select_users', 'Select users') ?> <span id="users_associated_with_product"></span><?php if (!empty($product_id)) { ?> (<?= get_label('users_associated_with_product', 'Users associated with product') ?> <b>{{$product->title}}</b>)
+                            <?php } ?></label>
+                        <div class="input-group">
+                            <select class="form-control js-example-basic-multiple" name="user_id[]" multiple="multiple" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                                <?php if (isset($product_id) && !empty($product_id)) { ?>
+                                    @foreach($toSelectCommandeUsers as $user)
+                                    <?php
+                                    $selected = '';
+                                    // Check if commande_accessibility is 'product_users' or if the user is the authenticated user
+                                    if ($product->commande_accessibility == 'product_users' || $user->id == getAuthenticatedUser()->id) {
+                                        $selected = 'selected';
+                                    }
+                                    ?>
+                                    <option value="{{$user->id}}" {{ (collect(old('user_id'))->contains($user->id)) ? 'selected':'' }} <?= $selected ?>>{{$user->first_name}} {{$user->last_name}}</option>
+                                    @endforeach
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3">
+                        <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
+                        <textarea class="form-control description" rows="5" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>">{{ old('description') }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3">
+                        <label class="form-label"><?= get_label('note', 'Note') ?></label>
+                        <textarea class="form-control" name="note" rows="3" placeholder="<?= get_label('optional_note', 'Optional Note') ?>"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <?= get_label('close', 'Close') ?>
+                </button>
+                <button type="submit" id="submit_btn" class="btn btn-primary"><?= get_label('create', 'Create') ?></button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+

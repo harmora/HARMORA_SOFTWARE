@@ -42,8 +42,8 @@ class CommandesController extends Controller
         $productId = isset($product->id) ? $product->id : (request()->has('product') ? request('product') : '');
         $url = isset($productId) ? '/products/commandes/draggable/' . $productId : '/commandes/draggable';
         $users = User::all();  // Default empty array for safety
-        $clients = []; // Default empty array for safety
-        $commandes = Commande::with('clients', 'users', 'products')->get();
+        //$clients = []; // Default empty array for safety
+        //$commandes = Commande::with('clients', 'users', 'products')->get();
         $toSelectCommandeUsers = []; // Default empty array for safety
 
     
@@ -57,10 +57,6 @@ class CommandesController extends Controller
         return view('commandes.commandes', ['commandes' => $commandes]);
     }
 
-    public function create()
-    {
-        return view('commandes.create_commande');
-    }
 
    /**
  * Store a newly created resource in storage.
@@ -70,54 +66,47 @@ class CommandesController extends Controller
  */
     public function store(Request $request)
     {
-        $formFields = $request->validate([
-            'title' => ['required'],
-            'status_id' => ['required'],
-            'priority_id' => ['nullable'],
-            'start_date' => ['required', 'before_or_equal:due_date'],
-            'due_date' => ['required'],
-            'description' => ['nullable'],
-            'product' => ['required']  // Updated to 'product'
-        ], [
-            'status_id.required' => 'The status field is required.'
+        //dd(request()->all());
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'status' => 'required|string',
+            'priority' => 'nullable|integer',
+            'product' => 'nullable|integer',
+            'user_id' => 'nullable|array',
+            'user_id.*' => 'nullable|integer|exists:users,id',
+            'start_date' => 'nullable|date',
+            'due_date' => 'required|date',
+            'description' => 'nullable|string',
+            'note' => 'nullable|string',
         ]);
 
-        $status = Status::findOrFail($request->input('status_id'));
+        // Create a new commande
+        $commande = Commande::create([
+            
+            'client_id' => $request->client,
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_date' => $request->start_date,
+            'due_date' => $request->due_date,
+            'total_amount' => 0, // Placeholder for total amount logic
+            'status' => $request->status,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        if (canSetStatus($status)) {
-            $product_id = $request->input('product');  // Updated to 'product_id'
-            $start_date = $request->input('start_date');
-            $due_date = $request->input('due_date');
-            $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
-            $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
-
-            $formFields['created_by'] = $this->user->id;
-            $formFields['product_id'] = $product_id;  // Updated to 'product_id'
-            $userIds = $request->input('user_id', []);
-
-            $new_commande = Commande::create($formFields);
-            $commande_id = $new_commande->id;
-            $commande = Commande::find($commande_id);
-            $commande->users()->attach($userIds);
-
-            $notification_data = [
-                'type' => 'commande',
-                'type_id' => $commande_id,
-                'type_title' => $commande->title,
-                'access_url' => 'commandes/information/' . $commande->id,
-                'action' => 'assigned'
-            ];
-
-            // Adjusted recipients processing
-            $recipients = array_map(function ($userId) {
-                return 'u_' . $userId;
-            }, $userIds);
-            processNotifications($notification_data, $recipients);
-            return response()->json(['error' => false, 'id' => $new_commande->id, 'parent_id' => $product_id,  'parent_type' => 'product',  'message' => 'Commande created successfully.']);
-        } else {
-            return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+        // If user IDs are provided, attach them to the commande
+         if ($request->has('user_id')) {
+            $commande->users()->attach($request->user_id); // Assuming a many-to-many relationship
         }
+
+
+        return response()->json(['error' => false,'message' => 'Commande created successfully.']);
+        return redirect()->route('commandes.commande_informations')->with('success', 'Commande created successfully!');
     }
+
+
+
 
 
     /**
@@ -129,6 +118,7 @@ class CommandesController extends Controller
     public function show($id)
     {
         $commande = Commande::findOrFail($id);
+        \Log::info('Commande data:', ['commande' => $commande]);
         return view('commandes.commande_information', ['commande' => $commande, 'auth_user' => $this->user]);
     }
 
@@ -137,6 +127,7 @@ class CommandesController extends Controller
     {
         $commande = Commande::with('users')->findOrFail($id);
         $product = $commande->product()->with('users')->firstOrFail();
+        \Log::info('Commande and Product data:', ['commande' => $commande, 'product' => $product]);
 
         return response()->json(['error' => false, 'commande' => $commande, 'product' => $product]);
     }
@@ -337,9 +328,7 @@ class CommandesController extends Controller
         if (!empty($product_ids)) {
             $commandes->whereIn('product_id', $product_ids);
         }
-        if (!empty($status_ids)) {
-            $commandes->whereIn('status_id', $status_ids);
-        }
+
         if (!empty($priority_ids)) {
             $commandes->whereIn('priority_id', $priority_ids);
         }
@@ -361,46 +350,19 @@ class CommandesController extends Controller
         // Count total commandes before pagination
         $totalcommandes = $commandes->count();
 
-        $canCreate = checkPermission('create_commandes');
-        $canEdit = checkPermission('edit_commandes');
-        $canDelete = checkPermission('delete_commandes');
+        // $canCreate = checkPermission('create_commandes');
+        // $canEdit = checkPermission('edit_commandes');
+        // $canDelete = checkPermission('delete_commandes');
 
-        $statuses = Status::all();
-        $priorities = Priority::all();
+        //$statuses = Status::all();
+        // $priorities = Priority::all();
         // Paginate commandes and format them
-        $commandes = $commandes->orderBy($sort, $order)->paginate(request('limit'))->through(function ($commande) use ($statuses, $priorities, $canEdit, $canDelete, $canCreate) {
-            $statusOptions = '';
-            foreach ($statuses as $status) {
-                $disabled = canSetStatus($status)  ? '' : 'disabled';
-                $selected = $commande->status_id == $status->id ? 'selected' : '';
-                $statusOptions .= "<option value='{$status->id}' class='badge bg-label-{$status->color}' {$selected} {$disabled}>{$status->title}</option>";
-            }
+        $commandes = $commandes->orderBy($sort, $order)->paginate(request('limit'))->through(function ($commande)  {
 
-            $priorityOptions = '';
-            foreach ($priorities as $priority) {
-                $selectedPriority = $commande->priority_id == $priority->id ? 'selected' : '';
-                $priorityOptions .= "<option value='{$priority->id}' class='badge bg-label-{$priority->color}' {$selectedPriority}>{$priority->title}</option>";
-            }
 
             $actions = '';
 
-            if ($canEdit) {
-                $actions .= '<a href="javascript:void(0);" class="edit-commande" data-id="' . $commande->id . '" title="' . get_label('update', 'Update') . '">' .
-                    '<i class="bx bx-edit mx-1"></i>' .
-                    '</a>';
-            }
 
-            if ($canDelete) {
-                $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes" data-table="commande_table">' .
-                    '<i class="bx bx-trash text-danger mx-1"></i>' .
-                    '</button>';
-            }
-
-            if ($canCreate) {
-                $actions .= '<a href="javascript:void(0);" class="duplicate" data-id="' . $commande->id . '" data-title="' . $commande->title . '" data-type="commandes" data-table="commande_table" title="' . get_label('duplicate', 'Duplicate') . '">' .
-                    '<i class="bx bx-copy text-warning mx-2"></i>' .
-                    '</a>';
-            }
 
             $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
                 '<i class="bx bx-info-circle mx-3"></i>' .
@@ -420,11 +382,6 @@ class CommandesController extends Controller
                 $userHtml .= '</ul>';
             } else {
                 $userHtml = '<span class="badge bg-primary">' . get_label('not_assigned', 'Not Assigned') . '</span>';
-                if ($canEdit) {
-                    $userHtml .= '<a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="' . $commande->id . '">' .
-                        '<span class="bx bx-edit"></span>' .
-                        '</a>';
-                }
             }
 
             $clientHtml = '';
@@ -441,13 +398,13 @@ class CommandesController extends Controller
             return [
                 'id' => $commande->id,
                 'title' => "<a href='/commandes/information/{$commande->id}' target='_blank'><strong>{$commande->title}</strong></a> <a href='" . url('/chat?type=commande&id=' . $commande->id) . "' class='mx-2' target='_blank'><i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussion', 'Discussion') . "'></i></a>",
-                'product_id' => "<a href='/products/information/{$commande->product->id}' target='_blank' title='{$commande->product->description}'><strong>{$commande->product->title}</strong></a> <a href='javascript:void(0);' class='mx-2'><i class='bx " . ($commande->product->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning' data-favorite='{$commande->product->is_favorite}' data-id='{$commande->product->id}' title='" . ($commande->product->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'></i></a>",
+                //'product_id' => "<a href='/products/information/{$commande->product}' target='_blank' title='{$commande->product->description}'><strong>{$commande->product->title}</strong></a> <a href='javascript:void(0);' class='mx-2'><i class='bx " . ($commande->product->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning' data-favorite='{$commande->product->is_favorite}' data-id='{$commande->product->id}' title='" . ($commande->product->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'></i></a>",
                 'users' => $userHtml,
                 'clients' => $clientHtml,
                 'start_date' => format_date($commande->start_date),
                 'end_date' => format_date($commande->due_date),
-                'status_id' => "<select class='form-select form-select-sm select-bg-label-{$commande->status->color}' id='statusSelect' data-id='{$commande->id}' data-original-status-id='{$commande->status->id}' data-original-color-class='select-bg-label-{$commande->status->color}' data-type='commande'>{$statusOptions}</select>",
-                'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$commande->id}' data-original-priority-id='" . ($commande->priority ? $commande->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' data-type='commande'>{$priorityOptions}</select>",
+                //'status_id' => "<select class='form-select form-select-sm select-bg-label-{$commande->status->color}' id='statusSelect' data-id='{$commande->id}' data-original-status-id='{$commande->status->id}' data-original-color-class='select-bg-label-{$commande->status->color}' data-type='commande'>{$statusOptions}</select>",
+                //'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$commande->id}' data-original-priority-id='" . ($commande->priority ? $commande->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' data-type='commande'>{$priorityOptions}</select>",
                 'created_at' => format_date($commande->created_at, true),
                 'updated_at' => format_date($commande->updated_at, true),
                 'actions' => $actions
@@ -475,9 +432,7 @@ class CommandesController extends Controller
             $toSelectCommandeUsers = $this->user;
             $commandes = isAdminOrHasAllDataAccess() ? $this->commandes : $this->user->commandes()->get();
         }
-        if (request()->has('status')) {
-            $commandes = $commandes->where('status_id', request()->status);
-        }
+
         if (request()->has('product')) {
             $product = Product::findOrFail(request()->product);
             $commandes = $commandes->where('product_id', request()->product);

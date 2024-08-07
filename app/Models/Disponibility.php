@@ -9,9 +9,14 @@ class Disponibility extends Model
 {
     use HasFactory;
 
-     protected $fillable = [
-         'title',
-     ];
+    protected $fillable = [
+        'activity_name',
+        'details',
+        'start_date_time',
+        'end_date_time',
+        'entreprise_id', 
+    ];
+
 
 
 
