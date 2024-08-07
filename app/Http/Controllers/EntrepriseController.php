@@ -38,8 +38,11 @@ class EntrepriseController extends Controller
 
         $entreprises = Entreprise::all();
         $formesjuridique= Forme_juridique::all();
-        return view('entreprises.entreprises', ['entreprises' => $entreprises,'fomesJuridique'=> $formesjuridique]);
+        $visibleColumns = getUserPreferences('entreprises'); // Adjust this based on how you get user preferences
+        return view('entreprises.entreprises', ['entreprises' => $entreprises,'fomesJuridique'=> $formesjuridique],compact('visibleColumns'));
     }
+    // }   return view('disponibility.disponibility',['disponibilities'=>$disponibilities],compact('visibleColumns'));
+
 
     /**
      * Show the form for creating a new resource.

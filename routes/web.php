@@ -52,6 +52,7 @@ use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
 use App\Http\Controllers\EntrepriseController;
+use App\Http\Controllers\FournisseurController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -356,7 +357,15 @@ Route::middleware(['CheckInstallation'])->group(function () {
                     Route::get('/entreprises/list', [EntrepriseController::class, 'list']);
                     Route::delete('/entreprise/destroy/{id}', [EntrepriseController::class, 'destroy']);
 
+
                     // });
+
+        // fournisseurs-------------------------------------------------------------
+            Route::get('/fournisseurs', [FournisseurController::class, 'index']);
+            Route::get('fournisseurs/create', [FournisseurController::class,'create']);
+            Route::post('fournisseurs/store', [FournisseurController::class,'store']);
+
+
 
         //Clients-------------------------------------------------------------
 
