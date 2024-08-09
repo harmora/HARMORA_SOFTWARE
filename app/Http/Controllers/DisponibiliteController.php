@@ -37,26 +37,39 @@ class DisponibiliteController extends Controller
         $events = [];
         $reservations =  $this->user->entreprise->disponibility;
 
+
+        $colors = [
+            ['backgroundColor' => '#007bff', 'borderColor' => '#007bff', 'textColor' => '#ffffff'],
+            ['backgroundColor' => '#28a745', 'borderColor' => '#28a745', 'textColor' => '#ffffff'],
+            ['backgroundColor' => '#dc3545', 'borderColor' => '#dc3545', 'textColor' => '#ffffff'],
+            ['backgroundColor' => '#ffc107', 'borderColor' => '#ffc107', 'textColor' => '#000000'],
+            // Add more colors as needed
+        ];
+        $dateEventCount = [];
+
         foreach ($reservations as $disp) {
                 // Format the start date in the required format for FullCalendar
-
-
-                $startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $disp->start_date_time);
+                $startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $disp->start_date_time)->format('Y-m-d');
                 $endDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $disp->end_date_time);
 
-                // Prepare the event data
+                if (!isset($dateEventCount[$startDate])) {
+                    $dateEventCount[$startDate] = 0;
+                }
+
+                $colorIndex = $dateEventCount[$startDate] % count($colors);
+
                 $event = [
                     'dispoId' => $disp->id,
                     'title' => $disp->activity_name,
                     'start' => $startDate,
                     'end' => $endDate,
-                    'backgroundColor' => '#007bff',
-                    'borderColor' => '#007bff',
-                    'textColor' => '#ffffff',
+                    'backgroundColor' => $colors[$colorIndex]['backgroundColor'],
+                    'borderColor' => $colors[$colorIndex]['borderColor'],
+                    'textColor' => $colors[$colorIndex]['textColor'],
                 ];
 
-                // Add the event to the events array
                 $events[] = $event;
+                $dateEventCount[$startDate]++;
 
         }
         return response()->json($events);
@@ -181,6 +194,9 @@ public function list()
                     '</button>';
 
         $actions = $actions ?: '-';
+
+
+
 
         return [
             'id' => $disponibility->id,
