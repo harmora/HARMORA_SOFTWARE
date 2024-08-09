@@ -1675,6 +1675,11 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             </div>
                     </div>
 
+                    <div class="mb-3 col-md-12">
+                        <label for="total_amount" class="form-label"><?= get_label('total_amount', 'Total Amount') ?> </label>
+                        <input class="form-control" type="number" name="total_amount" placeholder="<?= get_label('please_enter_total_amount', 'Please enter total amount') ?>" value="{{ old('total_amount') }}">
+                    </div>
+
                     <!-- <div class="mb-3 col-md-6">
                         <label class="form-label" for="status"></label>
                         <div class="input-group">
@@ -1751,28 +1756,25 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </div>
                 </div>
 
-                <div class="row" id="selectCommandeUsers">
-                    <div class="mb-3">
-                        <label class="form-label" for="user_id"><?= get_label('select_users', 'Select users') ?> <span id="users_associated_with_product"></span><?php if (!empty($product_id)) { ?> (<?= get_label('users_associated_with_product', 'Users associated with product') ?> <b>{{$product->title}}</b>)
-                            <?php } ?></label>
+
+
+                <div class="mb-3">
+                    <label class="form-select" for="user_id"><?= get_label('select_user', 'Select User') ?></label>
                         <div class="input-group">
-                            <select class="form-control js-example-basic-multiple" name="user_id[]" multiple="multiple" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
-                                <?php if (isset($product_id) && !empty($product_id)) { ?>
-                                    @foreach($toSelectCommandeUsers as $user)
-                                    <?php
-                                    $selected = '';
-                                    // Check if commande_accessibility is 'product_users' or if the user is the authenticated user
-                                    if ($product->commande_accessibility == 'product_users' || $user->id == getAuthenticatedUser()->id) {
-                                        $selected = 'selected';
-                                    }
-                                    ?>
-                                    <option value="{{$user->id}}" {{ (collect(old('user_id'))->contains($user->id)) ? 'selected':'' }} <?= $selected ?>>{{$user->first_name}} {{$user->last_name}}</option>
-                                    @endforeach
-                                <?php } ?>
+                            <select class="form-control" name="user_id" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                            <option value=""></option>
+                            @if(isset($users))
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
+                                @endforeach
+                            @else
+                                    <option value="">No users available</option>
+                            @endif
                             </select>
                         </div>
-                    </div>
                 </div>
+
+
                 <div class="row">
                     <div class="mb-3">
                         <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
