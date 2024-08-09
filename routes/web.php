@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AchatController;
 use App\Models\ActivityLog;
 use App\Http\Middleware\Authorize;
 use Illuminate\Support\Facades\DB;
@@ -366,7 +367,17 @@ Route::middleware(['CheckInstallation'])->group(function () {
             Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
             Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
             Route::get('fournisseurs/list', [FournisseurController::class,'list']);
+            Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
 
+        // Achats-------------------------------------------------------------
+        Route::get('/achats', [AchatController::class, 'index'])->name('achats.index');
+        Route::get('/achats/create', [AchatController::class,'create']);
+        Route::post('/achats/store', [AchatController::class, 'store'])->name('achats.store');
+        // Route::post('/achats/store', [AchatController::class,'store']);
+        Route::get('achats/edit/{id}', [AchatController::class,'edit']);
+        Route::put('achats/update/{id}', [AchatController::class,'update']);
+        Route::get('achats/list', [AchatController::class,'list']);
+        Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
 
 
         //Clients-------------------------------------------------------------

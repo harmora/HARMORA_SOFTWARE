@@ -59,6 +59,13 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 </div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('achats') || Request::is('achats/*') ? 'active' : '' }}">
+            <a href="/achats" class="menu-link">
+                <i class='menu-icon tf-icons bx bx-cart text-dark'></i>
+                <div><?= get_label('achats', 'Achats') ?>
+                </div>
+            </a>
+        </li>
 <!--it ends here-->
         <li class="menu-item {{ Request::is('todos') || Request::is('todos/*') ? 'active' : '' }}">
             <a href="/todos" class="menu-link">

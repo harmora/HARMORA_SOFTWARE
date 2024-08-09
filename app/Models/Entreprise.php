@@ -24,6 +24,10 @@ class Entreprise extends Model
     {
         return $this->hasMany(Fournisseur::class);
     }
+    public function achat()
+    {
+        return $this->hasMany(Achat::class);
+    }
     public function disponibility()
     {
         return $this->hasMany(Disponibility::class);

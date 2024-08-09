@@ -30,7 +30,15 @@ use Carbon\Carbon;
 
 class FournisseurController extends Controller
 {
-    //
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // fetch session and use it in entire class with constructor
+            $this->user = getAuthenticatedUser();
+            return $next($request);
+        });
+    }
     public function index()
     {
         $fournisseurs = fournisseur::all();
@@ -53,8 +61,8 @@ class FournisseurController extends Controller
             'phone' => 'nullable',
             'city' => 'nullable',
             'country' => 'nullable',
-            'entreprise_id' => 'nullable|exists:entreprises,id'
         ]);
+        $formFields['entreprise_id'] = $this->user->entreprise_id;
 
         $fournisseur = Fournisseur::create($formFields);
         Session::flash('message', 'Fournisseur created successfully.');
@@ -83,7 +91,13 @@ class FournisseurController extends Controller
             Session::flash('message', 'Fournisseur updated successfully.');
             return response()->json(['error' => false]);
         }
+        public function destroy($id)
+        {
+            $response = DeletionService::delete(fournisseur::class, $id, 'fournisseur');
+            // UserClientPreference::where('user_id', 'u_' . $id)->delete();
 
+            return $response;
+        }
         public function list()
         {
         $search = request('search');

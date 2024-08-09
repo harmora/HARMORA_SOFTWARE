@@ -3020,6 +3020,33 @@ $(document).ready(function () {
     // Initialize state on page load
     toggleRequiredFields();
 });
+$(document).ready(function () {
+    function toggleProductNameField() {
+        var selectedType = $('#type_achat').val();
+        var productNameField = $('#product_name_field');
+        
+        if (selectedType === 'materielle/produits') {
+            productNameField.show();
+        } else {
+            productNameField.hide();
+        }
+    }
+
+    // Attach the change event handler
+    $('#type_achat').change(toggleProductNameField);
+
+    // Initialize the field visibility on page load
+    // toggleProductNameField();
+});
+
+$(document).ready(function () {
+    $('#product_id').change(function () {
+        var selectedValue = $(this).val();
+        if (selectedValue === 'add_new') {
+            $('#createProductModal').modal('show');
+        }
+    });
+});
 
 
 function toggleDarkMode() {

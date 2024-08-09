@@ -31,6 +31,15 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // fetch session and use it in entire class with constructor
+            $this->user = getAuthenticatedUser();
+            return $next($request);
+        });
+    }
     public function index()
     {
 
@@ -92,7 +101,7 @@ class ClientController extends Controller
         // }
 
         $formFields['internal_purpose'] =  $internal_purpose;
-
+        $formFields['entreprise_id'] = $this->user->entreprise_id;
 
         if ($request->hasFile('profile')) {
             $formFields['photo'] = $request->file('profile')->store('photos', 'public');
