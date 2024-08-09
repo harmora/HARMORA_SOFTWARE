@@ -23,6 +23,10 @@ class Product extends Model
                     ->withPivot('quantity', 'price')
                     ->withTimestamps();
     }
+    public function achats()
+    {
+        return $this->hasMany(Achat::class);
+    }
 
 
 }

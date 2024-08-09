@@ -71,23 +71,7 @@
                         <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
                     </div>
                 </div>
-                <h5 class="mt-2 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="entreprise_id"><?= get_label('entreprise', 'Entreprise') ?></label>
-                        <select class="form-select" id="entreprise_id" name="entreprise_id">
-                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
-                            @foreach ($entreprises as $etp)
-                                <option value="{{ $etp->id }}" {{ old('entreprise_id') == $etp->id ? "selected" : "" }}>
-                                    {{ ucfirst($etp->denomination) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div> 
-
-                <!-- Additional Information Section -->
-
+           
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
                     <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
