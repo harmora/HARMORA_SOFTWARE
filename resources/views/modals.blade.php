@@ -1661,19 +1661,32 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>" value="{{ old('title') }}">
                     </div>
+
+
                     <div class="mb-3 col-md-6">
-                        <label class="form-label" for="status"><?= get_label('status', 'Status') ?></span></label>
+                        <label class="form-label" for="status">{{ get_label('status', 'Status') }}</label>
+                            <div class="input-group">
+                                <select class="form-select" id="status" name="status" aria-label="Default select example">
+                                    <option value="">{{ get_label('select_status', 'Select status') }}</option>
+                                    <option value="pending">{{ get_label('pending', 'Pending') }}</option>
+                                    <option value="completed">{{ get_label('completed', 'Completed') }}</option>
+                                    <option value="cancelled">{{ get_label('cancelled', 'Cancelled') }}</option>
+                                </select>
+                            </div>
+                    </div>
+
+                    <!-- <div class="mb-3 col-md-6">
+                        <label class="form-label" for="status"></label>
                         <div class="input-group">
-                            <select class="form-select statusDropdown" name="status">
-                            <option value="" disabled selected><?= get_label('select_status', 'Select Status') ?></option>
-                            <option value="Pending">pending</option>
-                            <option value="Default">default</option>
-                            <option value="Starting">starting</option>
-                            <option value="Ended">ended</option>
+                            <select class="form-select" id="commande_status_filter" aria-label="Default select example">
+                                <option value=""></option>
+                                <option value="pending">{{get_label('pending', 'Pending')}}</option>
+                                <option value="completed">{{get_label('completed', 'Completed')}}</option>
+                                <option value="cancelled">{{get_label('cancelled', 'Cancelled')}}</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="mb-3 col-md-6">
+                    </div> -->
+                    <!-- <div class="mb-3 col-md-6">
                         <label class="form-label"><?= get_label('priority', 'Priority') ?></label>
                         <div class="input-group">
                             <select class="form-select" name="priority_id">
@@ -1688,7 +1701,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <a href="javascript:void(0);" class="openCreatePriorityModal"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title=" <?= get_label('create_priority', 'Create Priority') ?>"><i class="bx bx-plus"></i></button></a>
                             <a href="/priority/manage" target="_blank"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('manage_priorities', 'Manage Priorities') ?>"><i class="bx bx-list-ul"></i></button></a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="mb-3 col-md-6">
