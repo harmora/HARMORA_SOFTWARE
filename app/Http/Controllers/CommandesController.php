@@ -40,21 +40,21 @@ class CommandesController extends Controller
     public function index($id = '')
     {
         $productId = isset($product->id) ? $product->id : (request()->has('product') ? request('product') : '');
-        $url = isset($productId) ? '/products/commandes/draggable/' . $productId : '/commandes/draggable';
-        $users = User::all();  // Default empty array for safety
+       // $url = isset($productId) ? '/products/commandes/draggable/' . $productId : '/commandes/draggable';
+          // Default empty array for safety
         //$clients = []; // Default empty array for safety
         //$commandes = Commande::with('clients', 'users', 'products')->get();
         $toSelectCommandeUsers = []; // Default empty array for safety
 
-    
-        $users = User::all();  // Fetch all users
+        $users = User::all();
+       // $users = User::all();  // Fetch all users
         $clients = Client::all();  // Fetch all clients
         //$products = Product::all();  // Fetch all products
         $commandes = Commande::all();
         //dd($commandes); // this will dump and die the $commandes data
 
 
-        return view('commandes.commandes', compact('clients'), compact('commandes'));
+        return view('commandes.commandes', compact('clients'), compact('commandes'), ['users'=>$users]);
     }
 
 
@@ -79,6 +79,7 @@ class CommandesController extends Controller
             'due_date' => 'required|date',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
+            'total_amount'=>'nullable|integer',
             'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
         ]);
 
@@ -94,17 +95,14 @@ class CommandesController extends Controller
             'start_date' => $request->start_date,
             'due_date' => $request->due_date,
             'total_amount' => 0, // Placeholder for total amount logic
-            'status' => "pending",
+            'status' => $request->status,
             'created_at' => now(),
             'updated_at' => now(),
             'user_id' => $request->user_id, 
         ]);
 
 
-        // If user IDs are provided, attach them to the commande
-         if ($request->has('user_id')) {
-            $commande->users()->attach($request->user_id); // Assuming a many-to-many relationship
-        }
+
 
 
         return response()->json(['error' => false,'message' => 'Commande created successfully.']);
@@ -296,6 +294,7 @@ class CommandesController extends Controller
         $start_date_to = (request('commande_start_date_to')) ? trim(request('commande_start_date_to')) : "";
         $end_date_from = (request('commande_end_date_from')) ? trim(request('commande_end_date_from')) : "";
         $end_date_to = (request('commande_end_date_to')) ? trim(request('commande_end_date_to')) : "";
+        $total_amount=request();
 
         $where = [];
 
@@ -416,26 +415,23 @@ class CommandesController extends Controller
                 'actions' => $actions
             ];
         });
+        $commandes = Commande::all();
 
         // Return JSON response with formatted commandes and total count
         return response()->json([
-            "rows" => $commandes->items(),
+            "rows" => $commandes->all(),
             "total" => $totalcommandes,
+            "commandes"=>$commandes,
         ]);
     }
 
-
-    // public function dragula()
-    // {
-    //     $commandes = Commande::all();
-    //     $totalcommandes = commandes.count();
-    //     return view('commandes.board_view', ['commandes' => $commandes]);
-    // }
 
     public function dragula($id = '')
     {
         $product = (object)[];
         $products = [];
+        $clients = Client::all();  // Fetch all clients
+        $client_ids = request('client_ids', []);
         if ($id) {
             $project = Project::findOrFail($id);
             $commandes = isAdminOrHasAllDataAccess() ? $product->commandes : $this->user->product_commandes($id);
@@ -454,7 +450,7 @@ class CommandesController extends Controller
             $toSelectCommandeUsers = $product->users;
         }
         $total_commandes = $commandes->count();
-        return view('commandes.board_view', ['product' => $product, 'commandes' => $commandes, 'total_commandes' => $total_commandes, 'products' => $products]);
+        return view('commandes.board_view', ['clients' => $clients, 'commandes' => $commandes, 'total_commandes' => $total_commandes, 'products' => $products]);
     }
 
     // public function updateStatus($id, $newStatus)
