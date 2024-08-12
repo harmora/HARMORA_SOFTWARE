@@ -24,6 +24,7 @@
             </nav>
         </div>
     </div>
+
     <div class="card">
         <div class="card-body">
             <form action="{{url('/clients/update/' . $client->id)}}" method="POST" class="form-submit-event" enctype="multipart/form-data">

@@ -23,25 +23,19 @@
         </div>
     </div>
     <div class="nav-align-top">
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-upcoming-birthdays" aria-controls="navs-top-upcoming-birthdays" aria-selected="true">
-                    <i class="menu-icon tf-icons bx bx-calendar text-info"></i> <?= get_label('added_reservations', 'Reservations Added') ?>
-                </button>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade active show" id="navs-top-upcoming-birthdays" role="tabpanel">
+
                 <!-- Content for the "Upcoming birthdays" tab -->
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
+
                         <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-upcoming-birthdays-list" aria-controls="navs-top-upcoming-birthdays-list" aria-selected="true">
-                            <?= get_label('list', 'List') ?>
+                            <i class="menu-icon tf-icons bx bx-menu text-primary"></i>  <?= get_label('list', 'List') ?>
                         </button>
                     </li>
                     <li class="nav-item">
+
                         <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-upcoming-birthdays-calendar" aria-controls="navs-top-upcoming-birthdays-calendar" aria-selected="false">
-                            <?= get_label('calendar', 'Calendar') ?>
+                            <i class="menu-icon tf-icons bx bx-calendar text-info"></i>  <?= get_label('calendar', 'Calendar') ?>
                         </button>
                     </li>
                 </ul>
@@ -79,8 +73,7 @@
                         <div id="upcomingBirthdaysCalendar"></div>
                     </div>
                 </div>
-            </div>
-        </div>
+
     </div>
 
 
