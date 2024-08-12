@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Achat;
@@ -61,7 +60,7 @@ class AchatController extends Controller
         $achat = Achat::create($formFields);
         Session::flash('message', 'Fournisseur created successfully.');
         // Session::flash('message', 'Product created successfully.');
-        return response()->json(['error' => false, 'id' => $achat->id]);    
+        return response()->json(['error' => false, 'id' => $achat->id]);
     }
     public function edit($id)
     {
@@ -74,7 +73,7 @@ class AchatController extends Controller
     {
         // Find the achat by ID
         $achat = Achat::findOrFail($id);
-    
+
         // Validate the request data
         $formFields = $request->validate([
             'fournisseur_id' => 'required|exists:fournisseurs,id',
@@ -86,10 +85,10 @@ class AchatController extends Controller
             'date_limit' => 'nullable|date',
             'reference' => 'nullable|string|max:255',
         ]);
-    
+
         // Update entreprise_id if needed
         $formFields['entreprise_id'] = $this->user->entreprise_id;
-    
+
         // Check if a new facture file is uploaded
         if ($request->hasFile('facture')) {
             // Delete the old facture file if it exists
@@ -99,10 +98,10 @@ class AchatController extends Controller
             // Store the new facture file
             $formFields['facture'] = $request->file('facture')->store('factures', 'public');
         }
-    
+
         // Update the achat record
         $achat->update($formFields);
-    
+
         // Flash message
         Session::flash('message', 'Achat updated successfully.');
             return response()->json(['error' => false]);
@@ -147,7 +146,7 @@ class AchatController extends Controller
         // ->distinct()
         // ->orderBy($sort, $order)
         // ->paginate(request('limit'))
-        // ->through(function ($fournisseur)  
+        // ->through(function ($fournisseur)
         $achats = $achats->through(function ($achat){
             $actions = '';
 
