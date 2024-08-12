@@ -2,6 +2,7 @@
 @section('title')
 <?= get_label('client_profile', 'Client profile') ?>
 @endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between mb-2 mt-4">
