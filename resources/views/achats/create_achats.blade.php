@@ -1,26 +1,34 @@
+@php
+use App\Models\Workspace;
+$auth_user = getAuthenticatedUser();
+$roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
+@endphp
 @extends('layout')
 @section('title')
 <?= get_label('create_user', 'Create user') ?>
 @endsection
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between mb-2 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 mt-2">
+        <nav aria-label="breadcrumb" class="mb-0">
+            <ol class="breadcrumb breadcrumb-style1 mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{url('/achats')}}"><?= get_label('achats', 'Achats') ?></a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <?= get_label('create', 'Create') ?>
+                </li>
+            </ol>
+        </nav>
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-style1">
-                    <li class="breadcrumb-item">
-                        <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{{url('/achats')}}"><?= get_label('achats', 'Achats') ?></a>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        <?= get_label('create', 'Create') ?>
-                    </li>
-                </ol>
-            </nav>
+            <button type="button" id="add_supplier_btn" class="btn btn-outline-secondary me-2" ><?=  get_label('add_new_supplier', 'Add New Supplier') ?></button>
+            <button type="button" id="add_product_btn" class="btn btn-outline-secondary"       ><?=  get_label('add_new_product', 'Add New Product') ?></button>
         </div>
     </div>
+    
     @role('admin')
     @php
     $account_creation_template = App\Models\Template::where('type', 'email')
@@ -67,17 +75,21 @@
                         <label for="product_name" class="form-label"><?= get_label('product_name', 'Product Name') ?></label>
                         <input class="form-control" type="text" id="product_name" name="product_name" placeholder="<?= get_label('please_enter_product_name', 'Please enter product name') ?>" value="{{ old('product_name') }}">
                     </div> --}}
-                    <div class="mb-3 col-md-6">
+                    <div class="mb-3 col-md-6 " id="product_name_field" style="display: block;">
                         <label for="product_id" class="form-label"><?= get_label('product', 'Product') ?></label>
                         <select class="form-select" id="product_id" name="product_id">
                             <option value=""><?= get_label('select_product', 'Select Product') ?></option>
                             @foreach ($products as $product)
                                 <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
                             @endforeach
-                            <option value="add_new" id="add_product_option"><?= get_label('add_new_product', 'Add New Product') ?></option>
                         </select>
                     </div>
-                                        
+                    <div class="mb-3 col-md-6">
+                        @include('partials.select_single', ['label' => get_label(
+                            'select_suppliers', 'Select suppliers'), 'name' => 'supplier_ids[]', 
+                            'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
+                                )
+                    </div>                
                     <div class="mb-3 col-md-6">
                         <label for="montant" class="form-label"><?= get_label('montant', 'Montant') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" id="montant" name="montant" step="0.01" placeholder="<?= get_label('please_enter_montant', 'Please enter montant') ?>" value="{{ old('montant') }}" required>
@@ -119,65 +131,9 @@
         </div>
     </div>
 </div>
-
-<!-- Add New Product Modal -->
-<div class="modal fade" id="createProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ get_label('create_product', 'Create Product') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('products.store') }}" method="POST" class="form-submit-event" enctype="multipart/form-data">
-                <input type="hidden" name="redirect_url" value="/achats/create">
-                @csrf
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label for="name" class="form-label"><?= get_label('product_name', 'Product Name') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="name" name="name" placeholder="<?= get_label('please_enter_product_name', 'Please enter product name') ?>" value="{{ old('name') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
-                        <textarea class="form-control" id="description" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>">{{ old('description') }}</textarea>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="category"><?= get_label('category', 'Category') ?> <span class="asterisk">*</span></label>
-                        <select class="form-select text-capitalize" id="category_id" name="category_id">
-                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
-                            @foreach ($categories as $cat)
-                            <option value="{{$cat->id}}" {{ old('product_category_id') == $cat->id ? "selected" : "" }}>{{ ucfirst($cat->name_cat) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="price" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="price" name="price" placeholder="<?= get_label('please_enter_price', 'Please enter price') ?>" value="{{ old('price') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="stock" class="form-label"><?= get_label('stock', 'Stock') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="stock" name="stock" placeholder="<?= get_label('please_enter_stock', 'Please enter stock') ?>" value="{{ old('stock') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="stock_defective" class="form-label"><?= get_label('stock_defective', 'Stock Defective') ?></label>
-                        <input class="form-control" type="text" id="stock_defective" name="stock_defective" placeholder="<?= get_label('please_enter_stock_defective', 'Please enter stock defective') ?>" value="{{ old('stock_defective') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="photo" class="form-label"><?= get_label('product_image', 'Product Image') ?></label>
-                        <input class="form-control" type="file" id="photo" name="photo">
-                        <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
-                    </div>
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
-                        <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
 @endsection
+
+
 
 {{--
 
