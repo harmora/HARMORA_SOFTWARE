@@ -160,6 +160,15 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
 
 
+        <li class="menu-item {{ Request::is('facture') || Request::is('facture/*') ? 'active' : '' }}">
+            <a href="/facture" class="menu-link">
+                <i class='menu-icon tf-icons bx bx-notepad text-primary'></i>
+                <div><?= get_label('factures', 'Factures') ?></div>
+            </a>
+        </li>
+
+
+
 
          {{--    @role('admin')  --}}
         <li class="menu-item {{ Request::is('settings') || Request::is('roles/*') || Request::is('settings/*') ? 'active open' : '' }}">

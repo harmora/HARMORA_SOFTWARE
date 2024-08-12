@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Priority;
 use Illuminate\Http\Request;
 
+
 use Illuminate\Support\Arr;
 use App\Services\DeletionService;
 use Spatie\Permission\Models\Role;
@@ -54,7 +55,7 @@ class CommandesController extends Controller
         //dd($commandes); // this will dump and die the $commandes data
 
 
-        return view('commandes.commandes', compact('clients'), compact('commandes'), ['users'=>$users]);
+        return view('commandes.commandes', compact('clients'), compact('commandes'), compact('users'));
     }
 
 
@@ -82,9 +83,6 @@ class CommandesController extends Controller
             'total_amount'=>'nullable|integer',
             'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
         ]);
-
-
-
 
         // Create a new commande
         $commande = Commande::create([
@@ -428,29 +426,37 @@ class CommandesController extends Controller
 
     public function dragula($id = '')
     {
-        $product = (object)[];
-        $products = [];
+
         $clients = Client::all();  // Fetch all clients
-        $client_ids = request('client_ids', []);
-        if ($id) {
-            $project = Project::findOrFail($id);
-            $commandes = isAdminOrHasAllDataAccess() ? $product->commandes : $this->user->product_commandes($id);
-            $toSelectCommandeUsers = $product->users;
-        } else {
-            $products = isAdminOrHasAllDataAccess() ? $this->products : $this->user->products;
-            //$toSelectCommandeUsers = $this->users;
-            $commandes = isAdminOrHasAllDataAccess() ? $this->commandes : $this->user->commandes()->get();
-        }
-        if (request()->has('status')) {
-            $commandes = $commandes->where('status_id', request()->status);
-        }
-        if (request()->has('product')) {
-            $product = Project::findOrFail(request()->product);
-            $commandes = $commandes->where('product_id', request()->product);
-            $toSelectCommandeUsers = $product->users;
-        }
+        $commandes = Commande::all();
+        //collect();
+        //$statuses= Status::all();
+        // if ($id) {
+        //     $product = Product::findOrFail($id);
+        //     $commandes = isAdminOrHasAllDataAccess() ? $product->commandes : $this->user->product_commandes($id);
+        //    // $toSelectCommandeUsers = $product->users;
+        // } else {
+        //     //$products = isAdminOrHasAllDataAccess() ? $this->products : $this->user->products;
+        //     //$toSelectCommandeUsers = $this->users;
+        //     $commandes = isAdminOrHasAllDataAccess() ? $this->commandes : $this->user->commandes()->get();
+        // }
+        // if (request()->has('status')) {
+        //     $commandes = $commandes->where('status_id', request()->status);
+        // }
+        // if (request()->has('product')) {
+        //     $product = Project::findOrFail(request()->product);
+        //     $commandes = $commandes->where('product_id', request()->product);
+        //     //$toSelectCommandeUsers = $product->users;
+        // }
         $total_commandes = $commandes->count();
-        return view('commandes.board_view', ['clients' => $clients, 'commandes' => $commandes, 'total_commandes' => $total_commandes, 'products' => $products]);
+         return view('commandes.board_view', 
+          compact('commandes') ,
+        [
+            //'commandes'=>$commandes,
+            //'statuses'=>$statuses, 
+            'clients' => $clients, 
+             'total_commandes' => $total_commandes, 
+         ]);
     }
 
     // public function updateStatus($id, $newStatus)

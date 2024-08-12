@@ -36,6 +36,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ContractsController;
 use App\Http\Controllers\InstallerController;
 use App\Http\Middleware\CustomRoleMiddleware;
+use App\Http\Controllers\FactureController;
 use App\Http\Controllers\AllowancesController;
 use App\Http\Controllers\DeductionsController;
 use App\Http\Controllers\PreferenceController;
@@ -379,6 +380,10 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('achats/list', [AchatController::class,'list']);
         Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
 
+
+        //Factures-------------------------------------------------------------
+        Route::get('/facture', [FactureController::class, 'show'])->name('factures.show');
+        Route::get('/factures/{id}/download', [FactureController::class, 'download'])->name('factures.download');
 
         //Clients-------------------------------------------------------------
 

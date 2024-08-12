@@ -64,6 +64,7 @@ class Commande extends Model implements HasMedia
     public function getlink()
     {
         return str('/commandes/information/' . $this->id);
+        return str('/commandes/draggable/' . $this->id);
     }
 
 }
