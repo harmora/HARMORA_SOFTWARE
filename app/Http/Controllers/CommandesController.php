@@ -452,6 +452,7 @@ class CommandesController extends Controller
         [
             'commandesByStatus' => $commandesByStatus,
             'clients' => $clients, 
+            'users' => $users,
             'total_commandes' => $total_commandes, 
          ]);
     }
