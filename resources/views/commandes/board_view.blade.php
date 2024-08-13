@@ -37,7 +37,7 @@
         </div>
         <div>
             @php
-            $url = isset($product->id) ? '/products/commandes/list/' . $product->id : '/commandes';
+            $url = isset($product->id) ? '/commandes/list/' . $product->id : '/commandes';
             if (request()->has('status')) {
                 $url .= '?status=' . request()->status;
             }
@@ -54,32 +54,35 @@
             </a>
         </div>
     </div>
+
     @if ($total_commandes > 0)
     <div class="alert alert-primary alert-dismissible" role="alert">
         Drag and drop to update commande status!
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    </div> 
+
     <div class="d-flex card flex-row" style="overflow-x: scroll; overflow-y: hidden;">
-        @foreach ($statuses as $status)
-        <div class="my-4" style="min-width: 300px; max-width: 300px;">
-            <h4 class="fw-bold mx-4 my-2">{{ $status->title }}</h4>
-            <div class="row m-2 d-flex flex-column" id="{{ $status->slug }}" style="height: 100%;" data-status="{{ $status->id }}">
-                @foreach ($commandes as $commande)
-                @if ($commande->status_id == $status->id)
-                <x-kanban :commande="$commande" />
-                @endif
-                @endforeach
+        @foreach(['pending', 'completed', 'cancelled'] as $status)
+            <div class="my-4" style="min-width: 300px; max-width: 300px;">
+                <h4 class="fw-bold mx-4 my-2">{{ ucfirst($status) }}</h4>
+                <div class="row m-2 d-flex flex-column" id="{{ $status }}" style="height: 100%" data-status="{{ $status }}">
+                    @forelse ($commandesByStatus[$status] ?? [] as $commande)
+                        <x-kanban :commande="$commande" />
+                    @empty
+                        <p>No commandes in this status.</p>
+                    @endforelse
+                </div>
             </div>
-        </div>
         @endforeach
     </div>
+
     @else
-    <x-empty-state-card type="Commandes" />
+        <x-empty-state-card type="Commandes" />
     @endif
 </div>
 
 <script>
-    var statusArray = @json($statuses);
+    var statusArray = @json(['pending', 'completed', 'cancelled']);
 </script>
 <script src="{{ asset('assets/js/pages/commande-board.js') }}"></script>
 @endsection

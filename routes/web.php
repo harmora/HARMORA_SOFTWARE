@@ -366,7 +366,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
         // fournisseurs-------------------------------------------------------------
             Route::get('/fournisseurs', [FournisseurController::class, 'index']);
             Route::get('fournisseurs/create', [FournisseurController::class,'create']);
-            Route::post('fournisseurs/store', [FournisseurController::class,'store']);
+            Route::post('fournisseurs/store', [FournisseurController::class,'store'])->name('fournisseurs.store');
             Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
             Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
             Route::get('fournisseurs/list', [FournisseurController::class,'list']);

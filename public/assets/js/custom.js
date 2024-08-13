@@ -3024,30 +3024,31 @@ $(document).ready(function () {
     function toggleProductNameField() {
         var selectedType = $('#type_achat').val();
         var productNameField = $('#product_name_field');
+        var addProductBtn = $('#add_product_btn');
         
         if (selectedType === 'materielle/produits') {
             productNameField.show();
+            addProductBtn.show();
+
         } else {
             productNameField.hide();
+            addProductBtn.hide();
+
         }
     }
 
     // Attach the change event handler
     $('#type_achat').change(toggleProductNameField);
-
+    
+    $('#add_product_btn').click(function() {
+        $('#createProductModal').modal('show');
+    });
+    $('#add_supplier_btn').click(function() {
+        $('#createSupplierModal').modal('show');
+    });
     // Initialize the field visibility on page load
     // toggleProductNameField();
 });
-
-$(document).ready(function () {
-    $('#product_id').change(function () {
-        var selectedValue = $(this).val();
-        if (selectedValue === 'add_new') {
-            $('#createProductModal').modal('show');
-        }
-    });
-});
-
 
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
@@ -3072,3 +3073,10 @@ window.onload = () => {
 
 // Add event listener to toggle button
 document.querySelector('#darkModeToggle').addEventListener('click', toggleDarkMode);
+
+$(document).ready(function() {
+    $('.js-example-basic-single').select2({
+        placeholder: 'Type to search',
+        allowClear: true
+    });
+});

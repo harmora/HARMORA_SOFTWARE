@@ -1643,133 +1643,142 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 @if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('commandes/list/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*'))
-<div class="modal fade" id="create_commande_modal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <form action="/commandes/store" class="form-submit-event modal-content" method="POST">
-            @if (!Request::is('commandes/draggable/*') && !Request::is('commandes/draggable') && !Request::is('products/information/*'))
-            <input type="hidden" name="dnr">
-            <input type="hidden" name="table" value="commande_table">
-            @endif
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel1"><?= get_label('create_commande', 'Create Commande') ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            @csrf
-            <div class="modal-body">
-                <div class="row">
-                    <div class="mb-3 col-md-12">
-                        <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>" value="{{ old('title') }}">
-                    </div>
+    <div class="modal fade" id="create_commande_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <form action="/commandes/store" class="form-submit-event modal-content" method="POST">
+                @if (!Request::is('commandes/draggable/*') && !Request::is('commandes/draggable') && !Request::is('products/information/*'))
+                    <input type="hidden" name="dnr">
+                    <input type="hidden" name="table" value="commande_table">
+                @endif
 
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">{{ get_label('create_commande', 'Create Commande') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="status">{{ get_label('status', 'Status') }}</label>
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="mb-3 col-md-12">
+                            <label for="title" class="form-label">{{ get_label('title', 'Title') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" name="title" placeholder="{{ get_label('please_enter_title', 'Please enter title') }}" value="{{ old('title') }}">
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="status">{{ get_label('status', 'Status') }}</label>
                             <div class="input-group">
-                                <select class="form-select" id="status" name="status" aria-label="Default select example">
+                                <select class="form-select" id="status" name="status">
                                     <option value="">{{ get_label('select_status', 'Select status') }}</option>
                                     <option value="pending">{{ get_label('pending', 'Pending') }}</option>
                                     <option value="completed">{{ get_label('completed', 'Completed') }}</option>
                                     <option value="cancelled">{{ get_label('cancelled', 'Cancelled') }}</option>
                                 </select>
                             </div>
-                    </div>
-
-                    <div class="mb-3 col-md-12">
-                        <label for="total_amount" class="form-label"><?= get_label('total_amount', 'Total Amount') ?> </label>
-                        <input class="form-control" type="number" name="total_amount" placeholder="<?= get_label('please_enter_total_amount', 'Please enter total amount') ?>" value="{{ old('total_amount') }}">
-                    </div>
-
-
-                </div>
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="start_date"><?= get_label('starts_at', 'Starts at') ?> <span class="asterisk">*</span></label>
-                        <input type="text" id="commande_start_date" name="start_date" class="form-control" value="">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="due_date"><?= get_label('ends_at', 'Ends at') ?> <span class="asterisk">*</span></label>
-                        <input type="text" id="commande_end_date" name="due_date" class="form-control" value="">
-                    </div>
-                </div>
-                <div class="row">
-                    <?php $product_id = 0;
-                    if (!isset($product->id)) {
-                    ?>
-                        <div class="mb-3">
-                            <label class="form-label" for="user_id"><?= get_label('select_product', 'Select product') ?></label>
-                            <div class="input-group">
-                                <select class="form-control selectCommandeProduct" name="product" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
-                                    <option value=""></option>
-                                    @isset($products)
-                                    @foreach($products as $product)
-                                    <option value="{{$product->id}}" {{ old('product') == $product->id ? 'selected' : '' }}>{{$product->title}}</option>
-                                    @endforeach
-                                    @endisset
-                                </select>
-                            </div>
                         </div>
-                    <?php } else {
-                        $product_id = $product->id ?>
-                        <input type="hidden" name="product" value="{{$product_id}}">
-                        <div class="mb-3">
-                            <label for="product_title" class="form-label"><?= get_label('product', 'Product') ?> <span class="asterisk">*</span></label>
-                            <input class="form-control" type="text" value="{{ $product->title }}" readonly>
+
+                        <div class="mb-3 col-md-12">
+                            <label for="total_amount" class="form-label">{{ get_label('total_amount', 'Total Amount') }}</label>
+                            <input class="form-control" type="number" name="total_amount" placeholder="{{ get_label('please_enter_total_amount', 'Please enter total amount') }}" value="{{ old('total_amount') }}">
                         </div>
-                    <?php } ?>
-                </div>
-                <div class="mb-3">
-                    <label class="form-select" for="client_id"><?= get_label('select_client', 'Select Client') ?></label>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="start_date">{{ get_label('starts_at', 'Starts at') }} <span class="asterisk">*</span></label>
+                            <input type="text" id="commande_start_date" name="start_date" class="form-control" value="{{ old('start_date') }}">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="due_date">{{ get_label('ends_at', 'Ends at') }} <span class="asterisk">*</span></label>
+                            <input type="text" id="commande_end_date" name="due_date" class="form-control" value="{{ old('due_date') }}">
+                        </div>
+                    </div>
+
+                    <!-- <div class="mb-3">
+                        <label class="form-label" for="product_ids">Select Products</label>
                         <div class="input-group">
-                            <select class="form-control" name="client_id" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
-                            <option value=""></option>
+                            <select class="form-control" name="product_ids[]" multiple>
+                                <option value=""></option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div> -->
+
+
+                    <div class="mb-3">
+                        <label class="form-label" for="products">{{ get_label('select_product', 'Select Products') }}</label>
+                        <div class="input-group">
+                        @if(isset($products) && $products->count() > 0)
+                            <select class="form-control selectCommandeProduct" name="products[]" multiple data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}" {{ in_array($product->id, old('products', [])) ? 'selected' : '' }}>
+                                    {{ $product->title }}
+                                </option>
+                            @endforeach
+                            </select>
+                        @else
+                        <p>No products available.</p>
+                        @endif
+                        </div>
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label class="form-select" for="client_id">{{ get_label('select_client', 'Select Client') }}</label>
+                        <div class="input-group">
+                            <select class="form-control" name="client_id">
+                                <option value=""></option>
                                 @foreach($clients as $client)
                                     <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                </div>
+                    </div>
 
-
-
-                <div class="mb-3">
-                    <label class="form-select" for="user_id"><?= get_label('select_user', 'Select User') ?></label>
+                    <div class="mb-3">
+                        <label class="form-select" for="user_id">{{ get_label('select_user', 'Select User') }}</label>
                         <div class="input-group">
-                            <select class="form-control" name="user_id" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
-                            <option value=""></option>
-                            <!-- @if(isset($users)) -->
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
-                                @endforeach
-                            <!-- @else -->
-                                    <!-- <option value="">No users available</option>
-                            @endif -->
+                            <select class="form-control" name="user_id">
+                                <option value=""></option>
+                                @if(isset($users) && $users->count() > 0)
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
+                                    @endforeach
+                                @else
+                                    <option value="">No users available</option>
+                                @endif
                             </select>
                         </div>
-                </div>
+                    </div>
 
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">{{ get_label('description', 'Description') }}</label>
+                            <textarea class="form-control description" rows="5" name="description" placeholder="{{ get_label('please_enter_description', 'Please enter description') }}">{{ old('description') }}</textarea>
+                        </div>
+                    </div>
 
-                <div class="row">
-                    <div class="mb-3">
-                        <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
-                        <textarea class="form-control description" rows="5" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>">{{ old('description') }}</textarea>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label class="form-label">{{ get_label('note', 'Note') }}</label>
+                            <textarea class="form-control" name="note" rows="3" placeholder="{{ get_label('optional_note', 'Optional Note') }}"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="mb-3">
-                        <label class="form-label"><?= get_label('note', 'Note') ?></label>
-                        <textarea class="form-control" name="note" rows="3" placeholder="<?= get_label('optional_note', 'Optional Note') ?>"></textarea>
-                    </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        {{ get_label('close', 'Close') }}
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">{{ get_label('create', 'Create') }}</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <?= get_label('close', 'Close') ?>
-                </button>
-                <button type="submit" id="submit_btn" class="btn btn-primary"><?= get_label('create', 'Create') ?></button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 @endif
+
+
+
 
