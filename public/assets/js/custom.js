@@ -3024,14 +3024,17 @@ $(document).ready(function () {
     function toggleProductNameField() {
         var selectedType = $('#type_achat').val();
         var productNameField = $('#product_name_field');
+        var stockNameField = $('#stock_name_field');
         var addProductBtn = $('#add_product_btn');
         
         if (selectedType === 'materielle/produits') {
             productNameField.show();
+            stockNameField.show();
             addProductBtn.show();
 
         } else {
             productNameField.hide();
+            stockNameField.hide();
             addProductBtn.hide();
 
         }

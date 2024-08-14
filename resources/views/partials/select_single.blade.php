@@ -3,9 +3,9 @@
     $for = isset($for) && $for != '' ? $for : 'users';
 @endphp
 
-<label class="form-label" for="{{ $name }}">{{ $label }}</label>
+<label class="form-label" for="{{ $name }}">{{ $label }}<span class="asterisk">*</span></label>
 <div class="input-group">
-    <select class="form-control js-example-basic-single" name="{{ $name }}" data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
+    <select class="form-control js-example-basic-single" name="{{ $name }}"  data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
         @foreach($items as $item)
             @php
             $selected = '';

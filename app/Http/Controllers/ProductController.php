@@ -74,6 +74,7 @@ class ProductController extends Controller
              'description' => 'nullable',
              'price' => ['required', 'numeric'],
              'stock' => ['required', 'integer'],
+             'stock_defective' => ['nullable', 'integer'],
              'category_id' => ['required', 'exists:prod_categories,id'],
              'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
          ]);

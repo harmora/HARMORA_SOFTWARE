@@ -1698,9 +1698,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <div class="input-group">
                             <select class="form-control" name="product_ids[]" multiple>
                                 <option value=""></option>
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->title }}</option>
-                                @endforeach
+                                {{-- @foreach($products as $product) --}}
+                                    {{-- <option value="{{ $product->id }}">{{ $product->title }}</option> --}}
+                                {{-- @endforeach --}}
                             </select>
                         </div>
                     </div> -->
