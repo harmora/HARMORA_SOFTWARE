@@ -43,6 +43,7 @@ class AchatController extends Controller
     }
     public function store(Request $request)
     {
+        // Validate initial form fields
         $formFields = $request->validate([
             'fournisseur_id' => 'required|exists:fournisseurs,id',
             'type_achat' => 'required|string|max:255',
@@ -53,14 +54,36 @@ class AchatController extends Controller
             'date_limit' => 'nullable|date',
             'reference' => 'nullable|string|max:255',
         ]);
+    
+        // Additional validation based on type_achat
+        if ($formFields['type_achat'] == 'materielle/produits') {
+            $additionalFields = $request->validate([
+                'product_id' => 'required|exists:products,id', // Validate as a single product ID
+                'stock' => ['required', 'integer'],
+            ]);
+            $formFields['product_id'] = $additionalFields['product_id'];
+            
+        } 
+
+            
         $formFields['entreprise_id'] = $this->user->entreprise_id;
+    
+        // Handle file upload
         if ($request->hasFile('facture')) {
             $formFields['facture'] = $request->file('facture')->store('factures', 'public');
         }
-        $achat = Achat::create($formFields);
-        Session::flash('message', 'Fournisseur created successfully.');
-        // Session::flash('message', 'Product created successfully.');
-        return response()->json(['error' => false, 'id' => $achat->id]);
+    
+        // Create Achat instance
+        $achat = Achat::create($formFields); 
+        if ($achat && $formFields['type_achat'] == 'materielle/produits') {
+            $product = Product::findOrFail($additionalFields['product_id']);
+            $product->stock += $additionalFields['stock'];
+            $product->save();
+        }
+
+        Session::flash('message', 'Fournisseur created successfully.'.$formFields['type_achat']);
+    
+        return response()->json(['error' => false, 'id' => 1]);
     }
     public function edit($id)
     {
