@@ -6,61 +6,83 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 {{-- <!-- add disp MODAL  -->   add langs !!!!!!!!!!!1 --}}
-<div class="modal fade" id="createreservationmodal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+<div class="modal fade" id="createreservationmodal" tabindex="-1" role="dialog" aria-labelledby="createreservationmodalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        {{-- <div class="modal-content">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{get_label('add_reservation', 'Add Reservation')}}</h5>
+                <h5 class="modal-title">{{ get_label('add_reservation', 'Add Reservation') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{url('/disponibility/store')}}" class="form-submit-event" method="POST">
+
+            <form class=" form-submit-event" action="{{ url('/disponibility/store') }}" method="POST">
                 <input type="hidden" name="dnr">
-                <input type="hidden" name="table" value="meetings_table">
+                <input type="hidden" name="table" value="disponibilities">
+                @csrf
                 <div class="modal-body">
                     <div class="row">
                         <div class="mb-3">
-                            <label for="title" class="form-label"><?= get_label('title', 'Title') ?> <span class="asterisk">*</span></label>
-                            <input class="form-control" type="text" name="title" placeholder="<?= get_label('please_enter_title', 'Please enter title') ?>">
+                            <label for="activity_name" class="form-label">{{ get_label('activity_name', 'Activity Name') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" name="activity_name" placeholder="{{ get_label('please_enter_activity_name', 'Please enter activity name') }}" value="{{ old('activity_name') }}">
+                            @if ($errors->has('activity_name'))
+                                <span class="text-danger">{{ $errors->first('activity_name') }}</span>
+                            @endif
                         </div>
                     </div>
                     <div class="row">
                         <div class="col mb-3">
-                            <label for="nameBasic" class="form-label"><?= get_label('description', 'Description') ?></label>
-                            <textarea class="form-control description" name="description" placeholder="<?= get_label('please_enter_description', 'Please enter description') ?>"></textarea>
+                            <label for="details" class="form-label">{{ get_label('description', 'Description') }}</label>
+                            <textarea class="form-control" name="details" placeholder="{{ get_label('please_enter_description', 'Please enter description') }}">{{ old('details') }}</textarea>
+                            @if ($errors->has('details'))
+                                <span class="text-danger">{{ $errors->first('details') }}</span>
+                            @endif
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-md-4">
-                            <label class="form-label" for=""><?= get_label('starts_at', 'Starts at') ?> <span class="asterisk">*</span></label>
-                            <input type="text" id="start_date" name="start_date" class="form-control" value="">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="start_date_event">{{ get_label('starts_at', 'Starts at') }} <span class="asterisk">*</span></label>
+                            <input type="date" id="start_date_event" name="start_date_event" class="form-control" value="{{ old('start_date_event') }}">
+                            @if ($errors->has('start_date_event'))
+                                <span class="text-danger">{{ $errors->first('start_date_event') }}</span>
+                            @endif
                         </div>
-                        <div class="mb-3 col-md-2">
-                            <label class="form-label" for=""><?= get_label('time', 'Time') ?> <span class="asterisk">*</span></label>
-                            <input type="time" name="start_time" class="form-control">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="start_time">{{ get_label('time', 'Time') }} <span class="asterisk">*</span></label>
+                            <input type="time" id="start_time" name="start_time" class="form-control" value="{{ old('start_time') }}">
+                            @if ($errors->has('start_time'))
+                                <span class="text-danger">{{ $errors->first('start_time') }}</span>
+                            @endif
                         </div>
-                        <div class="mb-3 col-md-4">
-                            <label class="form-label" for="end_date_time"><?= get_label('ends_at', 'Ends at') ?> <span class="asterisk">*</span></label>
-                            <input type="text" id="end_date" name="end_date" class="form-control" value="">
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="end_date_event">{{ get_label('ends_at', 'Ends at') }} <span class="asterisk">*</span></label>
+                            <input type="date" id="end_date_event" name="end_date_event" class="form-control" value="{{ old('end_date_event') }}">
+                            @if ($errors->has('end_date_event'))
+                                <span class="text-danger">{{ $errors->first('end_date_event') }}</span>
+                            @endif
                         </div>
-                        <div class="mb-3 col-md-2">
-                            <label class="form-label" for=""><?= get_label('time', 'Time') ?> <span class="asterisk">*</span></label>
-                            <input type="time" name="end_time" class="form-control">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="end_time">{{ get_label('time', 'Time') }} <span class="asterisk">*</span></label>
+                            <input type="time" id="end_time" name="end_time" class="form-control" value="{{ old('end_time') }}">
+                            @if ($errors->has('end_time'))
+                                <span class="text-danger">{{ $errors->first('end_time') }}</span>
+                            @endif
                         </div>
                     </div>
 
                     <div class="alert alert-primary alert-dismissible" role="alert">
-                        <?= get_label('Hello world', 'Reservations Added here, will apear automatically in the calendar') ?>
+                        {{ get_label('hello_world', 'Reservations added here will appear automatically in the calendar') }}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><?= get_label('close', 'Close') ?></button>
-                    <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('create', 'Create') ?></button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
+                    <button type="submit" class="btn btn-primary" id="submit_btn"><?= get_label('create', 'Create') ?></label></button>
+
                 </div>
             </form>
-        </div> --}}
+        </div>
     </div>
 </div>
-
 
 
 
@@ -1698,9 +1720,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <div class="input-group">
                             <select class="form-control" name="product_ids[]" multiple>
                                 <option value=""></option>
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->title }}</option>
-                                @endforeach
+                                {{-- @foreach($products as $product) --}}
+                                    {{-- <option value="    {{ $product->id }}    ">   {{ $product->title }}   </option> --}}
+                                {{-- @endforeach --}}
                             </select>
                         </div>
                     </div> -->

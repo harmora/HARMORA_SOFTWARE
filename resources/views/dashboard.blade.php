@@ -7,6 +7,42 @@ $user = getAuthenticatedUser();
 @endphp
 @section('content')
 @authBoth
+
+
+<style>
+    .half-blue-half-white {
+    background: linear-gradient(to top, white 50%, #5f61e6 50%);
+    height: 220px; /* Adjust height as needed */
+    border: none; /* Optional: remove border if you want a clean split */
+}
+
+.profile-container {
+    text-align: center;
+   /* Adjust padding to position profile picture */
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white; /* Border around the profile picture */
+    margin-bottom: 15px; /* Space between picture and name */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 0;
+}
+</style>
 <div class="container-fluid">
     <div class="col-lg-12 col-md-12 order-1">
         @if (!isset($general_settings['allowSignup']) || $general_settings['allowSignup'] == 1)
@@ -25,7 +61,27 @@ $user = getAuthenticatedUser();
         </div>
         @endif
         @endif
+
+
         <div class="row mt-4">
+            <div class="col-lg-12 col-md-12 col-12 mb-4">
+                <div class="card card half-blue-half-white text-center">
+                    <div class="card-body">
+
+                        <div class="profile-container">
+                            <img src="https://marketplace.canva.com/EAFBazyZ4M8/1/0/1600w/canva-bleu-et-pourpre-d%C3%A9contract%C3%A9-soci%C3%A9t%C3%A9-application-d%C3%A9veloppement-start-up-entreprise-logo-0fa93Kmt5Oo.jpg" alt="Profile Picture" class="profile-pic">
+                            <h3 class="profile-name">FOR ENTREPRISE ONLY</h3>
+                            <p class="profile-email">THISisJUSTaTEST@example.com</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row">
             <div class="col-lg-3 col-md-12 col-6 mb-4">
                 <div class="card">
                     <div class="card-body">

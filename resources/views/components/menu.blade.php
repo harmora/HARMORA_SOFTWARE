@@ -34,7 +34,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         <a href="/" class="btn btn-primary"  aria-haspopup="true" aria-expanded="false">
             {{-- {{ strlen($current_workspace->title) > 22 ? substr($current_workspace->title, 0, 22) . '...' : $current_workspace->title }}
              --}}
-             Entreprise workspace   {{-- addtolang --}}
+              <?= $user->entreprise->denomination . " " . get_label('workspace', 'Workspace') ?> {{-- addtolang --}}
         </a>
     </div>
 
