@@ -32,13 +32,13 @@ $user = getAuthenticatedUser();
 }
 
 .profile-name {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: #333;
     margin-bottom: 5px;
 }
 
 .profile-email {
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: #777;
     margin-bottom: 0;
 }

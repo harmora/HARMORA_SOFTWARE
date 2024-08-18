@@ -93,6 +93,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 
+    public function userRole()
+    {
+        return str($this->role);
+    }
+
 
 
 

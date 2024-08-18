@@ -7,6 +7,7 @@ use App\Models\ProdCategory;
 use App\Models\Product;
 use App\Services\DeletionService;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -101,6 +102,63 @@ class ProductController extends Controller
      }
 
 
+
+
+    public function edit($id)
+    {
+        $categories = ProdCategory::all();
+        $product = Product::findOrFail($id);
+        return view('products.edit',['categories'=>$categories,'product'=>$product]);
+    }
+
+
+
+     public function update(Request $request, $id)
+{
+    $formFields = $request->validate([
+        'name' => ['required'],
+        'description' => 'nullable',
+        'price' => ['required', 'numeric'],
+        'stock' => ['required', 'integer'],
+        'stock_defective' => ['nullable', 'integer'],
+        'category_id' => ['required', 'exists:prod_categories,id'],
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    ]);
+
+    $product = Product::findOrFail($id);
+
+    if ($request->hasFile('photo')) {
+        if ($product->photo != 'photos/no-image.jpg' && $product->photo !== null) {
+            Storage::disk('public')->delete($product->photo);
+        }
+
+        $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+    } else {
+        // If no new photo is uploaded, keep the old one
+        $formFields['photo'] = $product->photo;
+    }
+
+    $product->update([
+        'name' => $formFields['name'],
+        'description' => $formFields['description'],
+        'price' => $formFields['price'],
+        'stock' => $formFields['stock'],
+        'stock_defective' => $formFields['stock_defective'],
+        'category_id' => $formFields['category_id'],
+        'photo' => $formFields['photo']
+    ]);
+
+    try {
+        Session::flash('message', 'Product updated successfully.');
+        return response()->json(['error' => false, 'id' => $product->id]);
+    } catch (Throwable $e) {
+        // Catch any throwable, including non-Exception errors
+        return response()->json(['error' => true, 'message' => 'Product couldn\'t be updated, please try again.']);
+    }
+}
+
+
+
     public function list ()
     {
         $search = request('search');
@@ -145,7 +203,7 @@ class ProductController extends Controller
 
             $actions = '';
 
-                $actions .= '<a href="/users/edit/' . $product->id . '" title="' . get_label('update', 'Update') . '">' .
+                $actions .= '<a href="/products/edit/' . $product->id . '" title="' . get_label('update', 'Update') . '">' .
                     '<i class="bx bx-edit mx-1"></i>' .
                     '</a>';
 
