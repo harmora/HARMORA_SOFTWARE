@@ -1642,7 +1642,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 @endif
 
 
-@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('commandes/list/*') || Request::is('home') || Request::is('users/profile/*') || Request::is('clients/profile/*'))
+@if (Request::is('commandes') || Request::is('commandes/draggable') || Request::is('products/information/*') || Request::is('commandes/draggable/*') || Request::is('commandes/list/*')  || Request::is('users/profile/*') || Request::is('clients/profile/*'))
     <div class="modal fade" id="create_commande_modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <form action="/commandes/store" class="form-submit-event modal-content" method="POST">
@@ -1693,33 +1693,16 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </div>
                     </div>
 
-                    <!-- <div class="mb-3">
-                        <label class="form-label" for="product_ids">Select Products</label>
-                        <div class="input-group">
-                            <select class="form-control" name="product_ids[]" multiple>
-                                <option value=""></option>
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div> -->
-
 
                     <div class="mb-3">
-                        <label class="form-label" for="products">{{ get_label('select_product', 'Select Products') }}</label>
+                        <label class="form-select" for="product_id">{{ get_label('select_product', 'Select Product') }}</label>
                         <div class="input-group">
-                        @if(isset($products) && $products->count() > 0)
-                            <select class="form-control selectCommandeProduct" name="products[]" multiple data-placeholder="<?= get_label('type_to_search', 'Type to search') ?>">
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}" {{ in_array($product->id, old('products', [])) ? 'selected' : '' }}>
-                                    {{ $product->title }}
-                                </option>
-                            @endforeach
+                            <select class="form-control" name="product_id">
+                                <option value=""></option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }} </option>
+                                @endforeach
                             </select>
-                        @else
-                        <p>No products available.</p>
-                        @endif
                         </div>
                     </div>
 
