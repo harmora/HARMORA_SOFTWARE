@@ -76,8 +76,8 @@ class CommandesController extends Controller
             'status' => 'required|string',
             'priority' => 'nullable|integer',
             // 'product' => 'nullable|integer',
-            'product' => 'nullable|array',
-            'product.*' => 'nullable|integer|exists:products,id', // Validate product IDs
+           // 'products' => 'nullable|array',
+            'product_id' => 'nullable|integer|exists:products,id', // Validate product IDs
             //'user_id' => 'nullable|array',
             'user_id' => 'nullable|integer|exists:users,id',
             'start_date' => 'nullable|date',
@@ -101,12 +101,13 @@ class CommandesController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
             'user_id' => $request->user_id, 
+            'product_id' => $request->product_id
         ]);
 
         // if ($request->has('product')) {
         //     $commande->products()->attach($request->product); // You can also add extra fields like quantity if needed
         // }
-        $commande->products()->attach($request->product);
+       // $commande->products()->attach($request->products);
 
         //$userIds = (array) $request->input('user_id');
 
@@ -286,150 +287,37 @@ class CommandesController extends Controller
     }
 
 
-    public function list($id = '')
+    public function list()
     {
-        $search = request('search');
-        $sort = (request('sort')) ? request('sort') : "id";
-        $order = (request('order')) ? request('order') : "DESC";
-        $status_ids = request('status_ids', []);
-        $priority_ids = request('priority_ids', []);
-        $user_ids = request('user_ids', []);
-        $client_ids = request('client_ids', []);
-        $product_ids = request('product_ids', []);
-        $start_date_from = (request('commande_start_date_from')) ? trim(request('commande_start_date_from')) : "";
-        $start_date_to = (request('commande_start_date_to')) ? trim(request('commande_start_date_to')) : "";
-        $end_date_from = (request('commande_end_date_from')) ? trim(request('commande_end_date_from')) : "";
-        $end_date_to = (request('commande_end_date_to')) ? trim(request('commande_end_date_to')) : "";
-        $total_amount=request();
-
-        $where = [];
-
-
-        if ($id) {
-            $id = explode('_', $id);
-            $belongs_to = $id[0];
-            $belongs_to_id = $id[1];
-            if ($belongs_to == 'product') {
-                $product = Product::find($belongs_to_id);
-                $commandes = $product->commandes();
-            } else {
-                $userOrClient = $belongs_to == 'user' ? User::find($belongs_to_id) : Client::find($belongs_to_id);
-                $commandes = isAdminOrHasAllDataAccess($belongs_to, $belongs_to_id) ? $this->commandes() : $userOrClient->commandes();
-            }
-        } else {
-            $commandes = isAdminOrHasAllDataAccess() ? $this->commandes() : $this->user->commandes();
-        }
-        if (!empty($user_ids)) {
-            $commandeIds = DB::table('commande_user')
-                ->whereIn('user_id', $user_ids)
-                ->pluck('commande_id')
-                ->toArray();
-
-            $commandes = $commandes->whereIn('id', $commandeIds);
-        }
-        if (!empty($client_ids)) {
-            $productIds = DB::table('client_product')
-                ->whereIn('client_id', $client_ids)
-                ->pluck('product_id')
-                ->toArray();
-
-            $commandes = $commandes->whereIn('product_id', $productIds);
-        }
-
-        if (!empty($product_ids)) {
-            $commandes->whereIn('product_id', $product_ids);
-        }
-
-        if (!empty($priority_ids)) {
-            $commandes->whereIn('priority_id', $priority_ids);
-        }
-        if ($start_date_from && $start_date_to) {
-            $commandes->whereBetween('start_date', [$start_date_from, $start_date_to]);
-        }
-        if ($end_date_from && $end_date_to) {
-            $commandes->whereBetween('due_date', [$end_date_from, $end_date_to]);
-        }
-        if ($search) {
-            $commandes = $commandes->where(function ($query) use ($search) {
-                $query->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('id', 'like', '%' . $search . '%');
-            });
-        }
-        // Apply where clause to $commandes
-        $commandes = $commandes->where($where);
-
-        // Count total commandes before pagination
-        $totalcommandes = $commandes->count();
-
-        // $canCreate = checkPermission('create_commandes');
-        // $canEdit = checkPermission('edit_commandes');
-        // $canDelete = checkPermission('delete_commandes');
-
-        //$statuses = Status::all();
-        // $priorities = Priority::all();
-        // Paginate commandes and format them
-        $commandes = $commandes->orderBy($sort, $order)->paginate(request('limit'))->through(function ($commande)  {
-
-
-            $actions = '';
-
-
-
-            $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
-                '<i class="bx bx-info-circle mx-3"></i>' .
-                '</a>';
-
-            $actions = $actions ?: '-';
-
-            $userHtml = '';
-            if (!empty($commande->users) && count($commande->users) > 0) {
-                $userHtml .= '<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
-                foreach ($commande->users as $user) {
-                    $userHtml .= "<li class='avatar avatar-sm pull-up'><a href='/users/profile/{$user->id}' target='_blank' title='{$user->first_name} {$user->last_name}'><img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle' /></a></li>";
-                }
-                if ($canEdit) {
-                    $userHtml .= '<li title=' . get_label('update', 'Update') . '><a href="javascript:void(0)" class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-commande update-users-clients" data-id="' . $commande->id . '"><span class="bx bx-edit"></span></a></li>';
-                }
-                $userHtml .= '</ul>';
-            } else {
-                $userHtml = '<span class="badge bg-primary">' . get_label('not_assigned', 'Not Assigned') . '</span>';
-            }
-
-            $clientHtml = '';
-            if (!empty($commande->product->clients) && count($commande->product->clients) > 0) {
-                $clientHtml .= '<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
-                foreach ($commande->product->clients as $client) {
-                    $clientHtml .= "<li class='avatar avatar-sm pull-up'><a href='/clients/profile/{$client->id}' target='_blank' title='{$client->first_name} {$client->last_name}'><img src='" . ($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle' /></a></li>";
-                }
-                $clientHtml .= '</ul>';
-            } else {
-                $clientHtml = '<span class="badge bg-primary">' . get_label('not_assigned', 'Not Assigned') . '</span>';
-            }
-
+        // Fetch all commandes with their associated user and client data
+        $commandes = Commande::with(['user', 'client'])->get();
+    
+        // Format commandes data
+        $formattedCommandes = $commandes->map(function ($commande) {
             return [
                 'id' => $commande->id,
-                'title' => "<a href='/commandes/information/{$commande->id}' target='_blank'><strong>{$commande->title}</strong></a> <a href='" . url('/chat?type=commande&id=' . $commande->id) . "' class='mx-2' target='_blank'><i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussion', 'Discussion') . "'></i></a>",
-                //'product_id' => "<a href='/products/information/{$commande->product}' target='_blank' title='{$commande->product->description}'><strong>{$commande->product->title}</strong></a> <a href='javascript:void(0);' class='mx-2'><i class='bx " . ($commande->product->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning' data-favorite='{$commande->product->is_favorite}' data-id='{$commande->product->id}' title='" . ($commande->product->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'></i></a>",
-                'users' => $userHtml,
-                'clients' => $clientHtml,
-                'start_date' => format_date($commande->start_date),
-                'end_date' => format_date($commande->due_date),
-                //'status_id' => "<select class='form-select form-select-sm select-bg-label-{$commande->status->color}' id='statusSelect' data-id='{$commande->id}' data-original-status-id='{$commande->status->id}' data-original-color-class='select-bg-label-{$commande->status->color}' data-type='commande'>{$statusOptions}</select>",
-                //'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$commande->id}' data-original-priority-id='" . ($commande->priority ? $commande->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($commande->priority ? $commande->priority->color : 'secondary') . "' data-type='commande'>{$priorityOptions}</select>",
-                'created_at' => format_date($commande->created_at, true),
-                'updated_at' => format_date($commande->updated_at, true),
-                'actions' => $actions
+                'title' => $commande->title,
+                'users' => $commande->user ? $commande->user->name : 'Not Assigned',
+                'clients' => $commande->client ? $commande->client->name : 'Not Assigned',
+                'start_date' => $commande->start_date,
+                'end_date' => $commande->due_date,
+                'created_at' => $commande->created_at,
+                'updated_at' => $commande->updated_at,
             ];
         });
-        $commandes = Commande::all();
-
-        // Return JSON response with formatted commandes and total count
+    
+        // Return JSON response
         return response()->json([
-            "rows" => $commandes->all(),
-            "total" => $totalcommandes,
-            "commandes"=>$commandes,
+            "rows" => $formattedCommandes->all(),
+            "total" => $formattedCommandes->count()
         ]);
     }
+    
+    
+    
+    
+    
+    
 
 
     public function dragula($id = '')
@@ -448,7 +336,7 @@ class CommandesController extends Controller
 
         $total_commandes = $commandes->count();
          return view('commandes.board_view', 
-          compact('commandes', 'products') ,
+          compact('commandes', 'products', 'users', 'clients') ,
         [
             'commandesByStatus' => $commandesByStatus,
             'clients' => $clients, 

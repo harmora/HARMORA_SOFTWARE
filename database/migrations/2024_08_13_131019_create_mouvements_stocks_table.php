@@ -13,8 +13,21 @@ return new class extends Migration
     {
         Schema::create('mouvements_stocks', function (Blueprint $table) {
             $table->id();
-            
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('achat_id')->nullable();
+            $table->unsignedBigInteger('commande_id')->nullable();
             $table->timestamps();
+            $table->enum('type_mouvement', ['entrée', 'sortie']);
+            $table->string('reference');
+            $table->string('description')->nullable();
+            $table->integer('quantitéajoutée');
+            $table->integer('quantitéprecedente');
+            $table->dateTime('date_mouvement');   
+            
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
+            $table->foreign('achat_id')->references('id')->on('achats')->onDelete('set null');
+            $table->foreign('commande_id')->references('id')->on('commandes')->onDelete('set null');
+
         });
     }
 
