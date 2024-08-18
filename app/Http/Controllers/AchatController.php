@@ -5,6 +5,7 @@ use App\Models\Achat;
 use App\Models\Entreprise;
 use App\Models\Forme_juridique;
 use App\Models\fournisseur;
+use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
 use App\Services\DeletionService;
@@ -77,8 +78,18 @@ class AchatController extends Controller
         $achat = Achat::create($formFields); 
         if ($achat && $formFields['type_achat'] == 'materielle/produits') {
             $product = Product::findOrFail($additionalFields['product_id']);
+            mouvements_stock::create([
+                'product_id'=>$product->id,
+                'achat_id'=>$achat->id,
+                'quantitéajoutée'=>$additionalFields['stock'],
+                'quantitéprecedente'=>$product->stock,
+                'date_mouvement'=>now(),
+                'type_mouvement'=>'entrée',
+                'reference'=>$achat->reference,
+            ]);
             $product->stock += $additionalFields['stock'];
             $product->save();
+            
         }
 
         Session::flash('message', 'Fournisseur created successfully.'.$formFields['type_achat']);
@@ -132,9 +143,14 @@ class AchatController extends Controller
 
     public function destroy($id)
     {
-        $response = DeletionService::delete(Achat::class, $id, 'achat');
+        $achat = Achat::find($id);
+        $response = DeletionService::delete(Achat::class, $id, 'achat'); 
+        if ($achat->type_achat == 'materielle/produits') {
+            $product = Product::findOrFail($achat->product_id);
+            $product->stock -= $achat->P;
+            $product->save();
+        }
         // UserClientPreference::where('user_id', 'u_' . $id)->delete();
-
         return $response;
     }
 

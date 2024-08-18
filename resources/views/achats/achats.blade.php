@@ -21,7 +21,7 @@ $visibleColumns = getUserPreferences('Achats');
             </nav>
         </div>
         <div>
-            <a href="{{url('/achats/create')}}"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_entreprise', 'Create entreprise') ?>"><i class='bx bx-plus'></i></button></a>
+            <a href="{{url('/achats/create')}}"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_achat', 'Create achat') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>
     @if (is_countable($entreprises) && count($entreprises) > 0)
@@ -64,7 +64,7 @@ $visibleColumns = getUserPreferences('Achats');
     </div>
     @else
     <?php
-    $type = 'Clients'; ?>
+    $type = 'achats'; ?>
     <x-empty-state-card :type="$type" />
     @endif
 </div>

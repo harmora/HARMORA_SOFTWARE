@@ -22,5 +22,9 @@ class Achat extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function mouvements_stock()
+    {
+        return $this->hasMany(mouvements_stock::class);
+    }
 
 }

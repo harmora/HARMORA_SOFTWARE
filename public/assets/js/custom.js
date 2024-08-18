@@ -3022,20 +3022,26 @@ $(document).ready(function () {
 });
 $(document).ready(function () {
     function toggleProductNameField() {
+        var productsNameField = $('#supplier_name_field');
         var selectedType = $('#type_achat').val();
         var productNameField = $('#product_name_field');
         var stockNameField = $('#stock_name_field');
         var addProductBtn = $('#add_product_btn');
+        var addSupplierBtn = $('#add_supplier_btn');
         
         if (selectedType === 'materielle/produits') {
+            productsNameField.show();
             productNameField.show();
             stockNameField.show();
             addProductBtn.show();
+            addSupplierBtn.show();
 
         } else {
+            productsNameField.hide();
             productNameField.hide();
             stockNameField.hide();
             addProductBtn.hide();
+            addSupplierBtn.hide();
 
         }
     }

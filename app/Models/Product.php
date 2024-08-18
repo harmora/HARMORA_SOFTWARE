@@ -27,6 +27,10 @@ class Product extends Model
     {
         return $this->hasMany(Achat::class);
     }
+    public function mouvements_stock()
+    {
+        return $this->hasMany(mouvements_stock::class, 'produit_id');
+    }
 
 
 }

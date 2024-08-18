@@ -49,24 +49,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     <div class="card">
         <div class="card-body">
             <form action="{{url('/achats/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
-                {{-- <input type="hidden" name="redirect_url" value="/achats"> --}}
+                <input type="hidden" name="redirect_url" value="/achats">
                 @csrf
                 <div class="row">
-                    <div class="mb-3 col-md-6">
-                        @include('partials.select_single', ['label' => get_label(
-                            'select_suppliers', 'Select supplier'), 'name' => 'fournisseur_id', 
-                            'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
-                                )
-                    </div>
-                    {{-- <div class="mb-3 col-md-6">
-                        <label for="fournisseur_id" class="form-label"><?= get_label('fournisseur', 'Fournisseur') ?><span class="asterisk">*</span></label>
-                        <select class="form-select" id="fournisseur_id" name="fournisseur_id" required>
-                            <option value=""><?= get_label('select_fournisseur', 'Select Fournisseur') ?></option>
-                            @foreach ($fournisseurs as $fournisseur)
-                                <option value="{{ $fournisseur->id }}" {{ old('fournisseur_id') == $fournisseur->id ? 'selected' : '' }}>{{ $fournisseur   ->name }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
                     <div class="mb-3 col-md-6">
                         <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="type_achat" name="type_achat">
@@ -76,6 +61,12 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <option value="salaires/avantages sociaux"><?= get_label('salaires_avantages_sociaux', 'Salaires/Avantages Sociaux') ?></option>
                             <option value="mainetenances/amélioration"><?= get_label('mainetenances_amélioration', 'Mainetenances/Amélioration') ?></option>
                         </select>                    
+                    </div>
+                    <div class="mb-3 col-md-6" id="supplier_name_field">
+                        @include('partials.select_single', ['label' => get_label(
+                            'select_suppliers', 'Select supplier'), 'name' => 'fournisseur_id', 
+                            'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
+                                )
                     </div>
                     <div class="mb-3 col-md-6" id="product_name_field" style="display: block;">
                         @include('partials.select_single', ['label' => get_label(
@@ -92,16 +83,16 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <input class="form-control" type="number" id="montant" name="montant" step="0.01" placeholder="<?= get_label('please_enter_montant', 'Please enter montant') ?>" value="{{ old('montant') }}" required>
                     </div>
                     <div class="mb-3 col-md-6">
+                        <label for="tva" class="form-label"><?= get_label('tva', 'TVA') ?><span class="asterisk">*</span>   </label>
+                        <input class="form-control" type="number" id="tva" name="tva" step="0.1" placeholder="<?= get_label('please_enter_tva', 'Please enter TVA') ?>" value="{{ old('tva') }}">
+                    </div>
+                    <div class="mb-3 col-md-6">
                         <label for="status_payement" class="form-label"><?= get_label('status_payement', 'Payment Status') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="status_payement" name="status_payement" required>
                             <option value=""><?= get_label('select_status', 'Select Status') ?></option>
                             <option value="paid" {{ old('status_payement') == 'paid' ? 'selected' : '' }}>{{ get_label('paid', 'Paid') }}</option>
                             <option value="unpaid" {{ old('status_payement') == 'unpaid' ? 'selected' : '' }}>{{ get_label('unpaid', 'Unpaid') }}</option>
                         </select>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="tva" class="form-label"><?= get_label('tva', 'TVA') ?></label>
-                        <input class="form-control" type="number" id="tva" name="tva" step="0.1" placeholder="<?= get_label('please_enter_tva', 'Please enter TVA') ?>" value="{{ old('tva') }}">
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="facture" class="form-label"><?= get_label('facture', 'Facture') ?></label>
@@ -133,6 +124,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 {{--
+
 
 <!-- Modal for Adding New Product -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
