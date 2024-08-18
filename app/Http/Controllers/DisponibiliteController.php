@@ -96,16 +96,16 @@ class DisponibiliteController extends Controller
         $formFields = $request->validate([
             'activity_name' => 'required',
             'details' => 'nullable',
-            'start_date' => ['required', 'date', 'before_or_equal:end_date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_date_event' => ['required', 'date', 'before_or_equal:end_date_event'],
+            'end_date_event' => ['required', 'date', 'after_or_equal:start_date_event'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i'],
         ]);
 
         // Combine date and time
-        $start_date = $request->input('start_date');
+        $start_date = $request->input('start_date_event');
         $start_time = $request->input('start_time');
-        $end_date = $request->input('end_date');
+        $end_date = $request->input('end_date_event');
         $end_time = $request->input('end_time');
 
         $formFields['start_date_time'] = $start_date . ' ' . $start_time;

@@ -49,10 +49,16 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
     <div class="card">
         <div class="card-body">
             <form action="{{url('/achats/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
-                <input type="hidden" name="redirect_url" value="/achats">
+                {{-- <input type="hidden" name="redirect_url" value="/achats"> --}}
                 @csrf
                 <div class="row">
                     <div class="mb-3 col-md-6">
+                        @include('partials.select_single', ['label' => get_label(
+                            'select_suppliers', 'Select supplier'), 'name' => 'fournisseur_id', 
+                            'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
+                                )
+                    </div>
+                    {{-- <div class="mb-3 col-md-6">
                         <label for="fournisseur_id" class="form-label"><?= get_label('fournisseur', 'Fournisseur') ?><span class="asterisk">*</span></label>
                         <select class="form-select" id="fournisseur_id" name="fournisseur_id" required>
                             <option value=""><?= get_label('select_fournisseur', 'Select Fournisseur') ?></option>
@@ -60,7 +66,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                                 <option value="{{ $fournisseur->id }}" {{ old('fournisseur_id') == $fournisseur->id ? 'selected' : '' }}>{{ $fournisseur   ->name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="mb-3 col-md-6">
                         <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="type_achat" name="type_achat">
@@ -71,25 +77,16 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <option value="mainetenances/amélioration"><?= get_label('mainetenances_amélioration', 'Mainetenances/Amélioration') ?></option>
                         </select>                    
                     </div>
-                    {{-- <div class="mb-3 col-md-6" id="product_name_field" style="display: block;">
-                        <label for="product_name" class="form-label"><?= get_label('product_name', 'Product Name') ?></label>
-                        <input class="form-control" type="text" id="product_name" name="product_name" placeholder="<?= get_label('please_enter_product_name', 'Please enter product name') ?>" value="{{ old('product_name') }}">
-                    </div> --}}
-                    <div class="mb-3 col-md-6 " id="product_name_field" style="display: block;">
-                        <label for="product_id" class="form-label"><?= get_label('product', 'Product') ?></label>
-                        <select class="form-select" id="product_id" name="product_id">
-                            <option value=""><?= get_label('select_product', 'Select Product') ?></option>
-                            @foreach ($products as $product)
-                                <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3 col-md-6">
+                    <div class="mb-3 col-md-6" id="product_name_field" style="display: block;">
                         @include('partials.select_single', ['label' => get_label(
-                            'select_suppliers', 'Select suppliers'), 'name' => 'supplier_ids[]', 
-                            'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
+                            'select_product', 'Select product'), 'name' => 'product_id', 
+                            'items' => $products??[], 'authUserId' => $auth_user->id, 'for' => 'products']
                                 )
-                    </div>                
+                    </div>
+                    <div class="mb-3 col-md-6" id="stock_name_field" style="display: block;">
+                        <label for="stock" class="form-label"><?= get_label('stock', 'Stock') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="text" id="stock" name="stock" placeholder="<?= get_label('please_enter_stock', 'Please enter stock') ?>" value="{{ old('stock') }}">
+                    </div> 
                     <div class="mb-3 col-md-6">
                         <label for="montant" class="form-label"><?= get_label('montant', 'Montant') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" id="montant" name="montant" step="0.01" placeholder="<?= get_label('please_enter_montant', 'Please enter montant') ?>" value="{{ old('montant') }}" required>

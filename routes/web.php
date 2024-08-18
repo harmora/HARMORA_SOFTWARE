@@ -191,6 +191,8 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         Route::get('/documents', [DocsController::class, 'index']);
         Route::get('/documents/list', [DocsController::class, 'list']);
+        Route::get('/documents/facture', [DocsController::class, 'getfactureinfo']);
+        Route::get('/documents/facturepdf', [DocsController::class, 'getDownloadFile']);
 
 
 
@@ -254,7 +256,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         //codes i added
         Route::get('/commandes', [CommandesController::class, 'index']);
-    
+
         Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
 
         Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');

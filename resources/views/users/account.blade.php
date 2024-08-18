@@ -71,7 +71,7 @@
                                 <label for="password_confirmation" class="form-label"><?= get_label('confirm_password', 'Confirm password') ?></label>
                                 <input class="form-control" type="password" id="password_confirmation" name="password_confirmation" placeholder="<?= get_label('please_re_enter_password', 'Please re enter password') ?>">
                                                             </div>
-                            @if(getAuthenticatedUser()->getRoleNames()->first() == 'admin')
+                            {{-- @if(getAuthenticatedUser()->getRoleNames()->first() == 'admin')
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="role"><?= get_label('role', 'Role') ?> <span class="asterisk">*</span></label>
                                 <div class="input-group">
@@ -90,7 +90,7 @@
                                 <label class="form-label" for="role"><?= get_label('role', 'Role') ?> <span class="asterisk">*</span></label>
                                 <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" value="{{ucfirst(getAuthenticatedUser()->getRoleNames()->first())}}" readonly="">
                             </div>
-                            @endif
+                            @endif --}}
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="address"><?= get_label('address', 'Address') ?></label>
                                 <input class="form-control" type="text" id="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" name="address" value="{{getAuthenticatedUser()->address}}">
