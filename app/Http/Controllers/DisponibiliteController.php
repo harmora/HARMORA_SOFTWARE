@@ -132,11 +132,58 @@ class DisponibiliteController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+{
+    // Find the reservation by ID
+    $reservation = Disponibility::findOrFail($id);
+
+    // Validate the request data
+    $formFields = $request->validate([
+        'activity_name' => 'required|string|max:255',
+        'details' => 'nullable|string',
+        'start_date_event' => ['required', 'date', 'before_or_equal:end_date_event'],
+        'end_date_event' => ['required', 'date', 'after_or_equal:start_date_event'],
+        'start_time' => ['required', 'date_format:H:i'],
+        'end_time' => ['required', 'date_format:H:i'],
+    ]);
+
+    // Combine date and time for start and end
+    $start_date = $request->input('start_date_event');
+    $start_time = $request->input('start_time');
+    $end_date = $request->input('end_date_event');
+    $end_time = $request->input('end_time');
+
+    $formFields['start_date_time'] = $start_date . ' ' . $start_time;
+    $formFields['end_date_time'] = $end_date . ' ' . $end_time;
+
+    // Update entreprise_id if needed
+    $formFields['entreprise_id'] = $this->user->entreprise_id;
+
+    try {
+        // Update the reservation record
+        $reservation->update($formFields);
+
+        // Flash success message
+        Session::flash('message', 'Reservation updated successfully.');
+        return response()->json(['error' => false,'id' => $id, 'message' => 'Reservation updated successfully.']);
+
+    } catch (\Throwable $e) {
+        // Handle exceptions and return error response
+        return response()->json(['error' => true, 'message' => 'Reservation couldn\'t be updated, please try again.']);
+    }
+}
+
 
 public function destroy($id)
 {
     $response = DeletionService::delete(Disponibility::class, $id, 'disponibility');
     return $response;
+}
+
+public function edit($id)
+{
+    $disp = Disponibility::findOrFail($id);
+    return view('disponibility.edit',['reservation'=>$disp]);
 }
 
 
@@ -185,7 +232,7 @@ public function list()
     $disponibilities = $disponibilities->through(function ($disponibility) {
         $actions = '';
 
-        $actions .= '<a href="/disponibilities/edit/' . $disponibility->id . '" title="Update">' .
+        $actions .= '<a href="/disponibility/edit/' . $disponibility->id . '" title="Update">' .
                     '<i class="bx bx-edit mx-1"></i>' .
                     '</a>';
 

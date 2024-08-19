@@ -77,5 +77,7 @@ class Kernel extends HttpKernel
         'log.activity' => \App\Http\Middleware\LogActivity::class,
         'custom.signature' => \App\Http\Middleware\CustomValidateSignature::class,
         'checkSignupEnabled' => \App\Http\Middleware\CheckSignupEnabled::class,
+        'role' => \App\Http\Middleware\CheckRoleAuth::class,
+        
     ];
 }

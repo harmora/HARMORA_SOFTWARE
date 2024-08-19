@@ -32,10 +32,14 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
     <div class="btn-group dropend px-2">
         <a href="/" class="btn btn-primary"  aria-haspopup="true" aria-expanded="false">
-            {{-- {{ strlen($current_workspace->title) > 22 ? substr($current_workspace->title, 0, 22) . '...' : $current_workspace->title }}
-             --}}
-              <?= $user->entreprise->denomination . " " . get_label('workspace', 'Workspace') ?> {{-- addtolang --}}
-        </a>
+
+            @if($user->role->rolename === 'admin')
+    {{ 'Admin Workspace' }}
+@elseif($user->role->rolename === 'user')
+    {{ strlen($user->entreprise->denomination) > 22 ? substr($user->entreprise->denomination, 0, 22) . '...' : $user->entreprise->denomination . " " . get_label('workspace', 'Workspace') }}
+@endif
+
+                 </a>
     </div>
 
 
@@ -51,6 +55,8 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             </a>
         </li>
 <!--codes i added-->
+
+    @if(auth()->user()->role->rolename === 'user')
         <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
             <a href="/commandes" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
@@ -59,6 +65,8 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 </div>
             </a>
         </li>
+
+
         <li class="menu-item {{ Request::is('achats') || Request::is('achats/*') ? 'active' : '' }}">
             <a href="/achats" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-cart text-dark'></i>
@@ -66,6 +74,8 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 </div>
             </a>
         </li>
+        @endif
+
 <!--it ends here-->
         <li class="menu-item {{ Request::is('todos') || Request::is('todos/*') ? 'active' : '' }}">
             <a href="/todos" class="menu-link">
@@ -89,13 +99,27 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             </a>
         </li>
 
+        @if(auth()->user()->role->rolename === 'user')
         <li class="menu-item {{ Request::is('users') || Request::is('users/*') ? 'active' : '' }}">
             <a href="/users" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-group text-primary"></i>
                 <div><?= get_label('users', 'Users') ?></div>
             </a>
         </li>
+    @elseif(auth()->user()->role->rolename === 'admin')
+    <li class="menu-item {{ Request::is('users') || Request::is('users/*') ? 'active' : '' }}">
+        <a href="/users" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-group text-primary"></i>
+            <div><?= get_label('accounts', 'Accounts') ?></div>
+        </a>
+    </li>
 
+    @endif
+
+
+
+
+        @if(auth()->user()->role->rolename === 'admin')
         <li class="menu-item {{ Request::is('entreprises') || Request::is('entreprises/*') ? 'active' : '' }}">
             <a href="/entreprises" class="menu-link">
                 <i class="menu-icon fas fa-building bx-group text-primary" style="font-size:20px"></i>
@@ -103,7 +127,16 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             </a>
         </li>
 
+        <li class="menu-item {{ Request::is('packs') || Request::is('packs/*') ? 'active' : '' }}">
+            <a href="/packs" class="menu-link">
+                <i class="menu-icon tf-icons bx-box text-warning" style="font-size:20px"></i>
+                <div><?= get_label('packs', 'packs') ?></div>
+            </a>
+        </li>
+        @endif
 
+
+        @if(auth()->user()->role->rolename === 'user')
         <li class="menu-item {{ Request::is('clients') || Request::is('clients/*') ? 'active' : '' }}">
             <a href="/clients" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-group text-warning"></i>
@@ -148,6 +181,14 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('disponibilite', 'Disponibility')  ?></div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('facture') || Request::is('facture/*') ? 'active' : '' }}">
+            <a href="/facture" class="menu-link">
+                <i class='menu-icon tf-icons bx bx-notepad text-primary'></i>
+                <div><?= get_label('factures', 'Factures') ?></div>
+            </a>
+        </li>
+
+        @endif
 
 
 
@@ -160,12 +201,6 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
 
 
-        <li class="menu-item {{ Request::is('facture') || Request::is('facture/*') ? 'active' : '' }}">
-            <a href="/facture" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-notepad text-primary'></i>
-                <div><?= get_label('factures', 'Factures') ?></div>
-            </a>
-        </li>
 
 
 

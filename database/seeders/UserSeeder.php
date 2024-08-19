@@ -25,6 +25,8 @@ class UserSeeder extends Seeder
             ]);
         }
 
+
+
         DB::table('entreprises')->insert([
             [
                 'denomination' => 'Entreprise A',
@@ -57,6 +59,7 @@ class UserSeeder extends Seeder
                 'country_code' => 'US',
                 'phone' => '1234567890',
                 'email' => 'tst2@gmail.com',
+                'role_id' => 1,
                 'address' => '1234 Elm St',
                 'city' => 'Springfield',
                 'state' => 'IL',
@@ -83,6 +86,7 @@ class UserSeeder extends Seeder
                 'country_code' => 'US',
                 'phone' => '0987654321',
                 'email' => 'test@gmail.com',
+                'role_id' => 2,
                 'address' => '5678 Oak St',
                 'city' => 'Springfield',
                 'state' => 'IL',

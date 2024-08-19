@@ -141,24 +141,13 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
     Route::post('/logout', [UserController::class, 'logout'])->middleware(['multiguard']);
 
+
+
+
     // ,'custom-verified'
     Route::middleware(['multiguard', 'custom-verified'])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
-
-        // Route::get('/home/upcoming-birthdays', [HomeController::class, 'upcoming_birthdays']);
-
-        // Route::get('/home/upcoming-work-anniversaries', [HomeController::class, 'upcoming_work_anniversaries']);
-
-        // Route::get('/home/members-on-leave', [HomeController::class, 'members_on_leave']);
-
-        // Route::get('/home/upcoming-birthdays-calendar', [HomeController::class, 'upcoming_birthdays_calendar']);
-
-        // Route::get('/home/upcoming-work-anniversaries-calendar', [HomeController::class, 'upcoming_work_anniversaries_calendar']);
-
-        // Route::get('/home/members-on-leave-calendar', [HomeController::class, 'members_on_leave_calendar']);
-
-
 
 
 
@@ -169,212 +158,128 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::post('/disponibility/store', [DisponibiliteController::class, 'store']);
         Route::get('/disponibilities/list', [DisponibiliteController::class, 'list']);
         Route::delete('/disponibilities/destroy/{id}', [DisponibiliteController::class, 'destroy']);
+        Route::get('/disponibility/edit/{id}', [DisponibiliteController::class, 'edit']);
+        Route::put('/disponibility/update/{id}', [DisponibiliteController::class, 'update']);
 
 
-
+        //products
         Route::get('/products', [ProductController::class, 'index']);
-       // web.php
-
         Route::get('/products/movements', [ProductController::class, 'render_mv'])->name('products.movements');
-
         Route::get('/products/get/{id}', [ProductController::class, 'show']);
         Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
         Route::get('/products/list', [ProductController::class, 'list']);
         Route::get('/mouvements/list', [ProductController::class, 'list_mv']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
-
-
         Route::get('/products/edit/{id}', [ProductController::class, 'edit']);
         Route::put('/products/update/{id}', [ProductController::class, 'update']);
-
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
 
 
 
-
+        //documents
         Route::get('/documents', [DocsController::class, 'index']);
         Route::get('/documents/list', [DocsController::class, 'list']);
         Route::get('/documents/facture', [DocsController::class, 'getfactureinfo']);
         Route::get('/documents/facturepdf', [DocsController::class, 'getDownloadFile']);
 
 
-
-
-
-
-        //Meetings-------------------------------------------------------------
-        // Route::middleware(['has_workspace', 'customcan:manage_meetings'])->group(function () {
-
-            Route::get('/meetings', [MeetingsController::class, 'index']);
-
-            Route::post('/meetings/store', [MeetingsController::class, 'store']);
-
-            Route::get('/meetings/list', [MeetingsController::class, 'list']);
-
-            Route::get('/meetings/get/{id}', [MeetingsController::class, 'get'])->middleware(['checkAccess:App\Models\Meeting,meetings,id,meetings'])->name('meeting.get');
-
-            Route::post('/meetings/update', [MeetingsController::class, 'update'])
+        //meetings
+        Route::get('/meetings', [MeetingsController::class, 'index']);
+        Route::post('/meetings/store', [MeetingsController::class, 'store']);
+        Route::get('/meetings/list', [MeetingsController::class, 'list']);
+        Route::get('/meetings/get/{id}', [MeetingsController::class, 'get'])->middleware(['checkAccess:App\Models\Meeting,meetings,id,meetings'])->name('meeting.get');
+        Route::post('/meetings/update', [MeetingsController::class, 'update'])
                 ->middleware(['customcan:edit_meetings', 'log.activity']);
-
-            Route::delete('/meetings/destroy/{id}', [MeetingsController::class, 'destroy'])
+        Route::delete('/meetings/destroy/{id}', [MeetingsController::class, 'destroy'])
                 ->middleware(['customcan:delete_meetings', 'demo_restriction', 'checkAccess:App\Models\Meeting,meetings,id,meetings', 'log.activity']);
-
-            Route::post('/meetings/destroy_multiple', [MeetingsController::class, 'destroy_multiple'])
+        Route::post('/meetings/destroy_multiple', [MeetingsController::class, 'destroy_multiple'])
                 ->middleware(['customcan:delete_meetings', 'demo_restriction', 'log.activity']);
-
-            Route::get('/meetings/join/{id}', [MeetingsController::class, 'join'])
+        Route::get('/meetings/join/{id}', [MeetingsController::class, 'join'])
                 ->middleware(['checkAccess:App\Models\Meeting,meetings,id,meetings']);
-
-            Route::get('/meetings/duplicate/{id}', [MeetingsController::class, 'duplicate'])
+        Route::get('/meetings/duplicate/{id}', [MeetingsController::class, 'duplicate'])
                 ->middleware(['customcan:create_meetings', 'checkAccess:App\Models\Meeting,meetings,id,meetings', 'log.activity']);
-        // });
 
-        //Workspaces-------------------------------------------------------------
-        // Route::middleware(['customcan:manage_workspaces'])->group(function () {
 
-        //     Route::get('/workspaces', [WorkspacesController::class, 'index']);
 
-        //     Route::post('/workspaces/store', [WorkspacesController::class, 'store'])->middleware(['customcan:create_workspaces', 'log.activity']);
 
-        //     Route::get('/workspaces/duplicate/{id}', [WorkspacesController::class, 'duplicate'])
-        //         ->middleware(['customcan:create_workspaces', 'checkAccess:App\Models\Workspace,workspaces,id,workspaces', 'log.activity']);
 
-        //     Route::get('/workspaces/list', [WorkspacesController::class, 'list']);
-
-        //     Route::get('/workspaces/get/{id}', [WorkspacesController::class, 'get'])->middleware(['checkAccess:App\Models\Workspace,workspaces,id,workspaces'])->name('workspace.get');
-
-        //     Route::post('/workspaces/update', [WorkspacesController::class, 'update'])
-        //         ->middleware(['customcan:edit_workspaces', 'demo_restriction', 'log.activity']);
-
-        //     Route::delete('/workspaces/destroy/{id}', [WorkspacesController::class, 'destroy'])
-        //         ->middleware(['customcan:delete_workspaces', 'demo_restriction', 'checkAccess:App\Models\Workspace,workspaces,id,workspaces', 'log.activity']);
-
-        //     Route::post('/workspaces/destroy_multiple', [WorkspacesController::class, 'destroy_multiple'])
-        //         ->middleware(['customcan:delete_workspaces', 'demo_restriction', 'log.activity']);
-
-        //     Route::get('/workspaces/switch/{id}', [WorkspacesController::class, 'switch'])
-        //         ->middleware(['checkAccess:App\Models\Workspace,workspaces,id,workspaces']);
-        // // });
-        // Route::get('/workspaces/remove_participant', [WorkspacesController::class, 'remove_participant'])->middleware(['demo_restriction']);
-
-        //codes i added
+        // commandes
         Route::get('/commandes', [CommandesController::class, 'index']);
-
         Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
-
         Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
-
         Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
-
         Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
-
         Route::post('/commandes/update', [CommandesController::class, 'update']);
-
-
         Route::post('/commandes/upload-media', [CommandesController::class, 'upload_media']);
-
         Route::get('/commandes/get-media/{id}', [CommandesController::class, 'get_media']);
-
         Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
-
-
         Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
-
         Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
-
-
         Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
-
         Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
-
         Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
-           // });
-        //it ends here
+
+
 
         //Todos-------------------------------------------------------------
-        // Route::middleware(['has_workspace'])->group(function () {
+        Route::get('/todos', [TodosController::class, 'index']);
+        Route::get('/todos/create', [TodosController::class, 'create']);
+        Route::post('/todos/store', [TodosController::class, 'store']);
+        Route::get('/todos/edit/{id}', [TodosController::class, 'edit']);
+        Route::post('/todos/update', [TodosController::class, 'update'])->name('todos.update')->middleware(['log.activity']);
+        Route::put('/todos/update_status', [TodosController::class, 'update_status'])->middleware(['log.activity']);
+        Route::delete('/todos/destroy/{id}', [TodosController::class, 'destroy'])->middleware(['demo_restriction', 'log.activity']);
+        Route::get('/todos/get/{id}', [TodosController::class, 'get']);
+        Route::get('/notes', [NotesController::class, 'index']);
+        Route::post('/notes/store', [NotesController::class, 'store']);
+        Route::post('/notes/update', [NotesController::class, 'update']);
+        Route::get('/notes/get/{id}', [NotesController::class, 'get']);
+        Route::delete('/notes/destroy/{id}', [NotesController::class, 'destroy'])->middleware(['demo_restriction', 'log.activity']);
 
-            Route::get('/todos', [TodosController::class, 'index']);
-
-            Route::get('/todos/create', [TodosController::class, 'create']);
-
-            Route::post('/todos/store', [TodosController::class, 'store']);
-
-            Route::get('/todos/edit/{id}', [TodosController::class, 'edit']);
-
-            Route::post('/todos/update', [TodosController::class, 'update'])->name('todos.update')->middleware(['log.activity']);
-
-            Route::put('/todos/update_status', [TodosController::class, 'update_status'])->middleware(['log.activity']);
-
-            Route::delete('/todos/destroy/{id}', [TodosController::class, 'destroy'])->middleware(['demo_restriction', 'log.activity']);
-
-            Route::get('/todos/get/{id}', [TodosController::class, 'get']);
-
-
-            Route::get('/notes', [NotesController::class, 'index']);
-
-            Route::post('/notes/store', [NotesController::class, 'store']);
-
-            Route::post('/notes/update', [NotesController::class, 'update']);
-
-            Route::get('/notes/get/{id}', [NotesController::class, 'get']);
-
-            Route::delete('/notes/destroy/{id}', [NotesController::class, 'destroy'])->middleware(['demo_restriction', 'log.activity']);
-        // });
 
         //Users-------------------------------------------------------------
-
         Route::get('account/{user}', [ProfileController::class, 'show'])->name('profile.show');
-
         Route::put('/profile/update_photo/{userOrClient}', [ProfileController::class, 'update_photo'])->middleware(['demo_restriction']);
-
         Route::put('profile/update/{userOrClient}', [ProfileController::class, 'update'])->name('profile.update')->middleware(['demo_restriction']);
-
         Route::delete('/account/destroy/{user}', [ProfileController::class, 'destroy'])->middleware(['demo_restriction']);
 
-        // Route::middleware(['has_workspace', 'customcan:manage_users'])->group(function () {
-
-            Route::get('/users', [UserController::class, 'index']);
-
-            Route::get('/users/create', [UserController::class, 'create']);
-
-            Route::post('/users/store', [UserController::class, 'store']);
-
-            Route::get('/users/profile/{id}', [UserController::class, 'show'])->name('users.profile');
-
-            Route::get('/users/edit/{id}', [UserController::class, 'edit']);
-
-            Route::put('/users/update_user/{user}', [UserController::class, 'update_user']);
-
-            Route::delete('/users/delete_user/{user}', [UserController::class, 'delete_user']);
-
-            Route::post('/users/delete_multiple_user', [UserController::class, 'delete_multiple_user']);
-
-            Route::get('/users/list', [UserController::class, 'list']);
-
-                    // Entreprises-------------------------------------------------------------
-
-                    Route::get('/entreprises', [EntrepriseController::class, 'index']);
-                    Route::get('/entreprises/create', [EntrepriseController::class, 'create']);
-                    Route::post('/entreprises/store', [EntrepriseController::class, 'store']);
-                    Route::get('/entreprises/profile/{id}', [EntrepriseController::class, 'show']);
-                    Route::get('/entreprises/edit/{id}', [EntrepriseController::class, 'edit']);
-                    Route::put('/entreprises/update_entreprise/{entreprise}', [EntrepriseController::class, 'update_entreprise']);
-                    Route::get('/entreprises/list', [EntrepriseController::class, 'list']);
-                    Route::delete('/entreprise/destroy/{id}', [EntrepriseController::class, 'destroy']);
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/create', [UserController::class, 'create']);
+        Route::post('/users/store', [UserController::class, 'store']);
+        Route::get('/users/profile/{id}', [UserController::class, 'show'])->name('users.profile');
+        Route::get('/users/edit/{id}', [UserController::class, 'edit']);
+        Route::put('/users/update_user/{user}', [UserController::class, 'update_user']);
+        Route::delete('/users/delete_user/{user}', [UserController::class, 'delete_user']);
+        Route::post('/users/delete_multiple_user', [UserController::class, 'delete_multiple_user']);
+        Route::get('/users/list', [UserController::class, 'list']);
 
 
-                    // });
+
+        // Entreprises-------------------------------------------------------------
+                Route::group(['middleware' => ['auth', 'role:admin']], function () {
+
+        Route::get('/entreprises', [EntrepriseController::class, 'index']);
+        Route::get('/entreprises/create', [EntrepriseController::class, 'create']);
+        Route::post('/entreprises/store', [EntrepriseController::class, 'store']);
+        Route::get('/entreprises/profile/{id}', [EntrepriseController::class, 'show']);
+        Route::get('/entreprises/edit/{id}', [EntrepriseController::class, 'edit']);
+        Route::put('/entreprises/update_entreprise/{entreprise}', [EntrepriseController::class, 'update_entreprise']);
+        Route::get('/entreprises/list', [EntrepriseController::class, 'list']);
+        Route::delete('/entreprise/destroy/{id}', [EntrepriseController::class, 'destroy']);
+
+                  });
+
 
         // fournisseurs-------------------------------------------------------------
-            Route::get('/fournisseurs', [FournisseurController::class, 'index']);
-            Route::get('fournisseurs/create', [FournisseurController::class,'create']);
-            Route::post('fournisseurs/store', [FournisseurController::class,'store'])->name('fournisseurs.store');
-            Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
-            Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
-            Route::get('fournisseurs/list', [FournisseurController::class,'list']);
-            Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
+        Route::get('/fournisseurs', [FournisseurController::class, 'index']);
+        Route::get('fournisseurs/create', [FournisseurController::class,'create']);
+        Route::post('fournisseurs/store', [FournisseurController::class,'store'])->name('fournisseurs.store');
+        Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
+        Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
+        Route::get('fournisseurs/list', [FournisseurController::class,'list']);
+        Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
+
 
         // Achats-------------------------------------------------------------
         Route::get('/achats', [AchatController::class, 'index'])->name('achats.index');
@@ -391,39 +296,27 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/facture', [FactureController::class, 'show'])->name('factures.show');
         Route::get('/factures/{id}/download', [FactureController::class, 'download'])->name('factures.download');
 
+
+
         //Clients-------------------------------------------------------------
+        Route::get('/clients', [ClientController::class, 'index']);
+        Route::get('/clients/profile/{id}', [ClientController::class, 'show']);
+        Route::get('/clients/create', [ClientController::class, 'create']);
+        Route::post('/clients/store', [ClientController::class, 'store']);
+        Route::get('/clients/get/{id}', [ClientController::class, 'get']);
+        Route::get('/clients/edit/{id}', [ClientController::class, 'edit']);
+        Route::put('/clients/update/{id}', [ClientController::class, 'update']);
+        Route::delete('/clients/destroy/{id}', [ClientController::class, 'destroy']);
+        Route::post('/clients/destroy_multiple', [ClientController::class, 'destroy_multiple']);
+        Route::get('/clients/list', [ClientController::class, 'list']);
 
-        // Route::middleware(['has_workspace', 'customcan:manage_clients'])->group(function () {
-
-            Route::get('/clients', [ClientController::class, 'index']);
-
-            Route::get('/clients/profile/{id}', [ClientController::class, 'show']);
-
-            Route::get('/clients/create', [ClientController::class, 'create']);
-
-            Route::post('/clients/store', [ClientController::class, 'store']);
-
-            Route::get('/clients/get/{id}', [ClientController::class, 'get']);
-
-            Route::get('/clients/edit/{id}', [ClientController::class, 'edit']);
-
-            Route::put('/clients/update/{id}', [ClientController::class, 'update']);
-
-            Route::delete('/clients/destroy/{id}', [ClientController::class, 'destroy']);
-
-            Route::post('/clients/destroy_multiple', [ClientController::class, 'destroy_multiple']);
-
-            Route::get('/clients/list', [ClientController::class, 'list']);
-        // });
 
 
 
         //Settings-------------------------------------------------------------
-        Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);
+            Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);
 
-        Route::put("settings/languages/set-default", [LanguageController::class, 'set_default'])->middleware(['demo_restriction']);
-
-     //   Route::middleware(['customRole:admin'])->group(function () {
+            Route::put("settings/languages/set-default", [LanguageController::class, 'set_default'])->middleware(['demo_restriction']);
 
             Route::get('/settings/permission/create', [RolesController::class, 'create_permission']);
 
@@ -490,9 +383,13 @@ Route::middleware(['CheckInstallation'])->group(function () {
             Route::get('/settings/system-updater', [UpdaterController::class, 'index']);
 
             Route::post('/settings/update-system', [UpdaterController::class, 'update'])->middleware(['demo_restriction']);
-        //});
 
-        // Route::middleware(['has_workspace'])->group(function () {
+
+
+
+
+
+
 
             Route::get('/search', [SearchController::class, 'search']);
 
@@ -509,21 +406,21 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
 
             Route::middleware(['customcan:manage_system_notifications'])->group(function () {
-                Route::put('/notifications/mark-all-as-read', [NotificationsController::class, 'mark_all_as_read']);
-                Route::get('/notifications', [NotificationsController::class, 'index']);
-                Route::get('/notifications/list', [NotificationsController::class, 'list']);
-                Route::delete('/notifications/destroy/{id}', [NotificationsController::class, 'destroy'])->middleware(['customcan:delete_system_notifications', 'demo_restriction']);
-                Route::post('/notifications/destroy_multiple', [NotificationsController::class, 'destroy_multiple'])->middleware(['customcan:delete_system_notifications', 'demo_restriction']);
-                Route::put('/notifications/update-status', [NotificationsController::class, 'update_status']);
-                Route::get('/notifications/get-unread-notifications', [NotificationsController::class, 'getUnreadNotifications'])->middleware(['customcan:manage_system_notifications']);
+            Route::put('/notifications/mark-all-as-read', [NotificationsController::class, 'mark_all_as_read']);
+            Route::get('/notifications', [NotificationsController::class, 'index']);
+            Route::get('/notifications/list', [NotificationsController::class, 'list']);
+            Route::delete('/notifications/destroy/{id}', [NotificationsController::class, 'destroy'])->middleware(['customcan:delete_system_notifications', 'demo_restriction']);
+            Route::post('/notifications/destroy_multiple', [NotificationsController::class, 'destroy_multiple'])->middleware(['customcan:delete_system_notifications', 'demo_restriction']);
+            Route::put('/notifications/update-status', [NotificationsController::class, 'update_status']);
+            Route::get('/notifications/get-unread-notifications', [NotificationsController::class, 'getUnreadNotifications'])->middleware(['customcan:manage_system_notifications']);
             });
+
             Route::get('preferences', [PreferenceController::class, 'index'])->name('preferences.index');
-
             Route::post('/save-notification-preferences', [PreferenceController::class, 'saveNotificationPreferences'])->name('preferences.saveNotifications');
-
             Route::post('/save-column-visibility', [PreferenceController::class, 'saveColumnVisibility']);
+
         });
-    // });
+
 });
 
 

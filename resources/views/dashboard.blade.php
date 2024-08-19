@@ -8,11 +8,39 @@ $user = getAuthenticatedUser();
 @section('content')
 @authBoth
 
+<style>
+    /* Unique card container */
+.admin-dashboard-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    margin-top: 0;
+    text-align: center;
+}
+
+/* Unique title styling */
+.admin-dashboard-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+/* Unique description styling */
+.admin-dashboard-description {
+    font-size: 16px;
+    color: #666666;
+}
+
+</style>
 
 <style>
     .half-blue-half-white {
     background: linear-gradient(to top, white 50%, #5f61e6 50%);
-    height: 220px; /* Adjust height as needed */
+    height: 97%; /* Adjust height as needed */
     border: none; /* Optional: remove border if you want a clean split */
 }
 
@@ -68,11 +96,29 @@ $user = getAuthenticatedUser();
                 <div class="card card half-blue-half-white text-center">
                     <div class="card-body">
 
+                        @if(auth()->user()->role->rolename === 'user')
                         <div class="profile-container">
                             <img src="https://marketplace.canva.com/EAFBazyZ4M8/1/0/1600w/canva-bleu-et-pourpre-d%C3%A9contract%C3%A9-soci%C3%A9t%C3%A9-application-d%C3%A9veloppement-start-up-entreprise-logo-0fa93Kmt5Oo.jpg" alt="Profile Picture" class="profile-pic">
                             <h3 class="profile-name">FOR ENTREPRISE ONLY</h3>
                             <p class="profile-email">THISisJUSTaTEST@example.com</p>
                         </div>
+                    @elseif(auth()->user()->role->rolename === 'admin')
+                        {{-- <div class="profile-container">
+                            <img src="https://media.licdn.com/dms/image/D4D0BAQEtnLWLnSV-Uw/company-logo_400_400/0/1711586810808?e=2147483647&v=beta&t=05K3VHWrqPONa3p9MeMj4XrLFKZPRts1wWiAiPO14aA" alt="Profile Picture" class="profile-pic">
+                            <h3 class="profile-name">HARMORA</h3>
+                            <p class="profile-email">admin</p>
+                        </div> --}}
+
+                        <div class="admin-dashboard-card">
+                            <img src="https://media.licdn.com/dms/image/D4D0BAQEtnLWLnSV-Uw/company-logo_400_400/0/1711586810808?e=2147483647&v=beta&t=05K3VHWrqPONa3p9MeMj4XrLFKZPRts1wWiAiPO14aA" alt="Profile Picture" class="profile-pic">
+                            <h2 class="admin-dashboard-title">Welcome to Your Admin Dashboard</h2>
+                            <p class="admin-dashboard-description">Here you can manage your site, view statistics, and perform administrative tasks.</p>
+                        </div>
+
+                    @endif
+
+
+
 
                     </div>
                 </div>

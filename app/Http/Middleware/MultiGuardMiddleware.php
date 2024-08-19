@@ -20,6 +20,6 @@ class MultiGuardMiddleware
         if (Auth::guard('web')->check() || Auth::guard('client')->check()) {
             return $next($request);
         }
-        return redirect('/');
+        return redirect('/')->with('error', get_label('please login', 'Please login'));
     }
 }

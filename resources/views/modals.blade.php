@@ -71,7 +71,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     </div>
 
                     <div class="alert alert-primary alert-dismissible" role="alert">
-                        {{ get_label('hello_world', 'Reservations added here will appear automatically in the calendar') }}
+                        {{ get_label('Reservations added here will appear automatically in the calendar', 'Reservations added here will appear automatically in the calendar') }}
                     </div>
                 </div>
                 <div class="modal-footer">
