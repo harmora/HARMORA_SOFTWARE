@@ -286,8 +286,8 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/achats/create', [AchatController::class,'create']);
         Route::post('/achats/store', [AchatController::class, 'store'])->name('achats.store');
         // Route::post('/achats/store', [AchatController::class,'store']);
-        Route::get('achats/edit/{id}', [AchatController::class,'edit']);
-        Route::put('achats/update/{id}', [AchatController::class,'update']);
+        Route::get('achats/edit/{id}', [AchatController::class,'edit'])->name('achats.edit');
+        Route::put('achats/update/{id}', [AchatController::class,'update'])->name('achats.update');
         Route::get('achats/list', [AchatController::class,'list']);
         Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
 

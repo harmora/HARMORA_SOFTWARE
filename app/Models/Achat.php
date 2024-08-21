@@ -18,9 +18,11 @@ class Achat extends Model
     {
         return $this->belongsTo(Entreprise::class);
     }
-    public function product()
+    public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(Product::class, 'achat_product')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
     }
     public function mouvements_stock()
     {

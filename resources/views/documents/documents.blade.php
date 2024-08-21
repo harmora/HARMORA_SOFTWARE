@@ -42,13 +42,11 @@
                     <thead>
                         <tr>
                             <th data-field="document_number" data-visible="{{ (in_array('document_number', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('document_number', 'Document Number') }}</th>
-                            <th data-field="order" data-visible="{{ (in_array('order', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('order', 'Order') }}</th>
                             <th data-field="client" data-visible="{{ (in_array('client', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('client', 'Client') }}</th>
                             <th data-field="total_price" data-visible="{{ (in_array('total_price', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('total_price', 'Total Price') }}</th>
                             <th data-field="remaining_amount" data-visible="{{ (in_array('remaining_amount', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('remaining_amount', 'Remaining Amount') }}</th>
                             <th data-field="created_by" data-visible="{{ (in_array('created_by', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('created_by', 'Created By') }}</th>
-                            <th data-field="creation_date" data-visible="{{ (in_array('creation_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('creation_date', 'Creation Date') }}</th>
-                            <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('actions', 'Actions') }}</th>
+                            {{-- <th data-field="creation_date" data-visible="{{ (in_array('creation_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('creation_date', 'Creation Date') }}</th> --}}
                         </tr>
                     </thead>
                 </table>
@@ -60,5 +58,5 @@
     var label_update = '<?= get_label('update', 'Update') ?>';
     var label_delete = '<?= get_label('delete', 'Delete') ?>';
 </script>
-<script src="{{asset('assets/js/pages/documents.js')}}"></script>
+{{-- <script src="{{asset('assets/js/pages/documents.js')}}"></script> --}}
 @endsection
