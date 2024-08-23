@@ -56,6 +56,7 @@ use App\Http\Controllers\CommandesController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
+use App\Http\Controllers\PackController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -150,10 +151,26 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/home', [HomeController::class, 'index']);
 
 
+        Route::get('/ocr', function () {
+            return view('ocr\ocr');
+        });
+
+
+        //packs------------------------------------------------------------------
+
+// packs-------------------------------------------------------------
+Route::get('/packs', [PackController::class, 'index']); // Display a list of all packs
+Route::get('/packs/calendar', [PackController::class, 'calendar']); // Display a calendar view related to packs
+Route::get('/packs/get/{id}', [PackController::class, 'show']); // Display details for a specific pack
+Route::post('/packs/store', [PackController::class, 'store']); // Handle the creation of a new pack
+Route::get('/packs/list', [PackController::class, 'list']); // Display a detailed list of packs
+Route::delete('/packs/destroy/{id}', [PackController::class, 'destroy']); // Delete a specific pack
+Route::get('/packs/edit/{id}', [PackController::class, 'edit']); // Display the edit form for a specific pack
+Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a specific pack
+
 
         //disponibility-------------------------------------------------------------
         Route::get('/disponibility', [DisponibiliteController::class, 'index']);
-        Route::get('/disponibility/calendar', [DisponibiliteController::class, 'calendar']);
         Route::get('/disponibility/get/{id}', [DisponibiliteController::class, 'show']);
         Route::post('/disponibility/store', [DisponibiliteController::class, 'store']);
         Route::get('/disponibilities/list', [DisponibiliteController::class, 'list']);
