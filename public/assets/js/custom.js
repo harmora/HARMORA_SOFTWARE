@@ -3023,11 +3023,11 @@ $(document).ready(function () {
 $(document).ready(function () {
     function toggleProductNameField() {
         var productsNameField = $('#supplier_name_field');
-        var selectedType = $('#type_achat').val();
-        var productNameField = $('#product_name_field');
-        var stockNameField = $('#stock_name_field');
-        var addProductBtn = $('#add_product_btn');
-        var addSupplierBtn = $('#add_supplier_btn');
+        var selectedType      = $('#type_achat').val();
+        var productNameField  = $('#product_name_field');
+        var stockNameField    = $('#stock_name_field');
+        var addProductBtn     = $('#add_product_btn');
+        var addSupplierBtn    = $('#add_supplier_btn');
         
         if (selectedType === 'materielle/produits') {
             productsNameField.show();
@@ -3044,10 +3044,27 @@ $(document).ready(function () {
             addSupplierBtn.hide();
 
         }
+
+    }
+
+    function toggleStatusNameField() {
+        var selectedStatus    = $('#status_payement').val();
+        var montant_restant   = $('#montant_restant_name_field');
+        var montant_paye      = $('#montant_payée_name_field');
+
+        if(selectedStatus==='partial'){
+            montant_paye.show();
+            montant_restant.show();
+        }
+        else{
+            montant_paye.hide();
+            montant_restant.hide();
+        }  
     }
 
     // Attach the change event handler
     $('#type_achat').change(toggleProductNameField);
+    $('#status_payement').change(toggleStatusNameField);
     
     $('#add_product_btn').click(function() {
         $('#createProductModal').modal('show');
@@ -3056,7 +3073,7 @@ $(document).ready(function () {
         $('#createSupplierModal').modal('show');
     });
     // Initialize the field visibility on page load
-    // toggleProductNameField();
+    toggleProductNameField();
 });
 
 function toggleDarkMode() {
