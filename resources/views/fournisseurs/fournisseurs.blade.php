@@ -20,8 +20,24 @@ $visibleColumns = getUserPreferences('fournisseurs');
                 </ol>
             </nav>
         </div>
+
+
+
         <div>
-            <a href="{{url('/fournisseurs/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_fournisseur', 'Create fournisseur') ?>"><i class='bx bx-plus'></i></button></a>
+
+            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#importFileModal">
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="{{ get_label('import_file', 'Import File') }}">
+                   import Excel <i class="bx bx-file"></i>
+                </button>
+            </a>
+
+            <a href="{{url('/fournisseurs/create')}}">
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_fournisseur', 'Create fournisseur') ?>">
+                    <i class='bx bx-plus'></i>
+                </button>
+            </a>
+
+
         </div>
     </div>
     @if (is_countable($fournisseurs) && count($fournisseurs) > 0)
@@ -45,7 +61,6 @@ $visibleColumns = getUserPreferences('fournisseurs');
                             <th data-checkbox="true"></th>
                             <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
                             <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('fournisseurs', 'Fournisseurs') ?></th>
-                            {{-- <th data-field="entreprise" data-visible="{{ (in_array('role', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('entreprise', 'Entreprise') ?></th> --}}
                             <th data-field="phone" data-visible="{{ (in_array('phone', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('phone_number', 'Phone number') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
@@ -62,9 +77,54 @@ $visibleColumns = getUserPreferences('fournisseurs');
     <x-empty-state-card :type="$type" />
     @endif
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="importFileModal" tabindex="-1" aria-labelledby="importFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importFileModalLabel">{{ get_label('import_file', 'Import File') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('fournisseurs.import') }}" method="POST" enctype="multipart/form-data" class="form-submit-event">
+                    @csrf
+
+                    <!-- File input with label -->
+                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                        <!-- Hidden file input -->
+                        <input type="file" name="import_file" id="import_file" class="form-control" accept=".xlsx, .xls">
+
+                        <!-- File input preview (optional) -->
+                        <button type="submit" class="btn btn-danger">
+                            <i class='bx bx-upload'></i>
+                        </button>
+                    </div>
+
+                    <!-- Instructions for allowed file types -->
+                    <div class="ms-2">
+                        <p class="text-muted mt-2">{{ get_label('allowed_xlsx_xls', 'Allowed XLSX or XLS.') }}</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     var label_update = '<?= get_label('update', 'Update') ?>';
     var label_delete = '<?= get_label('delete', 'Delete') ?>';
+
+    // JavaScript to trigger file input click on label click
+    document.getElementById('select_file_button').addEventListener('click', function() {
+        document.getElementById('import_file').click();
+    });
 </script>
-{{-- <script src="{{asset('assets/js/pages/fournisseurs.js')}}"></script> --}}
 @endsection
+
+
+
+

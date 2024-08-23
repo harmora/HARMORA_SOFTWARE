@@ -8,6 +8,12 @@ use App\Models\fournisseur;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 
+
+use App\Models\Customer;
+use App\Imports\CustomerImport;
+use App\Imports\FournisseurImport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use Throwable;
 use App\Models\Task;
 use App\Models\User;
@@ -127,7 +133,7 @@ class FournisseurController extends Controller
         // ->distinct()
         // ->orderBy($sort, $order)
         // ->paginate(request('limit'))
-        // ->through(function ($fournisseur)  
+        // ->through(function ($fournisseur)
         $fournisseurs = $fournisseurs->through(function ($fournisseur){
             $actions = '';
 
@@ -178,4 +184,31 @@ class FournisseurController extends Controller
             'total' => $totalFournisseurs,
         ]);
         }
+
+        public function importExcelData(Request $request)
+        {
+            $request->validate([
+                'import_file' => [
+                    'required',
+                    'file'
+                ],
+            ]);
+
+            // Retrieve the entreprise_id from the user or request
+            $entrepriseId = auth()->user()->entreprise_id; // Example: from authenticated user
+
+            // If `entreprise_id` is not set or needs to be obtained differently, adjust accordingly
+            if (!$entrepriseId) {
+                return redirect()->back()->with('error', 'Entreprise ID is required.');
+            }
+
+            // Import the Excel file
+            Excel::import(new FournisseurImport($entrepriseId), $request->file('import_file'));
+
+            return redirect()->back()->with('status', 'Imported Successfully');
+        }
 }
+
+
+
+

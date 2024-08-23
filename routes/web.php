@@ -299,6 +299,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
         Route::get('fournisseurs/list', [FournisseurController::class,'list']);
         Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
+        Route::post('/fournisseurs/import', [FournisseurController::class, 'importExcelData'])->name('fournisseurs.import');
 
 
         // Achats-------------------------------------------------------------
