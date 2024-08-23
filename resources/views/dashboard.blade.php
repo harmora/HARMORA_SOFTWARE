@@ -32,14 +32,18 @@ $user = getAuthenticatedUser();
 /* Unique description styling */
 .admin-dashboard-description {
     font-size: 16px;
-    color: #666666;
+    color: #085cb0;
 }
 
 </style>
 
 <style>
     .half-blue-half-white {
-    background: linear-gradient(to top, white 50%, #5f61e6 50%);
+        background-image:   url('assets/img/logos/bg.svg');
+
+background-position: center;
+background-repeat: no-repeat;
+
     height: 97%; /* Adjust height as needed */
     border: none; /* Optional: remove border if you want a clean split */
 }
@@ -71,6 +75,8 @@ $user = getAuthenticatedUser();
     margin-bottom: 0;
 }
 </style>
+
+
 <div class="container-fluid">
     <div class="col-lg-12 col-md-12 order-1">
         @if (!isset($general_settings['allowSignup']) || $general_settings['allowSignup'] == 1)
@@ -97,11 +103,11 @@ $user = getAuthenticatedUser();
                     <div class="card-body">
 
                         @if(auth()->user()->role->rolename === 'user')
-                        <div class="profile-container">
+                        <div class="admin-dashboard-card">
                             <img src="https://marketplace.canva.com/EAFBazyZ4M8/1/0/1600w/canva-bleu-et-pourpre-d%C3%A9contract%C3%A9-soci%C3%A9t%C3%A9-application-d%C3%A9veloppement-start-up-entreprise-logo-0fa93Kmt5Oo.jpg" alt="Profile Picture" class="profile-pic">
-                            <h3 class="profile-name">FOR ENTREPRISE ONLY</h3>
-                            <p class="profile-email">THISisJUSTaTEST@example.com</p>
-                        </div>
+                            <h2 class="admin-dashboard-title">Welcome to Your Dashboard</h2>
+                            <p class="admin-dashboard-description">Here you can manage your Entreprise, view statistics, and perform tasks.</p>
+                         </div>
                     @elseif(auth()->user()->role->rolename === 'admin')
                         {{-- <div class="profile-container">
                             <img src="https://media.licdn.com/dms/image/D4D0BAQEtnLWLnSV-Uw/company-logo_400_400/0/1711586810808?e=2147483647&v=beta&t=05K3VHWrqPONa3p9MeMj4XrLFKZPRts1wWiAiPO14aA" alt="Profile Picture" class="profile-pic">
@@ -110,7 +116,11 @@ $user = getAuthenticatedUser();
                         </div> --}}
 
                         <div class="admin-dashboard-card">
-                            <img src="https://media.licdn.com/dms/image/D4D0BAQEtnLWLnSV-Uw/company-logo_400_400/0/1711586810808?e=2147483647&v=beta&t=05K3VHWrqPONa3p9MeMj4XrLFKZPRts1wWiAiPO14aA" alt="Profile Picture" class="profile-pic">
+
+
+
+
+                            <img src="{{asset("assets/img/logos/Logo.png")}}" alt="Profile Picture" class="profile-pic">
                             <h2 class="admin-dashboard-title">Welcome to Your Admin Dashboard</h2>
                             <p class="admin-dashboard-description">Here you can manage your site, view statistics, and perform administrative tasks.</p>
                         </div>

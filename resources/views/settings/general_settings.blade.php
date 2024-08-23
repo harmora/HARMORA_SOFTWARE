@@ -1,4 +1,4 @@
-g@extends('layout')
+@extends('layout')
 @section('title')
 <?= get_label('general_settings', 'General settings') ?>
 @endsection

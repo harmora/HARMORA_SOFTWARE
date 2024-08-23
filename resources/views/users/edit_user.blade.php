@@ -27,9 +27,10 @@
     <div class="card">
         <div class="card-body">
             <form action="{{url('/users/update_user/' . $user->id)}}" class="form-submit-event" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="redirect_url" value="/users">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="redirect_url" value="/users">
+
                 <h5 class="mb-4"><?= get_label('user_information', 'User Information') ?></h5>
                 <div class="row">
                     <div class="mb-3 col-md-6">
@@ -68,7 +69,7 @@
                         <div class="input-group">
                             <select class="form-select text-capitalize js-example-basic-multiple" id="role" name="role">
                                 @foreach ($roles as $role)
-                                    <option value="{{$role->id}}" 
+                                    <option value="{{$role->id}}"
                                         <?php if ($user->getRoleNames()->first() == $role->name) {
                                                     echo 'selected'; }  ?>>{{ ucfirst($role->name) }}
                                     </option>
@@ -112,9 +113,9 @@
                             </div>
                         </div>
                     </div>
-                </div>                    
+                </div>
                     <!-- Enterprise Information Section -->
-                 <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>                
+                 <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
                <div class="row">
                 <div class="mb-3 col-md-6">
                     <label class="form-label" for="entreprise_id"><?= get_label('entreprise', 'Entreprise') ?></label>
@@ -126,7 +127,7 @@
                             </option>
                         @endforeach
                     </select>
-                </div>  
+                </div>
                 {{--
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
@@ -142,7 +143,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>                          
+                    </div>
                     <div class="mb-3 col-md-6">
                         <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
                         <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ $entreprise->ICE }}">

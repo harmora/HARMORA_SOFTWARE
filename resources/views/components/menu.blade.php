@@ -31,7 +31,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
 
     <div class="btn-group dropend px-2">
-        <a href="/" class="btn btn-primary"  aria-haspopup="true" aria-expanded="false">
+        <a href="/"  class="btn btn-dark"  aria-haspopup="true" aria-expanded="false">
 
             @if($user->role->rolename === 'admin')
     {{ 'Admin Workspace' }}
@@ -109,7 +109,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
     @elseif(auth()->user()->role->rolename === 'admin')
     <li class="menu-item {{ Request::is('users') || Request::is('users/*') ? 'active' : '' }}">
         <a href="/users" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-group text-primary"></i>
+            <i class="menu-icon bx bx-user-circle text-primary"></i>
             <div><?= get_label('accounts', 'Accounts') ?></div>
         </a>
     </li>
@@ -122,15 +122,15 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         @if(auth()->user()->role->rolename === 'admin')
         <li class="menu-item {{ Request::is('entreprises') || Request::is('entreprises/*') ? 'active' : '' }}">
             <a href="/entreprises" class="menu-link">
-                <i class="menu-icon fas fa-building bx-group text-primary" style="font-size:20px"></i>
+                <i class="menu-icon bx bx-building text-primary" style="font-size:20px"></i>
                 <div><?= get_label('entreprises', 'Entreprises') ?></div>
             </a>
         </li>
 
         <li class="menu-item {{ Request::is('packs') || Request::is('packs/*') ? 'active' : '' }}">
             <a href="/packs" class="menu-link">
-                <i class="menu-icon tf-icons bx-box text-warning" style="font-size:20px"></i>
-                <div><?= get_label('packs', 'packs') ?></div>
+                <i class="menu-icon bx bx-layer text-warning" style="font-size:20px"></i>
+                <div><?= get_label('packs', 'Packs') ?></div>
             </a>
         </li>
         @endif
@@ -175,6 +175,8 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('my documents', 'My Documents')  ?></div>
             </a>
         </li>
+
+
         <li class="menu-item">
             <a href="/disponibility" class="menu-link ">
                 <i class='menu-icon tf-icons bx bx-calendar text-info'></i>
@@ -190,6 +192,14 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
         @endif
 
+        <li class="menu-item">
+            <a href="/ocr" class="menu-link">
+                <i class='menu-icon tf-icons  bx bx-spreadsheet text-primary'></i>
+                <div><?= get_label('ocr', 'OCR')  ?></div>
+            </a>
+        </li>
+
+
 
 
         <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
@@ -199,7 +209,32 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             </a>
         </li>
 
+{{-- dddddddddddddddddddddddd --}}
 
+
+        @if(auth()->user()->role->rolename === 'admin')
+
+        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
+            <a href="" class="menu-link ">
+                <i class="menu-icon tf-icons bx bx-globe text-success"></i>
+                <div><?= get_label('languages', 'Languages') ?></div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
+            <a href="" class="menu-link ">
+                <i class="menu-icon tf-icons bx bx-at text-warning"></i>
+                <div><?= get_label('email', 'Email') ?></div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
+            <a href="" class="menu-link ">
+                <i class="menu-icon tf-icons bx bx-notification text-primary"></i>
+                <div><?= get_label('notifications', 'Notifications') ?></div>
+            </a>
+        </li>
+        @endif
 
 
 
@@ -208,7 +243,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
          {{--    @role('admin')  --}}
         <li class="menu-item {{ Request::is('settings') || Request::is('roles/*') || Request::is('settings/*') ? 'active open' : '' }}">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box text-dark"></i>
+                <i class="menu-icon tf-icons bx bx-cog text-dark"></i>
                 <div data-i18n="User interface"><?= get_label('settings', 'Settings') ?></div>
             </a>
             <ul class="menu-sub">

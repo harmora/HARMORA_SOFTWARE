@@ -218,7 +218,7 @@ class UserController extends Controller
         //         'state' => '',
         //         'country' => '',
         //         'forme_juridique_id' => '', // Update this field
-        //     ];  
+        //     ];
         //  else
         $entreprise = Entreprise::all();
         $roles = Role::where('guard_name', 'web')->get();
@@ -530,7 +530,7 @@ class UserController extends Controller
             $phone = !empty($user->country_code) ? $user->country_code . ' ' . $user->phone : $user->phone;
 
             $r = 1;
-        if($user->role == 1) {
+        if($user->role->id == 1) {
            $r = 1;
             }
             $roleLabel = $r == 1 ? 'admin' : 'user';
