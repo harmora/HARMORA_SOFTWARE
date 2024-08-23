@@ -28,7 +28,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             <button type="button" id="add_product_btn" class="btn btn-outline-secondary"       ><?=  get_label('add_new_product', 'Add New Product') ?></button>
         </div>
     </div>
-    
     @role('admin')
     @php
     $account_creation_template = App\Models\Template::where('type', 'email')
@@ -137,6 +136,10 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <label for="facture" class="form-label"><?= get_label('facture', 'Facture') ?></label>
                         <input class="form-control" type="file" id="facture" name="facture" placeholder="<?= get_label('please_enter_facture', 'Please enter invoice number') ?>" value="{{ old('facture') }}">
                     </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="devis" class="form-label"><?= get_label('devis', 'Devis') ?></label>
+                        <input class="form-control" type="file" id="devis" name="devis" placeholder="<?= get_label('please_enter_devis', 'Please enter devis') ?>" value="{{ old('devis') }}">
+                    </div>                  
                     <div class="mb-3 col-md-6">
                         <label for="date_paiement" class="form-label"><?= get_label('date_paiement', 'Payment Date') ?></label>
                         <input class="form-control" type="date" id="date_paiement" name="date_paiement" value="{{ old('date_paiement') }}">

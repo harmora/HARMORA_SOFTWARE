@@ -104,7 +104,11 @@ class AchatController extends Controller
         // Handle file upload
         if ($request->hasFile('facture')) {
             $formFields['facture'] = $request->file('facture')->store('factures', 'public');
+        }        
+        if ($request->hasFile('devis')) {
+            $formFields['devis'] = $request->file('devis')->store('devis', 'public');
         }
+
         DB::beginTransaction();
         // Create Achat instance
         $achat = Achat::create($formFields); 
@@ -132,25 +136,31 @@ class AchatController extends Controller
                 $product->save();
             }
             $achat->products()->attach($productData1);
-            if(!$formFields['facture'])
-            {
-                $documentsField=[
-                    'type'=>'devis',
-                    'devis'=>$formFields['devis'],
+            $documentsFields = [];
+
+            if ($formFields['devis']) {
+                $documentsFields[] = [
+                    'type' => 'devis',
+                    'devis' => $formFields['devis'],
+                    'facture' => null,
                 ];
             }
-            else{
-                $documentsField=[
-                    'type'=>'facture',
-                    'facture'=>$formFields['facture'],
+            
+            if ($formFields['facture']) {
+                $documentsFields[] = [
+                    'type' => 'facture',
+                    'facture' => $formFields['facture'],
+                    'devis' => null,
                 ];
             }
-            $documentsField['reference']=$formFields['reference'];
-            $documentsField['from_to']=$achat->fournisseur->name;
-            $documentsField['total_amount']=$formFields['montant'];
-            $documentsField['remaining_amount']=$formFields['status_payement'] == 'partial'?$formFields['montant_restant']:0;
-            $documentsField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
-            Document::create($documentsField);
+            foreach ($documentsFields as $documentField) {
+                $documentField['reference'] = $formFields['reference'];
+                $documentField['from_to'] = $achat->fournisseur->name;
+                $documentField['total_amount'] = $formFields['montant'];
+                $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
+                $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;           
+                Document::create($documentField);
+            }
             DB::commit();    
         }
 

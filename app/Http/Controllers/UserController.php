@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pack;
+use App\Models\RoleAuth;
 use Throwable;
 use App\Models\Task;
 use App\Models\User;
@@ -55,10 +57,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('guard_name', 'web')->get();
+        $roles = RoleAuth::all(); // Fetch all roles
         $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
         $entreprises= Entreprise::all();
-        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises]);
+        $paques= Pack::all();
+        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises,'paques'=>$paques]);
     }
 
     /**
@@ -83,9 +86,10 @@ class UserController extends Controller
             'stateuser' => 'nullable',
             'countryuser' => 'nullable',
             'entreprise_id' => 'nullable',
+            'paque_id' => 'nullable',
             //'dob' => 'nullable',
             //'doj' => 'nullable',
-            //'role' => 'required'
+            'role' => 'required'
         ]);
 
         // $workspace = Workspace::find(session()->get('workspace_id'));
@@ -127,23 +131,31 @@ class UserController extends Controller
                 'photo' => $formFields['photo'],
                 'status' => $formFields['status'],
                 'entreprise_id' => $formFields['entreprise_id'],
+                'pack_id' => $formFields['paque_id'],
+                'role_id' => $formFields['role'],
             ]);
-        $user->assignRole($request->input('role'));
-        try {
-            if ($require_ev == 1) {
-                $user->notify(new VerifyEmail($user));
+            $selectedRole = RoleAuth::findOrFail($formFields['role']);
+            if ($selectedRole->rolename === 'admin') {
+                $roleId = Role::where('name', 'admin')->value('id');
+            } else {
+                $roleId = Role::where('name', 'member')->value('id');
             }
+            $user->assignRole($roleId);
+            try {
+            // if ($require_ev == 1) {
+            //     $user->notify(new VerifyEmail($user));
+            // }
 
-            // $workspace->users()->attach($user->id);
+            // // $workspace->users()->attach($user->id);
 
-            if (isEmailConfigured()) {
-                $account_creation_template = Template::where('type', 'email')
-                    ->where('name', 'account_creation')
-                    ->first();
-                if (!$account_creation_template || ($account_creation_template->status !== 0)) {
-                    $user->notify(new AccountCreation($user, $password));
-                }
-            }
+            // if (isEmailConfigured()) {
+            //     $account_creation_template = Template::where('type', 'email')
+            //         ->where('name', 'account_creation')
+            //         ->first();
+            //     if (!$account_creation_template || ($account_creation_template->status !== 0)) {
+            //         $user->notify(new AccountCreation($user, $password));
+            //     }
+            // }
             Session::flash('message', 'User created successfully.');
             return response()->json(['error' => false, 'id' => $user->id]);
         } catch (TransportExceptionInterface $e) {
@@ -543,7 +555,7 @@ class UserController extends Controller
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'role' => "<span class='badge bg-label-" . $roleCssClass . " me-1'>role " . $roleLabel . "</span>",                'email' => $user->email,
+                'role' => "<span class='badge bg-label-" . $roleCssClass . " me-1'>role " . $user->role->rolename . "</span>",
                 'phone' => $phone,
                 'email' => $user->email,
                 'profile' => $formattedHtml,
