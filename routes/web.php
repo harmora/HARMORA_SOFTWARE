@@ -180,8 +180,11 @@ Route::middleware(['CheckInstallation'])->group(function () {
         //documents
         Route::get('/documents', [DocsController::class, 'index']);
         Route::get('/documents/list', [DocsController::class, 'list']);
+        Route::get('/documents/edit/{id}', [DocsController::class, 'edit']);
+        Route::put('/documents/update/{id}', [DocsController::class, 'update']);
         Route::get('/documents/facture', [DocsController::class, 'getfactureinfo']);
         Route::get('/documents/facturepdf', [DocsController::class, 'getDownloadFile']);
+        Route::get('/documents/download-zip/{id}', [DocsController::class, 'downloadZip'])->name('documents.downloadZip');
 
 
         //meetings
