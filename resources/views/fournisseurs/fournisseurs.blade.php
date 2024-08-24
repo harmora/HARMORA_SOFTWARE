@@ -15,7 +15,7 @@ $visibleColumns = getUserPreferences('fournisseurs');
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item active">
-                        <?= get_label('fournisseurs', 'Fournisseurs') ?>
+                        <?= get_label('Suppliers', 'Fournisseurs') ?>
                     </li>
                 </ol>
             </nav>
@@ -60,7 +60,7 @@ $visibleColumns = getUserPreferences('fournisseurs');
                         <tr>
                             <th data-checkbox="true"></th>
                             <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
-                            <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('fournisseurs', 'Fournisseurs') ?></th>
+                            <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Suppliers', 'Fournisseurs') ?></th>
                             <th data-field="phone" data-visible="{{ (in_array('phone', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('phone_number', 'Phone number') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>

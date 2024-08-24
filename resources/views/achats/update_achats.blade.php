@@ -110,10 +110,50 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="facture" class="form-label"><?= get_label('facture', 'Facture') ?></label>
-                        <input class="form-control" type="file" id="facture" name="facture">
-                        @if($achat->facture)
-                            <p>Current file: {{ $achat->facture }}</p>
-                        @endif
+                        <div class="d-flex align-items-start gap-4">
+                            @if($achat->facture)
+                                @php
+                                    $fileExtension = pathinfo($achat->facture, PATHINFO_EXTENSION);
+                                @endphp
+                                @if(in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif','webp']))
+                                    <img src="{{$achat->facture? asset('storage/' . $achat->facture) : asset('storage/photos/doc.png')}}" alt="user-avatar" class="d-block rounded" height="130" width="130" id="uploadedAvatar" />
+                                @elseif (in_array(strtolower($fileExtension), ['pdf']))
+                                    <embed src="{{ asset('storage/' . $achat->facture) }}" type="application/pdf" height="130" width="130" style="overflow:auto;" /> 
+                                @else
+                                    <p class="text-muted mt-2"><?= get_label('file_not_supported', 'File not supported.') ?></p>        
+                                @endif
+                            @endif
+                            <div class="button-wrapper">
+                                <div class="input-group d-flex">
+                                    <input type="file" class="form-control" id="inputGroupFile04" name="upload1">
+                                </div>
+                                <p class="text-muted mt-2"><?= get_label('allowed_jpg_png_pdf', 'Allowed JPG or PNG or PDF .') ?>{{$fileExtension}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 col-md-6">
+                        <label for="devis" class="form-label"><?= get_label('devis', 'Devis') ?></label>
+                        <div class="d-flex align-items-start gap-4">
+                            @if($achat->devis)
+                                @php
+                                    $fileExtension2 = pathinfo($achat->devis, PATHINFO_EXTENSION);
+                                @endphp
+                                @if(in_array(strtolower($fileExtension2), ['jpg', 'jpeg', 'png', 'gif','webp']))
+                                    <img src="{{$achat->devis? asset('storage/' . $achat->devis) : asset('storage/photos/doc.png')}}" alt="user-avatar" class="d-block rounded" height="130" width="130" id="uploadedAvatar" />
+                                @elseif (in_array(strtolower($fileExtension2), ['pdf']))
+                                    <embed src="{{ asset('storage/' . $achat->devis) }}" type="application/pdf" height="130" width="130" style="overflow:auto;" /> 
+                                @else
+                                    <p class="text-muted mt-2"><?= get_label('file_not_supported', 'File not supported.') ?></p>        
+                                @endif
+                            @endif
+                            <div class="button-wrapper">
+                                <div class="input-group d-flex">
+                                    <input type="file" class="form-control" id="inputGroupFile04" name="upload1">
+                                </div>
+                                <p class="text-muted mt-2"><?= get_label('allowed_jpg_png_pdf', 'Allowed JPG or PNG or PDF .') ?>{{$fileExtension2}}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="date_paiement" class="form-label"><?= get_label('date_paiement', 'Payment Date') ?></label>

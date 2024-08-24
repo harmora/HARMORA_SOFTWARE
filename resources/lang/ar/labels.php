@@ -7,13 +7,14 @@
 
 
 
+// added by zakaria
+'achats' => 'المشتريات',
 
 
 
 
 
-
-
+//already
 'redirect_url' => '/settings/languages',
 'langcode' => 'ar',
 'dashboard' => 'لوحة القيادة',

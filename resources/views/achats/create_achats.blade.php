@@ -5,7 +5,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 @endphp
 @extends('layout')
 @section('title')
-<?= get_label('create_user', 'Create user') ?>
+<?= get_label('create_achat', 'Create Purchase') ?>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -55,7 +55,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <div class="mb-3 col-md-6">
                         <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="type_achat" name="type_achat">
-                            <option value="materielle/produits"><?= get_label('materielle_produits', 'Materielle/Produits') ?></option>
+                            <option value="materielle/produits"><?= get_label('materielle_produits', 'Materielle') ?></option>
                             <option value="recherche/developpement"><?= get_label('recherche_developpement', 'Recherche/Developpement') ?></option>
                             <option value="investissements"><?= get_label('investissements', 'Investissements') ?></option>
                             <option value="salaires/avantages sociaux"><?= get_label('salaires_avantages_sociaux', 'Salaires/Avantages Sociaux') ?></option>
