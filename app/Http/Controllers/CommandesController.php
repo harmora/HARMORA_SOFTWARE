@@ -41,7 +41,7 @@ class CommandesController extends Controller
     public function index($id = '')
     {
         //$productId = isset($product->id) ? $product->id : (request()->has('product') ? request('product') : '');
-            
+
         //$toSelectCommandeUsers = []; // Default empty array for safety
 
         $users = User::all();
@@ -90,17 +90,19 @@ class CommandesController extends Controller
 
         // Create a new commande
         $commande = Commande::create([
-            
+
             'client_id' => $request->client_id, // Ensure client_id is provided
             'title' => $request->title,
             'description' => $request->description,
-            'start_date' => $request->start_date,
-            'due_date' => $request->due_date,
+            // 'start_date' => $request->start_date,
+            // 'due_date' => $request->due_date,
+            'start_date' => now(),
+             'due_date' => now(),
             'total_amount' => 0, // Placeholder for total amount logic
             'status' => $request->status,
             'created_at' => now(),
             'updated_at' => now(),
-            'user_id' => $request->user_id, 
+            'user_id' => $request->user_id,
             'product_id' => $request->product_id
         ]);
 
@@ -244,7 +246,7 @@ class CommandesController extends Controller
         return response()->json(['error' => false, 'id' => $id, 'parent_id' => $commande->product->id, 'parent_type' => 'product',  'message' => 'Commande updated successfully.']);
     }
 
-        
+
     /**
      * Remove the specified commande from storage.
      *
@@ -291,33 +293,33 @@ class CommandesController extends Controller
     {
         // Fetch all commandes with their associated user and client data
         $commandes = Commande::with(['user', 'client'])->get();
-    
+
         // Format commandes data
         $formattedCommandes = $commandes->map(function ($commande) {
             return [
                 'id' => $commande->id,
                 'title' => $commande->title,
-                'users' => $commande->user ? $commande->user->name : 'Not Assigned',
-                'clients' => $commande->client ? $commande->client->name : 'Not Assigned',
+                'users' =>  $commande->user->first_name ." ".$commande->user->last_name ,
+                'clients' => $commande->client->first_name ." ".$commande->client->last_name ,
                 'start_date' => $commande->start_date,
                 'end_date' => $commande->due_date,
                 'created_at' => $commande->created_at,
                 'updated_at' => $commande->updated_at,
             ];
         });
-    
+
         // Return JSON response
         return response()->json([
             "rows" => $formattedCommandes->all(),
             "total" => $formattedCommandes->count()
         ]);
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
 
     public function dragula($id = '')
@@ -335,13 +337,13 @@ class CommandesController extends Controller
 
 
         $total_commandes = $commandes->count();
-         return view('commandes.board_view', 
+         return view('commandes.board_view',
           compact('commandes', 'products', 'users', 'clients') ,
         [
             'commandesByStatus' => $commandesByStatus,
-            'clients' => $clients, 
+            'clients' => $clients,
             'users' => $users,
-            'total_commandes' => $total_commandes, 
+            'total_commandes' => $total_commandes,
          ]);
     }
 
