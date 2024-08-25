@@ -2,42 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Facture;
-use PDF; // If using the dompdf library for PDF generation
+use App\Models\Entreprise;
+use App\Models\Forme_juridique;
+use App\Models\fournisseur;
+use App\Models\ProdCategory;
+use App\Models\Product;
+use App\Services\DeletionService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+
+
 
 class FactureController extends Controller
 {
-    /**
-     * Show the invoice details.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    protected $user;
+    public function __construct()
     {
-        // Retrieve the facture by ID
-        $facture = Facture::with(['client', 'items'])->findOrFail($id);
+        $this->middleware(function ($request, $next) {
+            // fetch session and use it in entire class with constructor
+            $this->user = getAuthenticatedUser();
+            return $next($request);
+        });
+    }
+    // Method to show all factures
+    public function index()
+    {
+        // Fetch all factures
+        $factures = Facture::all();
 
-        // Load the view to display the facture
-        return view('factures.show', compact('facture'));
+        // Return the view with factures data
+        return view('factures.show', compact('factures'));
     }
 
-    /**
-     * Generate and download the invoice PDF.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function download($id)
+
+    public function create(Request $request)
     {
-        // Retrieve the facture by ID
-        $facture = Facture::with(['client', 'items'])->findOrFail($id);
+        $entreprises = Entreprise::all();
+        $products = Product::all();
+        $fournisseurs = fournisseur::all();
+        $categories = ProdCategory::all();
 
-        // Load the view to generate the PDF
-        $pdf = PDF::loadView('factures.pdf', compact('facture'));
-
-        // Download the PDF file
-        return $pdf->download('facture_' . $facture->id . '.pdf');
+        return view('factures.create_factures', ['entreprises' => $entreprises,'products'=>$products,'fournisseurs'=> $fournisseurs,'categories'=>$categories]);
     }
-}
+
+    public function store(Request $request)
+    {
+        $formFields = $request->validate([
+            'fournisseur_id' => 'required|exists:fournisseurs,id',
+            'montant' => 'required|numeric|min:0',
+            'status_payement' => 'required|in:paid,unpaid',
+            'tva' => 'nullable|numeric|min:0',
+            'date_paiement' => 'nullable|date',
+            'date_limit' => 'nullable|date',
+            'reference' => 'nullable|string|max:255',
+        ]);
+        $formFields['entreprise_id'] = $this->user->entreprise_id;
+
+        $factures = Facture::create($formFields);
+        Session::flash('message', 'Fournisseur created successfully.');
+        // Session::flash('message', 'Product created successfully.');
+        return response()->json(['error' => false, 'id' => $factures->id]);
+    }
+
+}    

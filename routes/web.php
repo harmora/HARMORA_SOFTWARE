@@ -384,8 +384,9 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
 
         //Factures-------------------------------------------------------------
-        Route::get('/facture', [FactureController::class, 'show'])->name('factures.show');
-        Route::get('/factures/{id}/download', [FactureController::class, 'download'])->name('factures.download');
+        Route::get('/facture', [FactureController::class, 'index'])->name('factures.show');
+        Route::get('/factures/create', [FactureController::class, 'create'])->name('factures.create_factures');
+        Route::post('/factures/store', [FactureController::class, 'store'])->name('factures.store');
 
         //Clients-------------------------------------------------------------
 
