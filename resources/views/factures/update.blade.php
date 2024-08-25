@@ -160,27 +160,9 @@ document.addEventListener('DOMContentLoaded', function() {
         removeProductBtn.style.display = 'inline-block';
     });
 
-    // Remove product entry
-    removeProductBtn.addEventListener('click', function() {
-        if (productCount > 0) {
-            productsContainer.removeChild(productsContainer.lastChild);
-            productCount--;
-            if (productCount === 0) {
-                removeProductBtn.style.display = 'none';
-            }
-        }
-    });
 
-    // Show/Hide fields based on payment status
-    statusPayement.addEventListener('change', function() {
-        if (this.value === 'partial') {
-            montantPayéeField.style.display = 'block';
-            montantRestantField.style.display = 'block';
-        } else {
-            montantPayéeField.style.display = 'none';
-            montantRestantField.style.display = 'none';
-        }
-    });
+
+
 });
 </script>
 @endsection
