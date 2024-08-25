@@ -12,7 +12,7 @@
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{url('/fournisseurs')}}"><?= get_label('fournisseurs', 'Suppliers') ?></a>
+                        <a href="{{url('/fournisseurs')}}"><?= get_label('Suppliers', 'Suppliers') ?></a>
                     </li>
                     <li class="breadcrumb-item active">
                         <?= get_label('create', 'Create') ?>

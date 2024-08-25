@@ -51,18 +51,19 @@
                     <thead>
                         <tr>
 
+                            <th data-field="product" data-visible="{{ (in_array('product', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('product', 'product') ?></th>
                             <th data-field="type" data-visible="{{ (in_array('type', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('type', 'Type') ?></th>
                             <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('reference', 'Reference') ?></th>
                             <th data-field="description" data-visible="{{ (in_array('description', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('description', 'Description') }}</th>
                             <th data-field="quantity" data-visible="{{ (in_array('quantity', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('quantity', 'Quantity') }}</th>
-                            <th data-field="batch_number" data-visible="{{ (in_array('batch_number', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('batch_number', 'Batch Number') }}</th>
-                            <th data-field="departure" data-visible="{{ (in_array('departure', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('departure', 'Departure') }}</th>
+                            <th data-field="batch_number" data-visible="{{ (in_array('batch_number', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('batch_number', 'Quantity precedente') }}</th>
+                            {{-- <th data-field="departure" data-visible="{{ (in_array('departure', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('departure', 'Departure') }}</th>
                             <th data-field="arrival" data-visible="{{ (in_array('arrival', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('arrival', 'Arrival') }}</th>
-                            <th data-field="reason" data-visible="{{ (in_array('reason', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('reason', 'Reason') }}</th>
+                            <th data-field="reason" data-visible="{{ (in_array('reason', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('reason', 'Reason') }}</th> --}}
                             <th data-field="movement_date" data-visible="{{ (in_array('movement_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('movement_date', 'Movement Date') }}</th>
-                            <th data-field="delivery_date" data-visible="{{ (in_array('delivery_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('delivery_date', 'Delivery Date') }}</th>
+                            {{-- <th data-field="delivery_date" data-visible="{{ (in_array('delivery_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('delivery_date', 'Delivery Date') }}</th>
                             <th data-field="user" data-visible="{{ (in_array('user', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('user', 'User') }}</th>
-                            <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('actions', 'Actions') }}</th>
+                            <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('actions', 'Actions') }}</th> --}}
                         </tr>
                     </thead>
                 </table>

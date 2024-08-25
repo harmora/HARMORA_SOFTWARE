@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="{{ asset('fullcalendarr/interaction/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    
+
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{asset('assets/js/config.js')}}"></script>
@@ -172,6 +172,10 @@
     <script src="{{ asset('fullcalendarr/timegrid/main.js') }}"></script>
     <script src="{{ asset('fullcalendarr/list/main.js') }}"></script>
     <script src="{{ asset('fullcalendarr/interaction/main.js') }}"></script>
+
+
+
+
     @authBoth
     <script>
         var authUserId = '<?= getAuthenticatedUser()->id ?>';

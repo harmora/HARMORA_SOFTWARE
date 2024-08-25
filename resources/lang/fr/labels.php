@@ -7,13 +7,7 @@
 
 
 
-
-
-
-
-
-
-
+//already added
 'redirect_url' => '/settings/languages',
 'langcode' => 'fr',
 'dashboard' => 'Tableau de bord',
@@ -292,7 +286,7 @@
 'create_contract' => 'Créer un contrat',
 'contract_types' => 'Types de contrats',
 'create_contract_type' => 'Créer un type de contrat',
-'type' => 'Taper',
+'type' => 'type',
 'update_contract_type' => 'Mettre à jour le type de contrat',
 'created_at' => 'Créé à',
 'signed' => 'Signé',
@@ -703,4 +697,49 @@
 'meeting_assignment_sms_will_not_sent' => 'S\'il est désactivé, le SMS d\'affectation à la réunion ne sera pas envoyé',
 'text_json' => 'text/JSON',
 'formdata' => 'FormData',
+
+//added by zakaria
+'Suppliers'=>'Fournisseurs',
+'supplier_information'=> 'Informations de fournisseur',
+'enterprise_information' => "Information d'Entreprise",
+'entreprise' => 'Entreprise',
+'delete_alert'=> 'Etes-vous sûr de vouloir supprimer?',
+'achats' => 'Achats',
+'create_achat' => 'Créer un achat',
+'montant' => 'Montant',
+'facture_bon' => 'Facture/Bond',
+'add_new_supplier' => 'Ajouter un nouveau fournisseur',
+'add_new_product' => 'Ajouter un nouveau produit',
+'materielle_produits' => 'Matériel/Produits',
+'mainetenances_amélioration' => 'Maintenance/Amélioration',
+'salaires_avantages_sociaux' => 'Salaires/Avantages Sociaux',
+'investissements' => 'Investissements',
+'recherche_developpement' => 'Recherche/Développement',
+'select_product' => 'Sélectionner un produit',
+'product' => 'Produit',
+'select_suppliers' => 'Sélectionner un fournisseur',
+'user_acc_crea_email_enabled_inf' => 'Comme l\'état de création du compte par e-mail est actif, veuillez vous assurer que les paramètres d\'e-mail sont configurés et opérationnels.',
+'enter_quantity' => 'Entrez la quantité',
+'enter_price' => 'Entrez le prix',
+'add_another_product' => 'Ajouter un autre produit',
+'remove_last_product' => 'Supprimer le dernier produit',
+'please_enter_montant' => 'Veuillez entrer un montant',
+'tva' => 'TVA',
+'please_enter_tva' => 'Veuillez entrer la TVA',
+'montant_ht' => 'Montant hors taxe',
+'status_payement' => 'État du paiement',
+'montant_payée' => 'Montant payé',
+'please_enter_monntatnt_payée' => 'Veuillez entrer le montant payé',
+'montant_restant' => 'Montant restant',
+'please_enter_montant_restant' => 'Veuillez entrer le montant restant',
+'facture' => 'Facture',
+'please_enter_facture' => 'Veuillez entrer la facture',
+'devis' => 'Devis',
+'please_enter_devis' => 'Veuillez entrer une estimation',
+'date_paiement' => 'Date de paiement',
+'date_limit' => 'Date limite de paiement',
+'reference' => 'Référence',
+'please_enter_reference' => 'Veuillez entrer la référence',
+'please_enter_montant_ht'=> 'Veuillez entrer le montant hors taxe',
+
 ];

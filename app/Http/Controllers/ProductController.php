@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
 use App\Services\DeletionService;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -101,6 +103,63 @@ class ProductController extends Controller
      }
 
 
+
+
+    public function edit($id)
+    {
+        $categories = ProdCategory::all();
+        $product = Product::findOrFail($id);
+        return view('products.edit',['categories'=>$categories,'product'=>$product]);
+    }
+
+
+
+     public function update(Request $request, $id)
+{
+    $formFields = $request->validate([
+        'name' => ['required'],
+        'description' => 'nullable',
+        'price' => ['required', 'numeric'],
+        'stock' => ['required', 'integer'],
+        'stock_defective' => ['nullable', 'integer'],
+        'category_id' => ['required', 'exists:prod_categories,id'],
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    ]);
+
+    $product = Product::findOrFail($id);
+
+    if ($request->hasFile('photo')) {
+        if ($product->photo != 'photos/no-image.jpg' && $product->photo !== null) {
+            Storage::disk('public')->delete($product->photo);
+        }
+
+        $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+    } else {
+        // If no new photo is uploaded, keep the old one
+        $formFields['photo'] = $product->photo;
+    }
+
+    $product->update([
+        'name' => $formFields['name'],
+        'description' => $formFields['description'],
+        'price' => $formFields['price'],
+        'stock' => $formFields['stock'],
+        'stock_defective' => $formFields['stock_defective'],
+        'category_id' => $formFields['category_id'],
+        'photo' => $formFields['photo']
+    ]);
+
+    try {
+        Session::flash('message', 'Product updated successfully.');
+        return response()->json(['error' => false, 'id' => $product->id]);
+    } catch (Throwable $e) {
+        // Catch any throwable, including non-Exception errors
+        return response()->json(['error' => true, 'message' => 'Product couldn\'t be updated, please try again.']);
+    }
+}
+
+
+
     public function list ()
     {
         $search = request('search');
@@ -145,7 +204,7 @@ class ProductController extends Controller
 
             $actions = '';
 
-                $actions .= '<a href="/users/edit/' . $product->id . '" title="' . get_label('update', 'Update') . '">' .
+                $actions .= '<a href="/products/edit/' . $product->id . '" title="' . get_label('update', 'Update') . '">' .
                     '<i class="bx bx-edit mx-1"></i>' .
                     '</a>';
 
@@ -210,94 +269,49 @@ class ProductController extends Controller
 
     public function list_mv(Request $request)
     {
-        // Fake data as a PHP array
-        $data = [
-            [
-                "id" => 1,
-                "type" => "In",
-                "reference" => "REF123",
-                "description" => "Received new stock",
-                "quantity" => 100,
-                "batch_number" => "BN001",
-                "departure" => "Warehouse A",
-                "arrival" => "Warehouse B",
-                "reason" => "Restocking",
-                "movement_date" => "2024-07-01",
-                "delivery_date" => "2024-07-02",
-                "user" => "John Doe"
-            ],
-            [
-                "id" => 2,
-                "type" => "Out",
-                "reference" => "REF124",
-                "description" => "Dispatched to customer",
-                "quantity" => 50,
-                "batch_number" => "BN002",
-                "departure" => "Warehouse B",
-                "arrival" => "Customer Location",
-                "reason" => "Order fulfillment",
-                "movement_date" => "2024-07-03",
-                "delivery_date" => "2024-07-04",
-                "user" => "Jane Smith"
-            ]
-            // Add more fake data as needed
-        ];
 
         // Apply search, sort, and pagination logic
         $search = $request->input('search');
         $sort = $request->input('sort', 'id');
         $order = $request->input('order', 'DESC');
-        $limit = $request->input('limit', 10);
-        $page = $request->input('page', 1);
+
+
+        $query = mouvements_stock::query();
 
         // Filtering based on search term
         if ($search) {
-            $data = array_filter($data, function ($item) use ($search) {
-                return Str::contains($item['reference'], $search) || Str::contains($item['description'], $search);
+            $query->where(function ($query) use ($search) {
+                $query->where('type_mouvement', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('reference', 'like', '%' . $search . '%');
             });
         }
+        $totalmovements = $query->count();
 
-        // Sorting
-        usort($data, function ($a, $b) use ($sort, $order) {
-            if ($order === 'DESC') {
-                return strcmp($b[$sort], $a[$sort]);
-            } else {
-                return strcmp($a[$sort], $b[$sort]);
-            }
-        });
+        $mouvements= $query->select('mouvements_stocks.*')
+            ->leftJoin('products', 'mouvements_stocks.product_id', '=', 'products.id')
+            ->leftJoin('achats', 'mouvements_stocks.achat_id', '=', 'achats.id')
+            ->leftJoin('commandes', 'mouvements_stocks.commande_id', '=', 'commandes.id')
+            ->orderBy($sort, $order)
+            ->paginate(request('limit'));
 
-        // Paginate
-        $total = count($data);
-        $data = array_slice($data, ($page - 1) * $limit, $limit);
-
-        // Format data for the table
-        $formattedData = array_map(function ($item) {
+        $mouvements= $mouvements->through(function ($mouvement) {
             return [
-                'id' => $item['id'],
-                'type' => $item['type'],
-                'reference' => $item['reference'],
-                'description' => $item['description'],
-                'quantity' => $item['quantity'],
-                'batch_number' => $item['batch_number'],
-                'departure' => $item['departure'],
-                'arrival' => $item['arrival'],
-                'reason' => $item['reason'],
-                'movement_date' => $item['movement_date'],
-                'delivery_date' => $item['delivery_date'],
-                'user' => $item['user'],
-                'actions' => '<a href="/movements/edit/' . $item['id'] . '" title="Update">' .
-                             '<i class="bx bx-edit mx-1"></i>' .
-                             '</a>' .
-                             '<button title="Delete" type="button" class="btn delete" data-id="' . $item['id'] . '">' .
-                             '<i class="bx bx-trash text-danger mx-1"></i>' .
-                             '</button>'
-            ];
-        }, $data);
-
+                'id' => $mouvement['id'],
+                'product' => $mouvement->product->name,
+                'type' => $mouvement['type_mouvement'],
+                'reference' => $mouvement['reference'],
+                'description' => $mouvement['description'],
+                'quantity' => $mouvement['quantitéajoutée'],
+                'batch_number' => $mouvement['quantitéprecedente'],
+                'movement_date' => $mouvement['date_mouvement'],
+        ];
+        });
         return response()->json([
-            "rows" => $formattedData,
-            "total" => $total,
+            'rows' => $mouvements->items(),
+            'total' => $totalmovements,
         ]);
+
     }
 
 
@@ -327,6 +341,87 @@ class ProductController extends Controller
     }
 }
 
+            // $profileHtml = "<div class='avatar avatar-md pull-up' title='" . $mouvement->fournisseur->name. " '>
+            //     <a href='/clients/profile/" . $achat->id . "'>
+            //     </a>
+            //     </div>";//when hover the photo display infos as popup
+
+            // $formattedHtml = '<div class="d-flex mt-2">' .
+            //     $profileHtml .
+            //     '<div class="mx-2">' .
+            //     '<h6 class="mb-1">fournisseur: '.$achat->fournisseur->name.
+            //     '</h6>' .
+            //     '<span class="text-muted">entreprise: ' . $achat->entreprise->denomination . '</span>';
+
+            // $formattedHtml .= '</div>' .
+            //     '</div>';
+        // Fake data as a PHP array
+        // $data = [
+        //     [
+        //         "id" => 1,
+        //         "type" => "In",
+        //         "reference" => "REF123",
+        //         "description" => "Received new stock",
+        //         "quantity" => 100,
+        //         "batch_number" => "BN001",
+        //         "departure" => "Warehouse A",
+        //         "arrival" => "Warehouse B",
+        //         "reason" => "Restocking",
+        //         "movement_date" => "2024-07-01",
+        //         "delivery_date" => "2024-07-02",
+        //         "user" => "John Doe"
+        //     ],
+        //     [
+        //         "id" => 2,
+        //         "type" => "Out",
+        //         "reference" => "REF124",
+        //         "description" => "Dispatched to customer",
+        //         "quantity" => 50,
+        //         "batch_number" => "BN002",
+        //         "departure" => "Warehouse B",
+        //         "arrival" => "Customer Location",
+        //         "reason" => "Order fulfillment",
+        //         "movement_date" => "2024-07-03",
+        //         "delivery_date" => "2024-07-04",
+        //         "user" => "Jane Smith"
+        //     ]
+        //     // Add more fake data as needed
+        // ];
 
 
+        // // Sorting
+        // usort($data, function ($a, $b) use ($sort, $order) {
+        //     if ($order === 'DESC') {
+        //         return strcmp($b[$sort], $a[$sort]);
+        //     } else {
+        //         return strcmp($a[$sort], $b[$sort]);
+        //     }
+        // });
 
+        // Paginate
+        // $total = count($data);
+        // $data = array_slice($data, ($page - 1) * $limit, $limit);
+
+        // // Format data for the table
+        // $formattedData = array_map(function ($item) {
+        //     return [
+        //         'id' => $item['id'],
+        //         'type' => $item['type'],
+        //         'reference' => $item['reference'],
+        //         'description' => $item['description'],
+        //         'quantity' => $item['quantity'],
+        //         'batch_number' => $item['batch_number'],
+        //         'departure' => $item['departure'],
+        //         'arrival' => $item['arrival'],
+        //         'reason' => $item['reason'],
+        //         'movement_date' => $item['movement_date'],
+        //         'delivery_date' => $item['delivery_date'],
+        //         'user' => $item['user'],
+        //         'actions' => '<a href="/movements/edit/' . $item['id'] . '" title="Update">' .
+        //                      '<i class="bx bx-edit mx-1"></i>' .
+        //                      '</a>' .
+        //                      '<button title="Delete" type="button" class="btn delete" data-id="' . $item['id'] . '">' .
+        //                      '<i class="bx bx-trash text-danger mx-1"></i>' .
+        //                      '</button>'
+        //     ];
+        // }, $data);

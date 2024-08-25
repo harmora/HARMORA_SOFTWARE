@@ -72,9 +72,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return $meetings;
     }
 
+    public function pack()
+{
+    return $this->belongsTo(Pack::class);
+}
+
+
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(RoleAuth::class);
     }
 
 
@@ -92,6 +98,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query;
     }
 
+
+    public function userRole()
+    {
+        return str($this->role);
+    }
 
 
 

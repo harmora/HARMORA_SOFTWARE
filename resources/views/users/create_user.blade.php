@@ -82,7 +82,18 @@
                         <select class="form-select text-capitalize js-example-basic-multiple" id="role" name="role">
                             <option value=""><?= get_label('please_select', 'Please select') ?></option>
                             @foreach ($roles as $role)
-                            <option value="{{$role->id}}" {{ old('role') == $role->id ? "selected" : "" }}>{{ ucfirst($role->name) }}</option>
+                            <option value="{{$role->id}}" {{ old('role') == $role->id ? "selected" : "" }}>{{ ucfirst($role->rolename) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="paque_id"><?= get_label('paque', 'pack') ?></label>
+                        <select class="form-select" id="paque_id" name="paque_id">
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                            @foreach ($paques as $paque)
+                                <option value="{{ $paque->id }}" {{ old('paque_id') == $paque->id ? "selected" : "" }}>
+                                    {{ ucfirst($paque->name) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -133,8 +144,8 @@
                         </select>
                     </div>
                 </div> 
-                {{-- 
-                <div class="row">
+                
+                {{-- <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ old('denomenation') }}">
@@ -177,36 +188,35 @@
                     <div class="mb-3 col-md-6">
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
-                    </div> --}}
-                    @if(isAdminOrHasAllDataAccess())
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('deactivated_user_login_restricted', 'If Deactivated, the User Won\'t Be Able to Log In to Their Account') ?></small>)</label>
-                        <div class="">
-                            <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
-                                <input type="radio" class="btn-check" id="user_active" name="status" value="1">
-                                <label class="btn btn-outline-primary" for="user_active"><?= get_label('active', 'Active') ?></label>
-                                <input type="radio" class="btn-check" id="user_deactive" name="status" value="0" checked>
-                                <label class="btn btn-outline-primary" for="user_deactive"><?= get_label('deactive', 'Deactive') ?></label>
-                            </div>
+                    </div> 
+                </div> --}}
+                @if(isAdminOrHasAllDataAccess())
+                <div class="mb-3 col-md-6">
+                    <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('deactivated_user_login_restricted', 'If Deactivated, the User Won\'t Be Able to Log In to Their Account') ?></small>)</label>
+                    <div class="">
+                        <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" id="user_active" name="status" value="1">
+                            <label class="btn btn-outline-primary" for="user_active"><?= get_label('active', 'Active') ?></label>
+                            <input type="radio" class="btn-check" id="user_deactive" name="status" value="0" checked>
+                            <label class="btn btn-outline-primary" for="user_deactive"><?= get_label('deactive', 'Deactive') ?></label>
                         </div>
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="">
-                            <?= get_label('require_email_verification', 'Require email verification?') ?>
-                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('user_require_email_verification_info', 'If Yes is selected, user will receive a verification link via email. Please ensure that email settings are configured and operational.') ?>"></i>
-                        </label>
-                        <div class="">
-                            <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
-                                <input type="radio" class="btn-check" id="require_ev_yes" name="require_ev" value="1" checked>
-                                <label class="btn btn-outline-primary" for="require_ev_yes"><?= get_label('yes', 'Yes') ?></label>
-                                <input type="radio" class="btn-check" id="require_ev_no" name="require_ev" value="0">
-                                <label class="btn btn-outline-primary" for="require_ev_no"><?= get_label('no', 'No') ?></label>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                 </div>
-                    
+                <div class="mb-3 col-md-6">
+                    <label class="form-label" for="">
+                        <?= get_label('require_email_verification', 'Require email verification?') ?>
+                        <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('user_require_email_verification_info', 'If Yes is selected, user will receive a verification link via email. Please ensure that email settings are configured and operational.') ?>"></i>
+                    </label>
+                    <div class="">
+                        <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" id="require_ev_yes" name="require_ev" value="1" checked>
+                            <label class="btn btn-outline-primary" for="require_ev_yes"><?= get_label('yes', 'Yes') ?></label>
+                            <input type="radio" class="btn-check" id="require_ev_no" name="require_ev" value="0">
+                            <label class="btn btn-outline-primary" for="require_ev_no"><?= get_label('no', 'No') ?></label>
+                        </div>
+                    </div>
+                </div>
+                @endif                   
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
                     <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>

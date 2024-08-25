@@ -26,7 +26,11 @@ $default_language = $authenticatedUser->lang;
 
                 <li class="nav-item navbar-dropdown dropdown ml-1">
                     <div class="btn-group dropend px-1">
-                    <button id="darkModeToggle">Dark Mode</button>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeToggle" name="dark_mode">
+                            <label class="form-check-label" for="darkModeToggle"><?= get_label('dark_mode', 'Dark mode') ?></label>
+                            <i class='bx bx-info-circle text-primary' data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle dark mode for better visibility in low-light environments."></i>
+                          </div>
                     </div>
                 </li>
                 <script src="{{ asset('assets/js/custom.js') }}"></script>

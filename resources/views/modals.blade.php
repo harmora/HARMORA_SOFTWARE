@@ -71,7 +71,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     </div>
 
                     <div class="alert alert-primary alert-dismissible" role="alert">
-                        {{ get_label('hello_world', 'Reservations added here will appear automatically in the calendar') }}
+                        {{ get_label('Reservations added here will appear automatically in the calendar', 'Reservations added here will appear automatically in the calendar') }}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1714,6 +1714,18 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <input type="text" id="commande_end_date" name="due_date" class="form-control" value="{{ old('due_date') }}">
                         </div>
                     </div>
+
+                    <!-- <div class="mb-3">
+                        <label class="form-label" for="product_ids">Select Products</label>
+                        <div class="input-group">
+                            <select class="form-control" name="product_ids[]" multiple>
+                                <option value=""></option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div> -->
 
 
                     <div class="mb-3">
