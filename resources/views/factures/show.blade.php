@@ -21,21 +21,67 @@ $visibleColumns = getUserPreferences('Factures');
             </nav>
         </div>
         <div>
-            <a href="{{url('/factures/create')}}"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_facture', 'Create facture') ?>"><i class='bx bx-plus'></i></button></a>
+            <a href="{{url('/factures/create')}}">
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_facture', 'Create facture') ?>">
+                    <i class='bx bx-plus'></i>
+                </button>
+            </a>
         </div>
     </div>
 
     <div class="card">
-
+        <div class="card-header">
+            <h5><?= get_label('factures_list', 'Factures List') ?></h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><?= get_label('invoice_number', 'Invoice Number') ?></th>
+                        <th><?= get_label('company_name', 'Company Name') ?></th>
+                        <th><?= get_label('client_name', 'Client Name') ?></th>
+                        <th><?= get_label('date', 'Date') ?></th>
+                        <th><?= get_label('total_amount', 'Total Amount') ?></th>
+                        <th><?= get_label('status_payement', 'Payment Status') ?></th>
+                        <th><?= get_label('actions', 'Actions') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($factures as $facture)
+                        <tr>
+                            <td>{{ $facture->invoice_number }}</td>
+                            <td>{{ $facture->company_name }}</td>
+                            <td>{{ $facture->client_name }}</td>
+                            <td>{{ $facture->date }}</td>
+                            <td>{{ number_format($facture->total_amount, 2) }}</td>
+                            <td>{{ $facture->status_payement }}</td>
+                            <td>
+                                <a href="{{ url('/factures/' . $facture->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('view', 'View') ?>">
+                                    <i class='bx bx-eye'></i>
+                                </a>
+                                <a href="{{ url('/factures/' . $facture->id . '/edit') }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('edit', 'Edit') ?>">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                                <form action="{{ url('/factures/' . $facture->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('delete', 'Delete') ?>">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </div>
+
 <script>
     var label_update = '<?= get_label('update', 'Update') ?>';
     var label_delete = '<?= get_label('delete', 'Delete') ?>';
     var label_projects = '<?= get_label('projects', 'Projects') ?>';
     var label_tasks = '<?= get_label('tasks', 'Tasks') ?>';
-</script>
-{{-- <script src="{{asset('assets/js/pages/entreprises.js')}}"> --}}
 </script>
 @endsection
