@@ -46,15 +46,10 @@ class Commande extends Model implements HasMedia
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'commande_products');
-                    //->withPivot('quantity', 'price')
-                    //->withTimestamps();
+        return $this->belongsToMany(Product::class, 'commande_products')
+                    ->withPivot('quantity', 'price');
     }
 
-    public function priority()
-    {
-        return $this->belongsTo(Priority::class);
-    }
 
     public function getresult()
     {

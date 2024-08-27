@@ -30,14 +30,22 @@
                 <input type="hidden" name="redirect_url" value="/factures">
                 @csrf
                 <div class="row">
+
                     <div class="mb-3 col-md-6">
-                        <label for="company_name" class="form-label"><?= get_label('company_name', 'Company Name') ?><span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="company_name" name="company_name" placeholder="<?= get_label('please_enter_company_name', 'Please enter company name') ?>" value="{{ old('company_name') }}" required>
+                        <label for="company_name" class="form-label">Company Name<span class="asterisk">*</span></label>
+                        <input class="form-control" type="text" id="company_name" name="company_name" value="{{ $company_name }}" readonly>
                     </div>
-                    <div class="mb-3 col-md-6">
+
+                    <!-- <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?><span class="asterisk">*</span></label>
                         <textarea class="form-control" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" required>{{ old('address') }}</textarea>
+                    </div> -->
+
+                    <div class="mb-3 col-md-6">
+                        <label for="address" class="form-label"><?= get_label('address', 'Address') ?><span class="asterisk">*</span></label>
+                        <input class="form-control" type="text" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address', $address) }}" required>
                     </div>
+
                     <div class="mb-3 col-md-6">
                         <label for="contact_details" class="form-label"><?= get_label('contact_details', 'Contact Details') ?><span class="asterisk">*</span></label>
                         <textarea class="form-control" id="contact_details" name="contact_details" placeholder="<?= get_label('please_enter_contact_details', 'Please enter contact details') ?>" required>{{ old('contact_details') }}</textarea>

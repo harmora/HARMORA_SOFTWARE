@@ -31,9 +31,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            
-                            
-                              
                             <div class="row">
                                 <div class="col-md-6 mt-3 mb-3">
                                     <label class="form-label" for="start_date"><?= get_label('users', 'Users') ?></label>
@@ -99,18 +96,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="prioritySelect" class="form-label"><?= get_label('priority', 'Priority') ?></label>
-                                    <div class="input-group">
-                                        <select class="form-select form-select-sm select-bg-label-{{$commande->priority?$commande->priority->color:'secondary'}}" id="prioritySelect" data-id="{{ $commande->id }}" data-original-priority-id="{{ $commande->priority ? $commande->priority->id : '' }}" data-original-color-class="select-bg-label-{{$commande->priority?$commande->priority->color:'secondary'}}" data-type="commande">
-                                            @foreach($priorities as $priority)
-                                            <option value="{{ $priority->id }}" class="badge bg-label-{{ $priority->color }}" {{ $commande->priority && $commande->priority->id == $priority->id ? 'selected' : '' }}>
-                                                {{ $priority->title }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     </div>
