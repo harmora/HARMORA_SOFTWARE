@@ -36,10 +36,6 @@
                         <input class="form-control" type="text" id="company_name" name="company_name" value="{{ $company_name }}" readonly>
                     </div>
 
-                    <!-- <div class="mb-3 col-md-6">
-                        <label for="address" class="form-label"><?= get_label('address', 'Address') ?><span class="asterisk">*</span></label>
-                        <textarea class="form-control" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" required>{{ old('address') }}</textarea>
-                    </div> -->
 
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?><span class="asterisk">*</span></label>

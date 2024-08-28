@@ -78,119 +78,7 @@ class CommandesController extends Controller
  * @param  \Illuminate\Http\Request  $request
  * @return \Illuminate\Http\Response
  */
-    // public function store(Request $request)
-    // {
-    //     //dd(request()->all());
-    //     // Validate the request
-    //     $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'status' => 'required|string',
-    //         // 'product_id' => 'nullable|integer|exists:products,id', // Validate product IDs
-    //         'products' => 'required|array|min:1',
-    //         'products.*.product_id' => 'required|exists:products,id',
-    //         'products.*.quantity' => 'required|integer|min:1',
-    //         'products.*.price' => 'required|numeric|min:0',
-    //         'user_id' => 'nullable|integer|exists:users,id',
-    //         'start_date' => 'nullable|date',
-    //         'due_date' => 'required|date',
-    //         'description' => 'nullable|string',
-    //         'note' => 'nullable|string',
-    //         'total_amount'=>'nullable|integer',
-    //         'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
-    //     ]);
 
-    //     // Create a new commande
-    //     $commande = Commande::create([
-
-    //         'client_id' => $request->client_id, // Ensure client_id is provided
-    //         'title' => $request->title,
-    //         'description' => $request->description,
-    //         // 'start_date' => $request->start_date,
-    //         // 'due_date' => $request->due_date,
-    //         'start_date' => now(),
-    //          'due_date' => now(),
-    //         'total_amount' => 0, // Placeholder for total amount logic
-    //         'status' => $request->status,
-    //         'created_at' => now(),
-    //         'updated_at' => now(),
-    //         'user_id' => $request->user_id,
-    //         'product_id' => $request->product_id
-    //     ]);
-
-    //     foreach ($request->products as $productData) {
-    //         $commande->products()->attach($productData['product_id'], [
-    //             'quantity' => $productData['quantity'],
-    //             'price' => $productData['price'],
-    //         ]);
-    
-    //         // Update product stock or any other logic as necessary
-    //         $product = Product::find($productData['product_id']);
-    //         $product->stock -= $productData['quantity'];  // Adjust stock
-    //         $product->save();
-    //     }
-
-    //     return response()->json(['error' => false,'message' => 'Commande created successfully.']);
-    // }
-
-
-
-
-    // public function store(Request $request)
-    // {
-    //     // Validate the request
-    //     $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'status' => 'required|string',
-    //         'products' => 'required|array|min:1',
-    //         'products.*.product_id' => 'required|exists:products,id',
-    //         'products.*.quantity' => 'required|integer|min:1',
-    //         'products.*.price' => 'required|numeric|min:0',
-    //         'user_id' => 'nullable|integer|exists:users,id',
-    //         'start_date' => 'nullable|date',
-    //         'due_date' => 'required|date',
-    //         'description' => 'nullable|string',
-    //         'note' => 'nullable|string',
-    //         'total_amount' => 'nullable|integer',
-    //         'client_id' => 'nullable|integer|exists:clients,id',
-    //     ]);
-    
-    //     // Create a new commande
-    //     $commande = Commande::create([
-    //         'client_id' => $request->client_id,
-    //         'title' => $request->title,
-    //         'description' => $request->description,
-    //         'start_date' => now(),
-    //         'due_date' => $request->due_date,
-    //         'total_amount' => 0,
-    //         'status' => $request->status,
-    //         'created_at' => now(),
-    //         'updated_at' => now(),
-    //         'user_id' => $request->user_id,
-    //     ]);
-    
-    //     // Attach products to the commande
-    //     $totalAmount = 0;
-    //     foreach ($request->products as $productData) {
-    //         $commande->products()->attach($productData['product_id'], [
-    //             'quantity' => $productData['quantity'],
-    //             'price' => $productData['price'],
-    //         ]);
-    
-    //         // Update product stock
-    //         $product = Product::find($productData['product_id']);
-    //         $product->stock -= $productData['quantity'];
-    //         $product->save();
-    
-    //         // Calculate the total amount for the commande
-    //         $totalAmount += $productData['quantity'] * $productData['price'];
-    //     }
-    
-    //     // Update the total amount in the commande
-    //     $commande->total_amount = $totalAmount;
-    //     $commande->save();
-    
-    //     return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
-    // }
     
     public function store(Request $request)
     {
@@ -283,96 +171,179 @@ class CommandesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    // public function update(Request $request)
+    // {
+    //     $formFields = $request->validate([
+    //         'id' => 'required|exists:commandes,id',
+    //         'title' => ['required'],
+    //         'status_id' => ['required'],
+    //         'start_date' => ['required', 'before_or_equal:due_date'],
+    //         'due_date' => ['required'],
+    //         'description' => ['nullable']
+    //     ], [
+    //         'status_id.required' => 'The status field is required.'
+    //     ]);
+
+    //     $status = Status::findOrFail($request->input('status_id'));
+    //     $id = $request->input('id');
+    //     $commande = Commande::findOrFail($id);
+    //     $currentStatusId = $commande->status_id;
+
+    //     // Check if the status has changed
+    //     if ($currentStatusId != $request->input('status_id')) {
+    //         $status = Status::findOrFail($request->input('status_id'));
+    //         if (!canSetStatus($status)) {
+    //             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+    //         }
+    //     }
+    //     $start_date = $request->input('start_date');
+    //     $due_date = $request->input('due_date');
+    //     $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
+    //     $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
+
+    //     $userIds = $request->input('user_id', []);
+
+    //     $commande = Commande::findOrFail($id);
+    //     $commande->update($formFields);
+
+    //     // Get the current users associated with the commande
+    //     $currentUsers = $commande->users->pluck('id')->toArray();
+    //     $currentClients = $commande->product->clients->pluck('id')->toArray();
+
+    //     // Sync the users for the commande
+    //     $commande->users()->sync($userIds);
+
+    //     // Get the new users associated with the commande
+    //     $newUsers = array_diff($userIds, $currentUsers);
+
+    //     // Prepare notification data for new users
+    //     $notification_data = [
+    //         'type' => 'commande',
+    //         'type_id' => $id,
+    //         'type_title' => $commande->title,
+    //         'access_url' => 'commandes/information/' . $commande->id,
+    //         'action' => 'assigned'
+    //     ];
+
+    //     // Notify only the new users
+    //     $recipients = array_map(function ($userId) {
+    //         return 'u_' . $userId;
+    //     }, $newUsers);
+
+    //     // Process notifications for new users
+    //     processNotifications($notification_data, $recipients);
+
+    //     if ($currentStatusId != $request->input('status_id')) {
+    //         $currentStatus = Status::findOrFail($currentStatusId);
+    //         $newStatus = Status::findOrFail($request->input('status_id'));
+
+    //         $notification_data = [
+    //             'type' => 'commande_status_updation',
+    //             'type_id' => $id,
+    //             'type_title' => $commande->title,
+    //             'updater_first_name' => $this->user->first_name,
+    //             'updater_last_name' => $this->user->last_name,
+    //             'old_status' => $currentStatus->title,
+    //             'new_status' => $newStatus->title,
+    //             'access_url' => 'commandes/information/' . $id,
+    //             'action' => 'status_updated'
+    //         ];
+
+    //         $currentRecipients = array_merge(
+    //             array_map(function ($userId) {
+    //                 return 'u_' . $userId;
+    //             }, $currentUsers),
+    //             array_map(function ($clientId) {
+    //                 return 'c_' . $clientId;
+    //             }, $currentClients)
+    //         );
+    //         processNotifications($notification_data, $currentRecipients);
+    //     }
+    //     return response()->json(['error' => false, 'id' => $id, 'parent_id' => $commande->product->id, 'parent_type' => 'product',  'message' => 'Commande updated successfully.']);
+    // }
+
+    public function edit($id)
     {
-        $formFields = $request->validate([
-            'id' => 'required|exists:commandes,id',
-            'title' => ['required'],
-            'status_id' => ['required'],
-            'start_date' => ['required', 'before_or_equal:due_date'],
-            'due_date' => ['required'],
-            'description' => ['nullable']
-        ], [
-            'status_id.required' => 'The status field is required.'
+        $commande = Commande::findOrFail($id);
+        $clients = Client::all(); // Retrieve all clients
+        $users = User::all(); // Retrieve all clients
+
+        return view('commandes.edit', compact('commande', 'clients', 'users'));
+    }
+    
+//     public function update(Request $request, $id)
+// {
+//     $request->validate([
+//         'title' => 'required|string|max:255',
+//         'status' => 'required|string',
+//         // Add other fields validations as needed
+//     ]);
+
+//     $commande = Commande::findOrFail($id);
+//     $commande->update($request->all());
+
+//     return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
+// }
+
+public function update(Request $request, $id)
+{
+    // Validate the request
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'status' => 'required|string',
+        'products' => 'required|array|min:1',
+        'products.*.product_id' => 'required|exists:products,id',
+        'products.*.quantity' => 'required|integer|min:1',
+        'products.*.price' => 'required|numeric|min:0',
+        'user_id' => 'required|integer|exists:users,id',
+        'start_date' => 'nullable|date',
+        'due_date' => 'required|date',
+        'description' => 'nullable|string',
+        'note' => 'nullable|string',
+        'total_amount' => 'nullable|integer',
+        'client_id' => 'required|integer|exists:clients,id',
+    ]);
+
+    // Find the commande by ID
+    $commande = Commande::findOrFail($id);
+
+    // Update the commande fields
+    $commande->update([
+        'client_id' => $request->client_id,
+        'title' => $request->title,
+        'description' => $request->description,
+        'start_date' => $request->start_date,
+        'due_date' => $request->due_date,
+        'status' => $request->status,
+        'user_id' => $request->user_id,
+    ]);
+
+    // Detach old products
+    $commande->products()->detach();
+
+    // Attach new products and update stock
+    $totalAmount = 0;
+    foreach ($request->products as $productData) {
+        $commande->products()->attach($productData['product_id'], [
+            'quantity' => $productData['quantity'],
+            'price' => $productData['price'],
         ]);
 
-        $status = Status::findOrFail($request->input('status_id'));
-        $id = $request->input('id');
-        $commande = Commande::findOrFail($id);
-        $currentStatusId = $commande->status_id;
+        // Update product stock
+        $product = Product::find($productData['product_id']);
+        $product->stock -= $productData['quantity'];
+        $product->save();
 
-        // Check if the status has changed
-        if ($currentStatusId != $request->input('status_id')) {
-            $status = Status::findOrFail($request->input('status_id'));
-            if (!canSetStatus($status)) {
-                return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-            }
-        }
-        $start_date = $request->input('start_date');
-        $due_date = $request->input('due_date');
-        $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
-        $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
-
-        $userIds = $request->input('user_id', []);
-
-        $commande = Commande::findOrFail($id);
-        $commande->update($formFields);
-
-        // Get the current users associated with the commande
-        $currentUsers = $commande->users->pluck('id')->toArray();
-        $currentClients = $commande->product->clients->pluck('id')->toArray();
-
-        // Sync the users for the commande
-        $commande->users()->sync($userIds);
-
-        // Get the new users associated with the commande
-        $newUsers = array_diff($userIds, $currentUsers);
-
-        // Prepare notification data for new users
-        $notification_data = [
-            'type' => 'commande',
-            'type_id' => $id,
-            'type_title' => $commande->title,
-            'access_url' => 'commandes/information/' . $commande->id,
-            'action' => 'assigned'
-        ];
-
-        // Notify only the new users
-        $recipients = array_map(function ($userId) {
-            return 'u_' . $userId;
-        }, $newUsers);
-
-        // Process notifications for new users
-        processNotifications($notification_data, $recipients);
-
-        if ($currentStatusId != $request->input('status_id')) {
-            $currentStatus = Status::findOrFail($currentStatusId);
-            $newStatus = Status::findOrFail($request->input('status_id'));
-
-            $notification_data = [
-                'type' => 'commande_status_updation',
-                'type_id' => $id,
-                'type_title' => $commande->title,
-                'updater_first_name' => $this->user->first_name,
-                'updater_last_name' => $this->user->last_name,
-                'old_status' => $currentStatus->title,
-                'new_status' => $newStatus->title,
-                'access_url' => 'commandes/information/' . $id,
-                'action' => 'status_updated'
-            ];
-
-            $currentRecipients = array_merge(
-                array_map(function ($userId) {
-                    return 'u_' . $userId;
-                }, $currentUsers),
-                array_map(function ($clientId) {
-                    return 'c_' . $clientId;
-                }, $currentClients)
-            );
-            processNotifications($notification_data, $currentRecipients);
-        }
-        return response()->json(['error' => false, 'id' => $id, 'parent_id' => $commande->product->id, 'parent_type' => 'product',  'message' => 'Commande updated successfully.']);
+        // Calculate the total amount for the commande
+        $totalAmount += $productData['quantity'] * $productData['price'];
     }
+
+    // Update the total amount in the commande
+    $commande->total_amount = $totalAmount;
+    $commande->save();
+
+    return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
+}
 
 
     /**
@@ -417,35 +388,6 @@ class CommandesController extends Controller
     }
 
 
-    // public function list()
-    // {
-    //     // Fetch all commandes with their associated user and client data
-    //     $commandes = Commande::with(['user', 'client'])->get();
-
-    //     // Format commandes data
-    //     $formattedCommandes = $commandes->map(function ($commande) {
-    //         return [
-    //             'id' => $commande->id,
-    //             'title' => $commande->title,
-    //             'users' =>  $commande->user->first_name ." ".$commande->user->last_name ,
-    //             'clients' => $commande->client->first_name ." ".$commande->client->last_name ,
-    //             'start_date' => $commande->start_date,
-    //             'end_date' => $commande->due_date,
-    //             'created_at' => $commande->created_at,
-    //             'updated_at' => $commande->updated_at,
-    //             'status' => $commande->status,
-    //             // 'product'=> $commande-> $product->name,
-    //         ];
-    //     });
-
-    //     // Return JSON response
-    //     return response()->json([
-    //         "rows" => $formattedCommandes->all(),
-    //         "total" => $formattedCommandes->count()
-    //     ]);
-    // }
-
-
 
     public function list()
     {
@@ -454,6 +396,30 @@ class CommandesController extends Controller
     
         // Format commandes data
         $formattedCommandes = $commandes->map(function ($commande) {
+
+            $editUrl = route('commandes.edit', $commande->id);
+        
+            $actions = '';
+    
+            // Edit link
+            $actions .= '<a href="' . $editUrl . '" class="edit-commande">' .
+                '<li class="dropdown-item">' .
+                '<i class="menu-icon tf-icons bx bx-edit text-primary"></i> ' .
+                get_label('update', 'Update') .
+                '</li>' .
+                '</a>';
+
+    
+            $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes" data-table="commande_table">' .
+                '<i class="bx bx-trash text-danger mx-1"></i>' .
+                '</button>';
+    
+            $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
+                '<i class="bx bx-info-circle mx-3"></i>' .
+                '</a>';
+    
+            $actions = $actions ?: '-';
+
             return [
                 'id' => $commande->id,
                 'title' => $commande->title,
@@ -464,6 +430,7 @@ class CommandesController extends Controller
                 'created_at' => $commande->created_at,
                 'updated_at' => $commande->updated_at,
                 'status' => $commande->status,
+                'actions' => $actions,
                 'products' => $commande->products->map(function ($product) {
                     return [
                         // 'product_id' => $product->id,
@@ -471,6 +438,7 @@ class CommandesController extends Controller
                         'quantity' => $product->pivot->quantity,
                         'price' => $product->pivot->price,
                     ];
+
                 }),
             ];
         });
@@ -511,100 +479,62 @@ class CommandesController extends Controller
          ]);
     }
 
-    // public function updateStatus($id, $newStatus)
-    // {
-    //     $status = Status::findOrFail($newStatus);
-    //     if (canSetStatus($status)) {
-    //         $commande = Commande::findOrFail($id);
-    //         $current_status = $commande->status->title;
-    //         $commande->status_id = $newStatus;
-    //         if ($commande->save()) {
-    //             $commande->refresh();
-    //             $new_status = $commande->status->title;
-
-    //             $notification_data = [
-    //                 'type' => 'commande_status_updation',
-    //                 'type_id' => $id,
-    //                 'type_title' => $commande->title,
-    //                 'updater_first_name' => $this->user->first_name,
-    //                 'updater_last_name' => $this->user->last_name,
-    //                 'old_status' => $current_status,
-    //                 'new_status' => $new_status,
-    //                 'access_url' => 'commandes/information/' . $id,
-    //                 'action' => 'status_updated'
-    //             ];
-    //             $userIds = $commande->users->pluck('id')->toArray();
-    //             $clientIds = $commande->product->clients->pluck('id')->toArray();
-    //             $recipients = array_merge(
-    //                 array_map(function ($userId) {
-    //                     return 'u_' . $userId;
-    //                 }, $userIds),
-    //                 array_map(function ($clientId) {
-    //                     return 'c_' . $clientId;
-    //                 }, $clientIds)
-    //             );
-    //             processNotifications($notification_data, $recipients);
-
-    //             return response()->json(['error' => false, 'message' => 'Commande status updated successfully.', 'id' => $id, 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $current_status . ' to ' . $new_status]);
-    //         } else {
-    //             return response()->json(['error' => true, 'message' => 'Commande status couldn\'t updated.']);
-    //         }
-    //     } else {
-    //         return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-    //     }
-    // }
-    // //For status change from dropdown
-    // public function update_status(Request $request)
-    // {
-    //     $request->validate([
-    //         'id' => ['required'],
-    //         'statusId' => ['required']
-
-    //     ]);
-    //     $id = $request->id;
-    //     $statusId = $request->statusId;
-    //     $status = Status::findOrFail($statusId);
-    //     if (canSetStatus($status)) {
-    //         $commande = Commande::findOrFail($id);
-    //         $currentStatus = $commande->status->title;
-    //         $commande->status_id = $statusId;
-    //         $commande->note = $request->note;
-    //         if ($commande->save()) {
-    //             $commande = $commande->fresh();
-    //             $newStatus = $commande->status->title;
-
-    //             $notification_data = [
-    //                 'type' => 'commande_status_updation',
-    //                 'type_id' => $id,
-    //                 'type_title' => $commande->title,
-    //                 'updater_first_name' => $this->user->first_name,
-    //                 'updater_last_name' => $this->user->last_name,
-    //                 'old_status' => $currentStatus,
-    //                 'new_status' => $newStatus,
-    //                 'access_url' => 'commandes/information/' . $id,
-    //                 'action' => 'status_updated'
-    //             ];
-    //             $userIds = $commande->users->pluck('id')->toArray();
-    //             $clientIds = $commande->product->clients->pluck('id')->toArray();
-    //             $recipients = array_merge(
-    //                 array_map(function ($userId) {
-    //                     return 'u_' . $userId;
-    //                 }, $userIds),
-    //                 array_map(function ($clientId) {
-    //                     return 'c_' . $clientId;
-    //                 }, $clientIds)
-    //             );
-    //             processNotifications($notification_data, $recipients);
+  
 
 
-    //             return response()->json(['error' => false, 'message' => 'Status updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $currentStatus . ' to ' . $newStatus]);
-    //         } else {
-    //             return response()->json(['error' => true, 'message' => 'Status couldn\'t updated.']);
-    //         }
-    //     } else {
-    //         return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-    //     }
-    // }
+
+    //For status change from dropdown
+    public function update_status(Request $request)
+    {
+        $request->validate([
+            'id' => ['required'],
+            'statusId' => ['required']
+
+        ]);
+        $id = $request->id;
+        $statusId = $request->statusId;
+        $status = Status::findOrFail($statusId);
+        if (canSetStatus($status)) {
+            $commande = Commande::findOrFail($id);
+            $currentStatus = $commande->status->title;
+            $commande->status_id = $statusId;
+            $commande->note = $request->note;
+            if ($commande->save()) {
+                $commande = $commande->fresh();
+                $newStatus = $commande->status->title;
+
+                $notification_data = [
+                    'type' => 'commande_status_updation',
+                    'type_id' => $id,
+                    'type_title' => $commande->title,
+                    'updater_first_name' => $this->user->first_name,
+                    'updater_last_name' => $this->user->last_name,
+                    'old_status' => $currentStatus,
+                    'new_status' => $newStatus,
+                    'access_url' => 'commandes/information/' . $id,
+                    'action' => 'status_updated'
+                ];
+                $userIds = $commande->users->pluck('id')->toArray();
+                $clientIds = $commande->product->clients->pluck('id')->toArray();
+                $recipients = array_merge(
+                    array_map(function ($userId) {
+                        return 'u_' . $userId;
+                    }, $userIds),
+                    array_map(function ($clientId) {
+                        return 'c_' . $clientId;
+                    }, $clientIds)
+                );
+                processNotifications($notification_data, $recipients);
+
+
+                return response()->json(['error' => false, 'message' => 'Status updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $currentStatus . ' to ' . $newStatus]);
+            } else {
+                return response()->json(['error' => true, 'message' => 'Status couldn\'t updated.']);
+            }
+        } else {
+            return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+        }
+    }
     public function updateStatus($id, $status)
     {
         $commande = Commande::findOrFail($id);
@@ -615,23 +545,7 @@ class CommandesController extends Controller
     }
 
 
-    public function duplicate($id)
-    {
-        // Define the related tables for this meeting
-        $relatedTables = ['users']; // Include related tables as needed
 
-        // Use the general duplicateRecord function
-        $title = (request()->has('title') && !empty(trim(request()->title))) ? request()->title : '';
-        $duplicate = duplicateRecord(Commande::class, $id, $relatedTables, $title);
-
-        if (!$duplicate) {
-            return response()->json(['error' => true, 'message' => 'Commande duplication failed.']);
-        }
-        if (request()->has('reload') && request()->input('reload') === 'true') {
-            Session::flash('message', 'Commande duplicated successfully.');
-        }
-        return response()->json(['error' => false, 'message' => 'Commande duplicated successfully.', 'id' => $id, 'parent_id' => $duplicate->product->id, 'parent_type' => 'product']);
-    }
 
     public function upload_media(Request $request)
     {

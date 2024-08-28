@@ -13,8 +13,8 @@ $user = getAuthenticatedUser();
                 </a>
             </h6>
             <div class="d-flex align-items-center">
-                @if ($user->can('edit_commandes') || $user->can('delete_commandes'))
-                <div class="input-group">
+                <!-- @if ($user->can('edit_commandes') || $user->can('delete_commandes')) -->
+                <!-- <div class="input-group">
                     <a href="javascript:void(0);" class="mx-2" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class='bx bx-cog'></i>
                     </a>
@@ -35,7 +35,31 @@ $user = getAuthenticatedUser();
                         @endif
                     </ul>
                 </div>
-                @endif
+                @endif -->
+
+
+
+                <div class="input-group">
+                    <a href="javascript:void(0);" class="mx-2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class='bx bx-cog'></i>
+                    </a>
+                    <ul class="dropdown-menu">
+
+                        <a href="{{ route('commandes.edit', $commande->id) }}" class="edit-commande">
+                            <li class="dropdown-item">
+                                <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
+                            </li>
+                        </a>
+
+
+                        <a href="javascript:void(0);" class="delete" data-reload="true" data-type="commandes" data-id="{{ $commande->id }}">
+                            <li class="dropdown-item">
+                                <i class='menu-icon tf-icons bx bx-trash text-danger'></i> <?= get_label('delete', 'Delete') ?>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
                 <a href="javascript:void(0);" class="quick-view" data-id="{{ $commande->id }}" data-type="commande">
                     <i class='bx bx-info-circle text-info' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Quick View"></i>
                 </a>

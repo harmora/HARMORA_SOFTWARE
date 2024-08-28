@@ -146,14 +146,6 @@ public function update(Request $request, $id)
     return redirect()->route('factures.show');
 }
 
-// public function destroy($id)
-// {
-//     $facture = Facture::find($id);
-//     $response = DeletionService::delete(Facture::class, $id, 'facture'); 
-
-//     return $response;
-// }
-
 
 public function destroy($id)
 {

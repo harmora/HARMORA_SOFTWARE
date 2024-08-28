@@ -231,16 +231,21 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
         Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
         Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
-        Route::post('/commandes/update', [CommandesController::class, 'update']);
+        // Route::post('/commandes/update', [CommandesController::class, 'update']);
         Route::post('/commandes/upload-media', [CommandesController::class, 'upload_media']);
         Route::get('/commandes/get-media/{id}', [CommandesController::class, 'get_media']);
-        Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
-        Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
+        // Route::delete('/commandes/delete-media/{id}', [CommandesController::class, 'delete_media']);
+        // Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
         Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
         Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
         Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
         Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
+        // Route::get('/commandes/{id}/edit', [CommandeController::class, 'edit']);
+        Route::get('/commandes/{id}/edit', [CommandesController::class, 'edit'])->name('commandes.edit');
+        Route::delete('/commandes/{id}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
+        Route::put('/commandes/{id}', [CommandesController::class, 'update'])->name('commandes.update');
 
+        
 
 
         //Todos-------------------------------------------------------------
