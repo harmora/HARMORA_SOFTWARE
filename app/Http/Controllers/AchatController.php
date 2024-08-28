@@ -65,7 +65,7 @@ class AchatController extends Controller
             $formFields['montant_ht'] = $formFields['montant']/($formFields['tva']/100 +1);
         }
         // Additional validation based on type_achat
-        if ($formFields['type_achat'] == 'materielle/produits') {
+        if ($formFields['type_achat'] == 'Matériel/Produits') {
             $request->validate([
                 'fournisseur_id' => 'required|exists:fournisseurs,id',
                 'products' => 'nullable|array|min:1',
@@ -113,7 +113,7 @@ class AchatController extends Controller
         // Create Achat instance
         $achat = Achat::create($formFields); 
 
-        if ($achat && $formFields['type_achat'] == 'materielle/produits') {
+        if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
             $productData1=[];
             foreach ($request->products as $productd) {
                 if (!empty($productd['product_id'])) {
@@ -208,7 +208,7 @@ public function update(Request $request, $id)
     }
 
     // Additional validation based on type_achat
-    if ($formFields['type_achat'] == 'materielle/produits') {
+    if ($formFields['type_achat'] == 'Matériel/Produits') {
         $request->validate([
             'products' => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
@@ -247,7 +247,7 @@ public function update(Request $request, $id)
     // Update Achat instance
     $achat->update($formFields);
 
-    if ($achat && $formFields['type_achat'] == 'materielle/produits') {
+    if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
         // Remove old achat_product entries
         $achat->products()->detach();
 
@@ -285,7 +285,7 @@ public function update(Request $request, $id)
     {
         $achat = Achat::find($id);
         $response = DeletionService::delete(Achat::class, $id, 'achat'); 
-        if ($achat->type_achat == 'materielle/produits') {
+        if ($achat->type_achat == 'Matériel/Produits') {
             $product = Product::findOrFail($achat->product_id);
             $product->stock -= $achat->P;
             $product->save();
@@ -350,9 +350,9 @@ public function list()
         $formattedHtml = '<div class="d-flex mt-2">' .
             $profileHtml .
             '<div class="mx-2">' .
-            '<h6 class="mb-1">fournisseur: '.$achat->fournisseur->name.
+            '<h6 class="mb-1">' . get_label('Supplier', 'Supplier') . ': ' . $achat->fournisseur->name .
             '</h6>' .
-            '<span class="text-muted">entreprise: ' . $achat->entreprise->denomination . '</span>';
+            '<span class="text-muted">'. get_label('entreprise', 'entreprise') . ': ' . $achat->entreprise->denomination . '</span>';
 
         $formattedHtml .= '</div>' .
             '</div>';
@@ -363,7 +363,7 @@ public function list()
             // 'entreprise' => $fournisseur->denomenation,
             // 'company' => $client->denomenation,
             'montant' => $achat->montant,
-            'type_achat' => $achat->type_achat,
+            'type_achat' => get_label($achat->type_achat,$achat->type_achat),
             'profile' => $formattedHtml,
             'facture' => $achat->facture,
             'tva' => $achat->tva,
