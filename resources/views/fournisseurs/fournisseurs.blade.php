@@ -25,7 +25,7 @@ $visibleColumns = getUserPreferences('fournisseurs');
 
         <div>
 
-            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#importFileModal">
+            <a href="/fournisseurs/import">
                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="{{ get_label('import_file', 'Import File') }}">
                    import Excel <i class="bx bx-file"></i>
                 </button>
@@ -89,7 +89,7 @@ $visibleColumns = getUserPreferences('fournisseurs');
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('fournisseurs.import') }}" method="POST" enctype="multipart/form-data" class="form-submit-event">
+                <form action="{{ route('import.form') }}" method="POST" enctype="multipart/form-data" class="form-submit-event">
                     @csrf
 
                     <!-- File input with label -->
