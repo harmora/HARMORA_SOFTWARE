@@ -24,7 +24,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             </ol>
         </nav>
         <div>
-            <button type="button" id="add_client_btn" class="btn btn-outline-secondary me-2"><?= get_label('add_new_client', 'Add New Client') ?></button>
+            <!-- <button type="button" id="add_client_btn" class="btn btn-outline-secondary me-2"><?= get_label('add_new_client', 'Add New Client') ?></button> -->
             <button type="button" id="add_product_btn" class="btn btn-outline-secondary"><?= get_label('add_new_product', 'Add New Product') ?></button>
         </div>
     </div>

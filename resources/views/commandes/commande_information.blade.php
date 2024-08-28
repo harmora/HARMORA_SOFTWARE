@@ -231,7 +231,7 @@
                         @php
                         $visibleColumns = getUserPreferences('activity_log');
                         @endphp
-                        <div class="table-responsive text-nowrap">
+                        <!-- <div class="table-responsive text-nowrap">
                             <input type="hidden" id="activity_log_between_date_from">
                             <input type="hidden" id="activity_log_between_date_to">
                             <input type="hidden" id="data_type" value="activity-log">
@@ -260,7 +260,7 @@
                                     </tr>
                                 </thead>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 @endif
