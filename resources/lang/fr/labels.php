@@ -700,6 +700,7 @@
 
 //added by zakaria
 'Suppliers'=>'Fournisseurs',
+'Supplier'=>'Fournisseur',
 'supplier_information'=> 'Informations de fournisseur',
 'enterprise_information' => "Information d'Entreprise",
 'entreprise' => 'Entreprise',
@@ -710,11 +711,13 @@
 'facture_bon' => 'Facture/Bond',
 'add_new_supplier' => 'Ajouter un nouveau fournisseur',
 'add_new_product' => 'Ajouter un nouveau produit',
-'materielle_produits' => 'Matériel/Produits',
-'mainetenances_amélioration' => 'Maintenance/Amélioration',
-'salaires_avantages_sociaux' => 'Salaires/Avantages Sociaux',
+
+'Matériel/Produits'=> 'Matériel/Produits',
+'mainetenances/amélioration' => 'Maintenance/Amélioration',
+'salaires/avantages sociaux' => 'Salaires/Avantages sociaux',
 'investissements' => 'Investissements',
-'recherche_developpement' => 'Recherche/Développement',
+'recherche/developpement' => 'Recherche/Développement',
+
 'select_product' => 'Sélectionner un produit',
 'product' => 'Produit',
 'select_suppliers' => 'Sélectionner un fournisseur',

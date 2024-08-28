@@ -56,16 +56,7 @@ $visibleColumns = getUserPreferences('commandes');
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-4 mb-3">
-                <select class="form-control" id="commande_priority_filter" name="priority_ids[]" multiple="multiple" data-placeholder="<?= get_label('select_priorities', 'Select Priorities') ?>">
-                    @php
-                    $selected = (request()->has('priority') && request()->priority == $priority->id) ? 'selected' : '';
-                    @endphp
-                    @foreach ($priorities as $priority)
-                    <option value="{{ $priority->id }}" {{ $selected }}>{{ $priority->title }}</option>
-                    @endforeach
-                </select>
-            </div>
+
         </div>
         <input type="hidden" name="commande_start_date_from" id="commande_start_date_from">
         <input type="hidden" name="commande_start_date_to" id="commande_start_date_to">
@@ -85,7 +76,6 @@ $visibleColumns = getUserPreferences('commandes');
                         <th data-field="users" data-visible="{{ (in_array('users', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('users', 'Users') }}</th>
                         <th data-field="clients" data-visible="{{ (in_array('clients', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('clients', 'Clients') }}</th>
                         <th data-field="status" class="status-column" data-visible="{{ (in_array('status_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('status', 'Status') }}</th>
-                        <th data-field="priority_id" class="priority-column" data-visible="{{ (in_array('priority_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('priority', 'Priority') }}</th>
                         <th data-field="start_date" data-visible="{{ (in_array('start_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('starts_at', 'Starts at') }}</th>
                         <th data-field="end_date" data-visible="{{ (in_array('end_date', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('ends_at', 'Ends at') }}</th>
                         <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>

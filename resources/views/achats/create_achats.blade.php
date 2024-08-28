@@ -55,11 +55,11 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <div class="mb-3 col-md-6">
                         <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="type_achat" name="type_achat">
-                            <option value="materielle/produits"><?= get_label('materielle_produits', 'Materielle') ?></option>
-                            <option value="recherche/developpement"><?= get_label('recherche_developpement', 'Recherche/Developpement') ?></option>
-                            <option value="investissements"><?= get_label('investissements', 'Investissements') ?></option>
-                            <option value="salaires/avantages sociaux"><?= get_label('salaires_avantages_sociaux', 'Salaires/Avantages Sociaux') ?></option>
-                            <option value="mainetenances/amélioration"><?= get_label('mainetenances_amélioration', 'Mainetenances/Amélioration') ?></option>
+                            <option value="Matériel/Produits"><?= get_label('Matériel/Produits', 'Materielle/Products') ?></option>
+                            <option value="recherche/developpement"><?= get_label('recherche/developpement', 'Research/Development') ?></option>
+                            <option value="investissements"><?= get_label('investissements', 'Investments') ?></option>
+                            <option value="salaires/avantages sociaux"><?= get_label('salaires/avantages sociaux', 'Salaries/Social Benefits') ?></option>
+                            <option value="mainetenances/amélioration"><?= get_label('mainetenances/amélioration', 'Maintenance/Improvement') ?></option>
                         </select>                    
                     </div>
                     <div class="mb-3 col-md-6" id="supplier_name_field" >

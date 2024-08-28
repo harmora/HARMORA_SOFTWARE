@@ -42,7 +42,7 @@ $visibleColumns = getUserPreferences('commandes');
             $url .= '?status=' . request()->status;
             }
             @endphp
-            <a href="#" data-bs-toggle="modal" data-bs-target="#create_commande_modal">
+            <a href="{{url('/commandes/create')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="Create Commande">
                     <i class='bx bx-plus'></i>
                 </button>

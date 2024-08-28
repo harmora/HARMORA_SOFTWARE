@@ -231,6 +231,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         // commandes
         Route::get('/commandes', [CommandesController::class, 'index']);
         Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
+        Route::get('commandes/create', [CommandesController::class, 'create'])->name('commandes.create');
         Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
         Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
         Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
@@ -296,15 +297,22 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         // fournisseurs-------------------------------------------------------------
-        Route::get('/fournisseurs', [FournisseurController::class, 'index']);
+        Route::get('/fournisseurs', [FournisseurController::class, 'index'])->name('fournisseurs.index');
         Route::get('fournisseurs/create', [FournisseurController::class,'create']);
         Route::post('fournisseurs/store', [FournisseurController::class,'store'])->name('fournisseurs.store');
         Route::get('fournisseurs/edit/{id}', [FournisseurController::class,'edit']);
         Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
         Route::get('fournisseurs/list', [FournisseurController::class,'list']);
         Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
-        Route::post('/fournisseurs/import', [FournisseurController::class, 'importExcelData'])->name('fournisseurs.import');
+        Route::get('/fournisseurs/import', [FournisseurController::class, 'showForm'])->name('import.form');
+        Route::post('/fournisseurs/import/step1', [FournisseurController::class, 'step1'])->name('import.step1');
+        Route::post('/fournisseurs/import/step2', [FournisseurController::class, 'step2'])->name('import.step2');
+        Route::post('/fournisseurs/import/save', [FournisseurController::class, 'save'])->name('import.save');
 
+        // //test excrl -------------------------------------------------------------------------------
+        // Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1');
+        // Route::post('/import/step2', [ImportController::class, 'step2'])->name('import.step2');
+        // Route::post('/import/save', [ImportController::class, 'save'])->name('import.save');
 
         // Achats-------------------------------------------------------------
         Route::get('/achats', [AchatController::class, 'index'])->name('achats.index');
@@ -318,11 +326,13 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         //Factures-------------------------------------------------------------
-        Route::get('/facture', [FactureController::class, 'index'])->name('factures.show');
+        Route::get('/factures', [FactureController::class, 'index'])->name('factures.show');
         Route::get('/factures/create', [FactureController::class, 'create'])->name('factures.create_factures');
         Route::post('/factures/store', [FactureController::class, 'store'])->name('factures.store');
         Route::get('/factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit_facture');
         Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
+        Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
+
 
 
 

@@ -849,6 +849,7 @@
 
 // added by zakaria
 'Suppliers'=>'Suppliers',
+'Supplier'=>'Supplier',
 'supplier_information'=> 'Supplier Information',
 'enterprise_information' => 'Company Information',
 'entreprise' => 'Company',
@@ -859,11 +860,11 @@
 'facture_bon'=>'',
 'add_new_supplier'=> 'Add New Supplier',
 'add_new_product'=> 'Add New Product',
-'materielle_produits'=> 'Materielle/Products',
-'mainetenances_amélioration' => 'Maintenance/Improvement',
-'salaires_avantages_sociaux' => 'Salaries/Social Benefits',
+'Matériel/Produits'=> 'Materielle/Products',
+'mainetenances/amélioration' => 'Maintenance/Improvement',
+'salaires/avantages sociaux' => 'Salaries/Social Benefits',
 'investissements' => 'Investments',
-'recherche_developpement' => 'Research/Development',
+'recherche/developpement' => 'Research/Development',
 'select_product'=> 'Select product',
 'product'=>'Product',
 'select_suppliers'=> 'Select supplier',

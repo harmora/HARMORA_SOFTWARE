@@ -5,7 +5,6 @@ use App\Models\Commande;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Product;
-use App\Models\Priority;
 use Illuminate\Http\Request;
 
 
@@ -60,67 +59,197 @@ class CommandesController extends Controller
         return $this->belongsToMany(Product::class, 'commande_products'); // Adjust 'quantity' if you have other fields
     }
 
-
+    public function create()
+    {
+        try {
+            $products = Product::all();
+            $clients = Client::all();
+            $users = User::all();
+    
+            return view('commandes.create_commande', compact('products', 'clients', 'users'));
+        } catch (\Exception $e) {
+            \Log::error('Error in create method: ' . $e->getMessage());
+            return abort(500, 'Something went wrong.');
+        }
+    }
    /**
  * Store a newly created resource in storage.
  *
  * @param  \Illuminate\Http\Request  $request
  * @return \Illuminate\Http\Response
  */
+    // public function store(Request $request)
+    // {
+    //     //dd(request()->all());
+    //     // Validate the request
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'status' => 'required|string',
+    //         // 'product_id' => 'nullable|integer|exists:products,id', // Validate product IDs
+    //         'products' => 'required|array|min:1',
+    //         'products.*.product_id' => 'required|exists:products,id',
+    //         'products.*.quantity' => 'required|integer|min:1',
+    //         'products.*.price' => 'required|numeric|min:0',
+    //         'user_id' => 'nullable|integer|exists:users,id',
+    //         'start_date' => 'nullable|date',
+    //         'due_date' => 'required|date',
+    //         'description' => 'nullable|string',
+    //         'note' => 'nullable|string',
+    //         'total_amount'=>'nullable|integer',
+    //         'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
+    //     ]);
+
+    //     // Create a new commande
+    //     $commande = Commande::create([
+
+    //         'client_id' => $request->client_id, // Ensure client_id is provided
+    //         'title' => $request->title,
+    //         'description' => $request->description,
+    //         // 'start_date' => $request->start_date,
+    //         // 'due_date' => $request->due_date,
+    //         'start_date' => now(),
+    //          'due_date' => now(),
+    //         'total_amount' => 0, // Placeholder for total amount logic
+    //         'status' => $request->status,
+    //         'created_at' => now(),
+    //         'updated_at' => now(),
+    //         'user_id' => $request->user_id,
+    //         'product_id' => $request->product_id
+    //     ]);
+
+    //     foreach ($request->products as $productData) {
+    //         $commande->products()->attach($productData['product_id'], [
+    //             'quantity' => $productData['quantity'],
+    //             'price' => $productData['price'],
+    //         ]);
+    
+    //         // Update product stock or any other logic as necessary
+    //         $product = Product::find($productData['product_id']);
+    //         $product->stock -= $productData['quantity'];  // Adjust stock
+    //         $product->save();
+    //     }
+
+    //     return response()->json(['error' => false,'message' => 'Commande created successfully.']);
+    // }
+
+
+
+
+    // public function store(Request $request)
+    // {
+    //     // Validate the request
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'status' => 'required|string',
+    //         'products' => 'required|array|min:1',
+    //         'products.*.product_id' => 'required|exists:products,id',
+    //         'products.*.quantity' => 'required|integer|min:1',
+    //         'products.*.price' => 'required|numeric|min:0',
+    //         'user_id' => 'nullable|integer|exists:users,id',
+    //         'start_date' => 'nullable|date',
+    //         'due_date' => 'required|date',
+    //         'description' => 'nullable|string',
+    //         'note' => 'nullable|string',
+    //         'total_amount' => 'nullable|integer',
+    //         'client_id' => 'nullable|integer|exists:clients,id',
+    //     ]);
+    
+    //     // Create a new commande
+    //     $commande = Commande::create([
+    //         'client_id' => $request->client_id,
+    //         'title' => $request->title,
+    //         'description' => $request->description,
+    //         'start_date' => now(),
+    //         'due_date' => $request->due_date,
+    //         'total_amount' => 0,
+    //         'status' => $request->status,
+    //         'created_at' => now(),
+    //         'updated_at' => now(),
+    //         'user_id' => $request->user_id,
+    //     ]);
+    
+    //     // Attach products to the commande
+    //     $totalAmount = 0;
+    //     foreach ($request->products as $productData) {
+    //         $commande->products()->attach($productData['product_id'], [
+    //             'quantity' => $productData['quantity'],
+    //             'price' => $productData['price'],
+    //         ]);
+    
+    //         // Update product stock
+    //         $product = Product::find($productData['product_id']);
+    //         $product->stock -= $productData['quantity'];
+    //         $product->save();
+    
+    //         // Calculate the total amount for the commande
+    //         $totalAmount += $productData['quantity'] * $productData['price'];
+    //     }
+    
+    //     // Update the total amount in the commande
+    //     $commande->total_amount = $totalAmount;
+    //     $commande->save();
+    
+    //     return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
+    // }
+    
     public function store(Request $request)
     {
-        //dd(request()->all());
         // Validate the request
         $request->validate([
             'title' => 'required|string|max:255',
             'status' => 'required|string',
-            'priority' => 'nullable|integer',
-            // 'product' => 'nullable|integer',
-           // 'products' => 'nullable|array',
-            'product_id' => 'nullable|integer|exists:products,id', // Validate product IDs
-            //'user_id' => 'nullable|array',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
             'user_id' => 'nullable|integer|exists:users,id',
             'start_date' => 'nullable|date',
             'due_date' => 'required|date',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
-            'total_amount'=>'nullable|integer',
-            'client_id' => 'nullable|integer|exists:clients,id', // Ensure client_id is present and valid
+            'total_amount' => 'nullable|integer',
+            'client_id' => 'nullable|integer|exists:clients,id',
         ]);
-
+    
         // Create a new commande
         $commande = Commande::create([
-
-            'client_id' => $request->client_id, // Ensure client_id is provided
+            'client_id' => $request->client_id,
             'title' => $request->title,
             'description' => $request->description,
-            // 'start_date' => $request->start_date,
-            // 'due_date' => $request->due_date,
-            'start_date' => now(),
-             'due_date' => now(),
-            'total_amount' => 0, // Placeholder for total amount logic
+            'start_date' => $request->start_date,
+            'due_date' => $request->due_date,
+            'total_amount' => 0,
             'status' => $request->status,
             'created_at' => now(),
             'updated_at' => now(),
             'user_id' => $request->user_id,
-            'product_id' => $request->product_id
         ]);
-
-        // if ($request->has('product')) {
-        //     $commande->products()->attach($request->product); // You can also add extra fields like quantity if needed
-        // }
-       // $commande->products()->attach($request->products);
-
-        //$userIds = (array) $request->input('user_id');
-
-
-        return response()->json(['error' => false,'message' => 'Commande created successfully.']);
-        //return redirect()->route('commandes.commande_informations')->with('success', 'Commande created successfully!');
+    
+        // Attach products to the commande
+        $totalAmount = 0;
+        foreach ($request->products as $productData) {
+            $commande->products()->attach($productData['product_id'], [
+                'quantity' => $productData['quantity'],
+                'price' => $productData['price'],
+            ]);
+    
+            // Update product stock
+            $product = Product::find($productData['product_id']);
+            $product->stock -= $productData['quantity'];
+            $product->save();
+    
+            // Calculate the total amount for the commande
+            $totalAmount += $productData['quantity'] * $productData['price'];
+        }
+    
+        // Update the total amount in the commande
+        $commande->total_amount = $totalAmount;
+        $commande->save();
+    
+        return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
     }
-
-
-
-
+    
+    
 
     /**
      * Display the specified commande.
@@ -160,7 +289,6 @@ class CommandesController extends Controller
             'id' => 'required|exists:commandes,id',
             'title' => ['required'],
             'status_id' => ['required'],
-            'priority_id' => ['nullable'],
             'start_date' => ['required', 'before_or_equal:due_date'],
             'due_date' => ['required'],
             'description' => ['nullable']
@@ -289,35 +417,71 @@ class CommandesController extends Controller
     }
 
 
+    // public function list()
+    // {
+    //     // Fetch all commandes with their associated user and client data
+    //     $commandes = Commande::with(['user', 'client'])->get();
+
+    //     // Format commandes data
+    //     $formattedCommandes = $commandes->map(function ($commande) {
+    //         return [
+    //             'id' => $commande->id,
+    //             'title' => $commande->title,
+    //             'users' =>  $commande->user->first_name ." ".$commande->user->last_name ,
+    //             'clients' => $commande->client->first_name ." ".$commande->client->last_name ,
+    //             'start_date' => $commande->start_date,
+    //             'end_date' => $commande->due_date,
+    //             'created_at' => $commande->created_at,
+    //             'updated_at' => $commande->updated_at,
+    //             'status' => $commande->status,
+    //             // 'product'=> $commande-> $product->name,
+    //         ];
+    //     });
+
+    //     // Return JSON response
+    //     return response()->json([
+    //         "rows" => $formattedCommandes->all(),
+    //         "total" => $formattedCommandes->count()
+    //     ]);
+    // }
+
+
+
     public function list()
     {
-        // Fetch all commandes with their associated user and client data
-        $commandes = Commande::with(['user', 'client'])->get();
-
+        // Fetch all commandes with their associated user, client, and products data
+        $commandes = Commande::with(['user', 'client', 'products'])->get();
+    
         // Format commandes data
         $formattedCommandes = $commandes->map(function ($commande) {
             return [
                 'id' => $commande->id,
                 'title' => $commande->title,
-                'users' =>  $commande->user->first_name ." ".$commande->user->last_name ,
-                'clients' => $commande->client->first_name ." ".$commande->client->last_name ,
+                'users' =>  $commande->user->first_name ." ".$commande->user->last_name,
+                'clients' => $commande->client->first_name ." ".$commande->client->last_name,
                 'start_date' => $commande->start_date,
                 'end_date' => $commande->due_date,
                 'created_at' => $commande->created_at,
                 'updated_at' => $commande->updated_at,
+                'status' => $commande->status,
+                'products' => $commande->products->map(function ($product) {
+                    return [
+                        // 'product_id' => $product->id,
+                        'name' => $product->name,
+                        'quantity' => $product->pivot->quantity,
+                        'price' => $product->pivot->price,
+                    ];
+                }),
             ];
         });
-
+    
         // Return JSON response
         return response()->json([
             "rows" => $formattedCommandes->all(),
             "total" => $formattedCommandes->count()
         ]);
     }
-
-
-
-
+    
 
 
 
@@ -630,29 +794,7 @@ class CommandesController extends Controller
         return response()->json(['error' => false, 'message' => 'Files(s) deleted successfully.', 'id' => $deletedIds, 'titles' => $deletedTitles, 'parent_id' => $parentIds, 'type' => 'media', 'parent_type' => 'commande']);
     }
 
-    public function update_priority(Request $request)
-    {
-        $request->validate([
-            'id' => ['required'],
-            'priorityId' => ['nullable']
 
-        ]);
-        $id = $request->id;
-        $priorityId = $request->priorityId;
-        $commande = Commande::findOrFail($id);
-        $currentPriority = $commande->priority ? $commande->priority->title : 'Default';
-        $commande->priority_id = $priorityId;
-        $commande->note = $request->note;
-        if ($commande->save()) {
-            // Reload the commande to get updated priority information
-            $commande = $commande->fresh();
-            $newPriority = $commande->priority ? $commande->priority->title : 'Default';
-            $message = $this->user->first_name . ' ' . $this->user->last_name . ' updated commande priority from ' . $currentPriority . ' to ' . $newPriority;
-            return response()->json(['error' => false, 'message' => 'Priority updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $message]);
-        } else {
-            return response()->json(['error' => true, 'message' => 'Priority couldn\'t updated.']);
-        }
-    }
 
     public function saveViewPreference(Request $request)
     {

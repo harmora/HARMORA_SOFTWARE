@@ -7,6 +7,7 @@ use App\Models\Entreprise;
 use App\Models\fournisseur;
 use App\Models\ProdCategory;
 use App\Models\Product;
+use App\Services\DeletionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -35,16 +36,21 @@ class FactureController extends Controller
 
     public function create(Request $request)
     {
-        $entreprises = Entreprise::all();
         $products = Product::all();
         $fournisseurs = fournisseur::all();
         $categories = ProdCategory::all();
+        $user = auth()->user();
+        $entreprise = Entreprise::find($user->entreprise_id);
+
+        // $company = $user->entreprise_id; // Assuming there's a relationship set up between User and Entreprise
 
         return view('factures.create_facture', [
-            'entreprises' => $entreprises,
+            'entreprise' => $entreprise,
             'products' => $products,
             'fournisseurs' => $fournisseurs,
-            'categories' => $categories
+            'categories' => $categories,
+            'company_name' => $entreprise->denomination, // Pass the company name to the view
+            'address' => $entreprise->address,  // Assuming `address` is the column for company address  
         ]);
     }
 
@@ -108,6 +114,7 @@ public function update(Request $request, $id)
     $facture = Facture::findOrFail($id);
 
     $formFields = $request->validate([
+        // 'company_name' => 'required|string|max:255',
         'company_name' => 'required|string|max:255',
         'address' => 'required|string',
         'contact_details' => 'required|string',
@@ -136,7 +143,29 @@ public function update(Request $request, $id)
 
     Session::flash('message', 'Facture updated successfully.');
 
-    return redirect()->route('factures.show', $id);
+    return redirect()->route('factures.show');
+}
+
+// public function destroy($id)
+// {
+//     $facture = Facture::find($id);
+//     $response = DeletionService::delete(Facture::class, $id, 'facture'); 
+
+//     return $response;
+// }
+
+
+public function destroy($id)
+{
+    $facture = Facture::find($id);
+
+    if ($facture) {
+        $facture->delete();
+
+        return response()->json(['success' => true, 'message' => 'Facture deleted successfully.']);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Facture not found.']);
 }
 
 
