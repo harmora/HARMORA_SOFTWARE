@@ -285,6 +285,38 @@ background-repeat: no-repeat;
                     </div>
                 </div>
             </div>
+
+
+
+            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+                <div class="card overflow-hidden mb-4 statisticsDiv">
+                    <div class="card-header pt-3 pb-1">
+                        <div class="card-title d-flex justify-content-between mb-0">
+                            <h5 class="m-0 me-2"><?= get_label('sales revenue', 'Sales revenue') ?></h5>
+                            {{-- <div>
+                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_todo', 'Create todo') ?>"><i class='bx bx-plus'></i></a></span>
+                                <a href="/todos"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_more', 'View more') ?>"><i class="bx bx-list-ul"></i></button></a>
+                            </div> --}}
+                        </div>
+                        <div class="my-3">
+                            <div id="chart"></div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="todos-statistics">
+                        <ul class="p-0 m-0">
+                            @if (is_countable($todos) && count($todos) > 0)
+
+                            @else
+                            <div class=" h-100 d-flex justify-content-center align-items-center">
+                                <div>
+                                    <?= get_label('factures not found', 'Factures not found!') ?>
+                                </div>
+                            </div>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -293,7 +325,55 @@ background-repeat: no-repeat;
 
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/chiffre-affaires')
+                .then(response => response.json())
+                .then(data => {
+                    const dates = data.map(item => item.date);
+                    const totals = data.map(item => parseFloat(item.total));
 
+                    var options = {
+                        series: [{
+                            name: 'Chiffre d\'Affaires',
+                            type: 'line',
+                            data: totals
+                        }],
+                        chart: {
+                            height: 350,
+                            type: 'line',
+                        },
+                        stroke: {
+                            curve: 'smooth'
+                        },
+                        labels: dates,
+                        markers: {
+                            size: 0
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Chiffre d\'Affaires',
+                            },
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function (y) {
+                                    if (typeof y !== "undefined") {
+                                        return y.toFixed(2) + " €";
+                                    }
+                                    return y;
+                                }
+                            }
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#chart"), options);
+                    chart.render();
+                });
+        });
+    </script>
 
 
 

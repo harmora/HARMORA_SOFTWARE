@@ -150,6 +150,10 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
 
+        Route::get('/chiffre-affaires', [HomeController::class, 'getChiffreAffaires']);
+
+
+
 
         Route::get('/ocr', function () {
             return view('ocr\ocr');

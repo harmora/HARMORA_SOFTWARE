@@ -45,4 +45,18 @@ class HomeController extends Controller
         return view('dashboard', ['users' => $users, 'clients' => $clients, 'projects' => 0, 'tasks' => 0, 'todos' => $todos, 'total_todos' => $total_todos, 'meetings' => $meetings, 'auth_user' => $this->user]);
     }
 
+
+
+public function getChiffreAffaires()
+{
+    $chiffreAffaires = DB::table('factures')
+        ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(grand_total) as total'))
+        ->groupBy('date')
+        ->orderBy('date', 'asc')
+        ->get();
+
+    return response()->json($chiffreAffaires);
+}
+
+
 }

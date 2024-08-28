@@ -205,7 +205,9 @@ class FournisseurController extends Controller
             // Import the Excel file
             Excel::import(new FournisseurImport($entrepriseId), $request->file('import_file'));
 
-            return redirect()->back()->with('status', 'Imported Successfully');
+            // return redirect()->back()->with('status', 'Imported Successfully');
+            Session::flash('message', 'Imported Successfully');
+            return response()->json(['error' => false]);
         }
 }
 
