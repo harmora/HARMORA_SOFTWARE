@@ -67,34 +67,50 @@
                         <input class="form-control" type="file" id="logo" name="logo">
                     </div>
                     
-                    <!-- Client field should be a dropdown or select if necessary
-                    <div class="mb-3 col-md-6">
-                        <label for="client_id" class="form-label"><?= get_label('client', 'Client') ?><span class="asterisk">*</span></label>
-                        <select class="form-select" id="client_id" name="client_id" required>
-                            <option value="">Select Client</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                                    {{ $client->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div> -->
 
-                    <!-- Client field should be a dropdown or select if necessary -->
+
 <div class="mb-3 col-md-6">
     <label for="client_id" class="form-label"><?= get_label('client', 'Client') ?><span class="asterisk">*</span></label>
     <select class="form-select" id="client_id" name="client_id" required style="color: #000; background-color: #fff;">
         <option value="">Select Client</option>
         @foreach($clients as $client)
             <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                {{ $client->name }}
+            {{ $client->first_name }} {{ $client->last_name }}
             </option>
         @endforeach
     </select>
 </div>
-
-
-
+<div id="product_name_field" style="display: block;">
+                        <div id="products-container">
+                            <div class="product-entry mb-3">
+                                <h5><?= get_label('product', 'Product') ?> 1</h5>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="products[0][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
+                                        <select class="form-select" name="products[0][product_id]" >
+                                            <option value=""><?= get_label('select_product', 'Select product') ?></option>
+                                            @foreach($products ?? [] as $product)
+                                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="products[0][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
+                                        <input class="form-control" type="number" id="products[0][quantity]" name="products[0][quantity]" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" >
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="products[0][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                                        <input class="form-control" id="products[0][price]" type="number" name="products[0][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <button type="button" id="add-product" class="btn btn-secondary"><?= get_label('add_another_product', 'Add Another Product') ?></button>
+                            <button type="button" id="remove-product" class="btn btn-danger" style="display: none;"><?= get_label('remove_last_product', 'Remove Last Product') ?></button>
+                        </div>
+    
+                    </div>
                     <!-- Ensure the following fields are included based on your needs -->
                     <div class="mb-3 col-md-6">
                         <label for="item_description" class="form-label"><?= get_label('item_description', 'Item Description') ?><span class="asterisk">*</span></label>
@@ -133,5 +149,69 @@
         </div>
     </div>
 </div>
-
 @endsection
+
+<!-- @section('script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded and parsed');
+    
+    let productCount = 1;
+    const addProductBtn = document.getElementById('add-product');
+    const removeProductBtn = document.getElementById('remove-product');
+    const productsContainer = document.getElementById('products-container');
+    
+    if (!addProductBtn || !removeProductBtn || !productsContainer) {
+        console.error('One or more elements not found.');
+        return;
+    }
+
+    addProductBtn.addEventListener('click', function() {
+        console.log('Add Product button clicked');
+        const newProductDiv = document.createElement('div');
+        newProductDiv.classList.add('product-entry', 'mb-3');
+        newProductDiv.innerHTML = `
+            <h5>Product ${++productCount}</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="products[${productCount-1}][product_id]" class="form-label">Select product</label>
+                    <select class="form-select" id="products[${productCount-1}][product_id]" name="products[${productCount-1}][product_id]" required>
+                        <option value="">Select product</option>
+                        @foreach($products ?? [] as $product)
+                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="products[${productCount-1}][quantity]" class="form-label">Quantity <span class="asterisk">*</span></label>
+                    <input class="form-control" type="number" id="products[${productCount-1}][quantity]" name="products[${productCount-1}][quantity]" placeholder="Enter quantity" required min="1">
+                </div>
+                <div class="col-md-4">
+                    <label for="products[${productCount-1}][price]" class="form-label">Price <span class="asterisk">*</span></label>
+                    <input class="form-control" type="number" id="products[${productCount-1}][price]" name="products[${productCount-1}][price]" step="0.01" placeholder="Enter price" required>
+                </div>
+            </div>
+        `;
+        productsContainer.appendChild(newProductDiv);
+        
+        // Show the remove button when there's more than one product
+        removeProductBtn.style.display = productCount > 1 ? 'inline-block' : 'none';
+    });
+
+    removeProductBtn.addEventListener('click', function() {
+        console.log('Remove Product button clicked');
+        if (productCount > 1) {
+            productsContainer.removeChild(productsContainer.lastElementChild);
+            productCount--;
+
+            // Hide the remove button when there's only one product left
+            removeProductBtn.style.display = productCount > 1 ? 'inline-block' : 'none';
+        }
+    });
+});
+
+
+
+</script>
+
+@endsection -->

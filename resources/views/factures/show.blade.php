@@ -51,7 +51,7 @@ $visibleColumns = getUserPreferences('Factures');
                         <tr>
                             <td>{{ $facture->invoice_number }}</td>
                             <td>{{ $facture->company_name }}</td>
-                            <td>{{ $facture->client_name }}</td>
+                            <td>{{ $facture->client->first_name }} {{ $facture->client->last_name }}</td>
                             <td>{{ $facture->date }}</td>
                             <td>{{ number_format($facture->total_amount, 2) }}</td>
                             <td>{{ $facture->status_payement }}</td>

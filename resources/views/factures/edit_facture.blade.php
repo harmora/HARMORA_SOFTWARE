@@ -115,10 +115,4 @@
 
 @endsection
 
-@section('styles')
-<style>
-    .form-select {
-        color: black; /* Update to your desired text color */
-    }
-</style>
-@endsection
+

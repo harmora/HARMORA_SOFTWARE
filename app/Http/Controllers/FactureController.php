@@ -66,9 +66,6 @@ class FactureController extends Controller
             'invoice_number' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'client_id' => 'required|exists:clients,id', // Validate client_id
-            // 'client_name' => 'required|string|max:255',
-            // 'client_address' => 'required|string',
-            // 'client_contact_details' => 'required|string',
             'item_description' => 'required|string',
             'item_quantity' => 'required|integer|min:1',
             'item_price' => 'required|numeric|min:0',
@@ -76,12 +73,19 @@ class FactureController extends Controller
             'tax_rate' => 'required|numeric|min:0',
             'tax_amount' => 'required|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',
+            'products' => 'nullable|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
         ]);
 
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('logos', 'public');
             $formFields['logo'] = $logoPath;
         }
+
+
+
 
         $formFields['entreprise_id'] = $this->user->entreprise_id;
 
