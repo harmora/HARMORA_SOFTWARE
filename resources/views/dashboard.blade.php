@@ -361,7 +361,7 @@ background-repeat: no-repeat;
                             y: {
                                 formatter: function (y) {
                                     if (typeof y !== "undefined") {
-                                        return y.toFixed(2) + " €";
+                                        return y.toFixed(2) + " DH";
                                     }
                                     return y;
                                 }
