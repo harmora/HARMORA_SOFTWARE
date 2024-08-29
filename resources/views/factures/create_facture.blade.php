@@ -26,10 +26,13 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{url('/factures/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
+            <form action="{{ route('factures.store') }}" method="POST" class="form-submit-event" enctype="multipart/form-data">
                 <input type="hidden" name="redirect_url" value="/factures">
                 @csrf
+                <input type="hidden" name="entreprise_id" value="{{ $entreprise->id }}">
+                
                 <div class="row">
+                    <!-- Remove company_name and address fields -->
 
                     <div class="mb-3 col-md-6">
                         <label for="company_name" class="form-label">Company Name<span class="asterisk">*</span></label>
@@ -41,11 +44,12 @@
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?><span class="asterisk">*</span></label>
                         <input class="form-control" type="text" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address', $address) }}" required>
                     </div>
-
+                    
                     <div class="mb-3 col-md-6">
                         <label for="contact_details" class="form-label"><?= get_label('contact_details', 'Contact Details') ?><span class="asterisk">*</span></label>
                         <textarea class="form-control" id="contact_details" name="contact_details" placeholder="<?= get_label('please_enter_contact_details', 'Please enter contact details') ?>" required>{{ old('contact_details') }}</textarea>
                     </div>
+
                     <div class="mb-3 col-md-6">
                         <label for="email" class="form-label"><?= get_label('email', 'Email') ?><span class="asterisk">*</span></label>
                         <input class="form-control" type="email" id="email" name="email" placeholder="<?= get_label('please_enter_email', 'Please enter email') ?>" value="{{ old('email') }}" required>
@@ -62,18 +66,46 @@
                         <label for="logo" class="form-label"><?= get_label('logo', 'Logo') ?></label>
                         <input class="form-control" type="file" id="logo" name="logo">
                     </div>
+                    
+                    <!-- Client field should be a dropdown or select if necessary
                     <div class="mb-3 col-md-6">
-                        <label for="client_name" class="form-label"><?= get_label('client_name', 'Client Name') ?><span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="client_name" name="client_name" placeholder="<?= get_label('please_enter_client_name', 'Please enter client name') ?>" value="{{ old('client_name') }}" required>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="client_address" class="form-label"><?= get_label('client_address', 'Client Address') ?><span class="asterisk">*</span></label>
-                        <textarea class="form-control" id="client_address" name="client_address" placeholder="<?= get_label('please_enter_client_address', 'Please enter client address') ?>" required>{{ old('client_address') }}</textarea>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="client_contact_details" class="form-label"><?= get_label('client_contact_details', 'Client Contact Details') ?><span class="asterisk">*</span></label>
-                        <textarea class="form-control" id="client_contact_details" name="client_contact_details" placeholder="<?= get_label('please_enter_client_contact_details', 'Please enter client contact details') ?>" required>{{ old('client_contact_details') }}</textarea>
-                    </div>
+                        <label for="client_id" class="form-label"><?= get_label('client', 'Client') ?><span class="asterisk">*</span></label>
+                        <select class="form-select" id="client_id" name="client_id" required>
+                            <option value="">Select Client</option>
+                            @foreach($clients as $client)
+                                <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
+                                    {{ $client->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div> -->
+
+                    <!-- Client field should be a dropdown or select if necessary -->
+<div class="mb-3 col-md-6">
+    <label for="client_id" class="form-label"><?= get_label('client', 'Client') ?><span class="asterisk">*</span></label>
+    <select class="form-select" id="client_id" name="client_id" required style="color: #000; background-color: #fff;">
+        <option value="">Select Client</option>
+        @foreach($clients as $client)
+            <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
+                {{ $client->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+<style>
+    /* Custom styles for dropdown */
+    .form-select {
+        color: #000; /* Ensure text is black */
+        background-color: #fff; /* Ensure background is white */
+    }
+
+    .form-select option {
+        color: #000; /* Ensure option text is black */
+    }
+</style>
+
+
+                    <!-- Ensure the following fields are included based on your needs -->
                     <div class="mb-3 col-md-6">
                         <label for="item_description" class="form-label"><?= get_label('item_description', 'Item Description') ?><span class="asterisk">*</span></label>
                         <textarea class="form-control" id="item_description" name="item_description" placeholder="<?= get_label('please_enter_item_description', 'Please enter item description') ?>" required>{{ old('item_description') }}</textarea>
