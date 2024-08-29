@@ -92,17 +92,7 @@
         @endforeach
     </select>
 </div>
-<style>
-    /* Custom styles for dropdown */
-    .form-select {
-        color: #000; /* Ensure text is black */
-        background-color: #fff; /* Ensure background is white */
-    }
 
-    .form-select option {
-        color: #000; /* Ensure option text is black */
-    }
-</style>
 
 
                     <!-- Ensure the following fields are included based on your needs -->
