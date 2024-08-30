@@ -42,7 +42,6 @@ $visibleColumns = getUserPreferences('Factures');
                         <th><?= get_label('client_name', 'Client Name') ?></th>
                         <th><?= get_label('date', 'Date') ?></th>
                         <th><?= get_label('total_amount', 'Total Amount') ?></th>
-                        <th><?= get_label('status_payement', 'Payment Status') ?></th>
                         <th><?= get_label('actions', 'Actions') ?></th>
                     </tr>
                 </thead>
@@ -54,7 +53,7 @@ $visibleColumns = getUserPreferences('Factures');
                             <td>{{ $facture->client->first_name }} {{ $facture->client->last_name }}</td>
                             <td>{{ $facture->date }}</td>
                             <td>{{ number_format($facture->total_amount, 2) }}</td>
-                            <td>{{ $facture->status_payement }}</td>
+                            <!-- <td>{{ $facture->status_payement }}</td> -->
                             <td>
                                 <a href="{{ url('/factures/' . $facture->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('view', 'View') ?>">
                                     <i class='bx bx-eye'></i>
