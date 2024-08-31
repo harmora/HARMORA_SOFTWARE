@@ -1,3 +1,4 @@
+
 @extends('layout')
 
 @section('title')
@@ -5,8 +6,18 @@
 @endsection
 
 @section('content')
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <ul class="progressbar">
+            <li class="active"> Upload File</li>
+            <li>Map Columns</li>
+            <li>Import Data</li>
+        </ul>
+    </div>
 <div class="container-fluid mt-3">
-    <div class="row mb-4">
+
+
+    {{-- <div class="row mb-4">
         <div class="col-12">
             <ul class="nav nav-pills nav-justified">
                 <li class="nav-item">
@@ -20,7 +31,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> --}}
     <div class="row mt-3">
         <div class="col-12">
             <div class="card">
@@ -54,5 +65,81 @@
         </div>
     </div>
 </div>
-@endsection
 
+<style>
+.progress-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.progressbar {
+    counter-reset: step;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.progressbar li {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    color: gray;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.progressbar li::before {
+    counter-increment: step;
+    content: counter(step);
+    width: 30px;
+    height: 30px;
+    border: 2px solid gray;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    background-color: white;
+    line-height: 30px;
+}
+
+.progressbar li.active::before, .progressbar li.completed::before {
+    border-color: green;
+}
+
+.progressbar li.completed::before {
+    content: '\f00c'; /* FontAwesome check-circle */
+    font-family: FontAwesome;
+    color: white;
+    background-color: green;
+}
+
+.progressbar li.active {
+    color: green;
+}
+
+.progressbar li.active + li::after, .progressbar li.completed + li::after {
+    background-color: gray;
+}
+
+.progressbar li::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: gray;
+    top: 15px;
+    left: 0%;
+    z-index: -1;
+    transform: translateX(-50%);
+
+}
+
+.progressbar li:first-child::after {
+    content: none;
+}
+
+</style>
+
+@endsection
