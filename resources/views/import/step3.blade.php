@@ -11,13 +11,18 @@
                 @csrf
                 <input type="hidden" name="path" value="{{ $path }}">
                 <input type="hidden" name="mappings" value="{{ json_encode($mappings) }}">
+                <input type="hidden" name="save_columns" value="{{ json_encode($saveColumns) }}">
+                <input type="hidden" name="table" value="{{ $table }}">
+
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover text-center">
                         <thead class="thead-dark">
                             <tr>
                                 @foreach($mappings as $dbColumn => $excelIndex)
-                                    <th>{{ ucfirst($dbColumn) }}</th>
+                                    @if(in_array($dbColumn, $saveColumns))
+                                        <th>{{ ucfirst($dbColumn) }}</th>
+                                    @endif
                                 @endforeach
                             </tr>
                         </thead>
@@ -26,10 +31,12 @@
                                 @if(!empty(array_filter($row)))
                                     <tr>
                                         @foreach($mappings as $dbColumn => $excelIndex)
-                                            <td>
-                                                {{ $row[$excelIndex] ?? '' }}
-                                                <input type="hidden" name="data[{{ $rowIndex }}][{{ $dbColumn }}]" value="{{ $row[$excelIndex] ?? '' }}">
-                                            </td>
+                                            @if(in_array($dbColumn, $saveColumns))
+                                                <td>
+                                                    {{ $row[$excelIndex] ?? '' }}
+                                                    <input type="hidden" name="data[{{ $rowIndex }}][{{ $dbColumn }}]" value="{{ $row[$excelIndex] ?? '' }}">
+                                                </td>
+                                            @endif
                                         @endforeach
                                     </tr>
                                 @endif

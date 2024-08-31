@@ -101,7 +101,6 @@ class ClientController extends Controller
         // }
 
         $formFields['internal_purpose'] =  $internal_purpose;
-        $formFields['entreprise_id'] = $this->user->entreprise_id;
 
         if ($request->hasFile('profile')) {
             $formFields['photo'] = $request->file('profile')->store('photos', 'public');
@@ -120,37 +119,37 @@ class ClientController extends Controller
         $require_ev = isAdminOrHasAllDataAccess() && $request->has('require_ev') && $request->input('require_ev') == 0 ? 0 : 1;
         $status = !$internal_purpose && isAdminOrHasAllDataAccess() && $request->has('status') && $request->input('status') == 1 ? 1 : 0;
 
-        if (!$internal_purpose && $require_ev == 0) {
-            $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
-        }
+        // if (!$internal_purpose && $require_ev == 0) {
+        //     $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
+        // }
         $formFields['status'] = $status;
-
+        $formFields['entreprise_id'] = $this->user->entreprise_id;
         $client = Client::create($formFields);
 
         try {
-            if (!$internal_purpose && $require_ev == 1) {
-                $client->notify(new VerifyEmail($client));
-                $client->update(['email_verification_mail_sent' => 1]);
-            }else{
-                $client->notify(new VerifyEmail($client));
-                $client->update(['email_verification_mail_sent' => 0]);
-            }
-            // $workspace->clients()->attach($client->id);
+            // if (!$internal_purpose && $require_ev == 1) {
+            //     $client->notify(new VerifyEmail($client));
+            //     $client->update(['email_verification_mail_sent' => 1]);
+            // }else{
+            //     $client->notify(new VerifyEmail($client));
+            //     $client->update(['email_verification_mail_sent' => 0]);
+            // }
+            // // $workspace->clients()->attach($client->id);
 
             if (!$internal_purpose && isEmailConfigured()) {
                 $account_creation_template = Template::where('type', 'email')
                     ->where('name', 'account_creation')
                     ->first();
-                if (!$account_creation_template || ($account_creation_template->status !== 0)) {
-                    $client->notify(new AccountCreation($client));
-                    $client->update(['acct_create_mail_sent' => 1]);
-                } else {
-                    $client->update(['acct_create_mail_sent' => 0]);
-                }
-            } else {
+            //     if (!$account_creation_template || ($account_creation_template->status !== 0)) {
+            //         $client->notify(new AccountCreation($client));
+            //         $client->update(['acct_create_mail_sent' => 1]);
+            //     } else {
+            //         $client->update(['acct_create_mail_sent' => 0]);
+            //     }
+            // } else {
                 $client->update(['acct_create_mail_sent' => 0]);
             }
-            Session::flash('message', 'Client created successfully.');
+            Session::flash('message', 'Client created successfully.'.$this->user->entreprise_id);
             return response()->json(['error' => false, 'id' => $client->id]);
         } catch (TransportExceptionInterface $e) {
 

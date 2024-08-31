@@ -3029,7 +3029,7 @@ $(document).ready(function () {
         var addProductBtn     = $('#add_product_btn');
         var addSupplierBtn    = $('#add_supplier_btn');
         
-        if (selectedType === 'materielle/produits') {
+        if (selectedType === 'Matériel/Produits') {
             productsNameField.show();
             productNameField.show();
             stockNameField.show();
@@ -3106,3 +3106,120 @@ $(document).ready(function() {
         allowClear: true
     });
 });
+
+//-------------------------------------------------------------------------------------------------------------------
+// File upload handling
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    // const importForm = document.getElementById('importForm');
+    // const importSteps = document.getElementById('importSteps');
+    // const importContent = document.getElementById('importContent');
+
+    fileInput.addEventListener('change', function(e) {
+        const fileName = e.target.files[0].name;
+        fileNameDisplay.textContent = fileName;
+    });
+
+//     importForm.addEventListener('submit', function(e) {
+//         e.preventDefault();
+//         const formData = new FormData(this);
+
+//         fetch('/fournisseurs/import/step1', {
+//             method: 'POST',
+//             body: formData,
+//             headers: {
+//                 'X-Requested-With': 'XMLHttpRequest',
+//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+//             }
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 // Update progress indicator
+//                 importSteps.querySelectorAll('.nav-link')[1].classList.remove('disabled');
+//                 importSteps.querySelectorAll('.nav-link')[0].classList.remove('active');
+//                 importSteps.querySelectorAll('.nav-link')[1].classList.add('active');
+
+//                 // Display next step content
+//                 importContent.innerHTML = data.html;
+//             } else {
+//                 // Handle errors
+//                 alert(data.message || 'An error occurred during file upload.');
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('An error occurred during file upload.');
+//         });
+//     });
+});
+
+// // Function to handle the configuration step
+// function handleConfigStep() {
+//     const configForm = document.getElementById('configForm');
+//     configForm.addEventListener('submit', function(e) {
+//         e.preventDefault();
+//         const formData = new FormData(this);
+
+//         fetch('/import/step2', {
+//             method: 'POST',
+//             body: formData,
+//             headers: {
+//                 'X-Requested-With': 'XMLHttpRequest',
+//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+//             }
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 // Update progress indicator
+//                 document.querySelectorAll('#importSteps .nav-link')[2].classList.remove('disabled');
+//                 document.querySelectorAll('#importSteps .nav-link')[1].classList.remove('active');
+//                 document.querySelectorAll('#importSteps .nav-link')[2].classList.add('active');
+
+//                 // Display next step content
+//                 document.getElementById('importContent').innerHTML = data.html;
+//             } else {
+//                 // Handle errors
+//                 alert(data.message || 'An error occurred during configuration.');
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('An error occurred during configuration.');
+//         });
+//     });
+// }
+
+// // Function to handle the final import step
+// function handleImportStep() {
+//     const importFinalForm = document.getElementById('importFinalForm');
+//     importFinalForm.addEventListener('submit', function(e) {
+//         e.preventDefault();
+//         const formData = new FormData(this);
+
+//         fetch('/import/step3', {
+//             method: 'POST',
+//             body: formData,
+//             headers: {
+//                 'X-Requested-With': 'XMLHttpRequest',
+//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+//             }
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 alert('Import completed successfully!');
+//                 // Redirect or update UI as needed
+//             } else {
+//                 // Handle errors
+//                 alert(data.message || 'An error occurred during import.');
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('An error occurred during import.');
+//         });
+//     });
+// }

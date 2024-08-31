@@ -59,6 +59,8 @@ class AchatController extends Controller
             'date_limit' => 'nullable|date',
             'reference' => 'required|string|max:255',
             'montant_ht' => 'nullable|numeric|min:0',
+            'facture' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'devis' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
         if(!$formFields['montant_ht'])
         {
@@ -68,7 +70,8 @@ class AchatController extends Controller
         if ($formFields['type_achat'] == 'Matériel/Produits') {
             $request->validate([
                 'fournisseur_id' => 'required|exists:fournisseurs,id',
-                'products' => 'nullable|array|min:1',
+                'devis' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'products' => 'required|array|min:1',
                 'products.*.product_id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
                 'products.*.price' => 'required|numeric|min:0',
@@ -109,10 +112,9 @@ class AchatController extends Controller
             $formFields['devis'] = $request->file('devis')->store('devis', 'public');
         }
 
-        DB::beginTransaction();
         // Create Achat instance
         $achat = Achat::create($formFields); 
-
+        DB::beginTransaction();
         if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
             $productData1=[];
             foreach ($request->products as $productd) {
@@ -138,7 +140,7 @@ class AchatController extends Controller
             $achat->products()->attach($productData1);
             $documentsFields = [];
 
-            if ($formFields['devis']) {
+            if ($request->hasFile('devis')) {
                 $documentsFields[] = [
                     'type' => 'devis',
                     'devis' => $formFields['devis'],
@@ -146,7 +148,7 @@ class AchatController extends Controller
                 ];
             }
             
-            if ($formFields['facture']) {
+            if ($request->hasFile('facture')) {
                 $documentsFields[] = [
                     'type' => 'facture',
                     'facture' => $formFields['facture'],
@@ -161,9 +163,8 @@ class AchatController extends Controller
                 $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;           
                 Document::create($documentField);
             }
-            DB::commit();    
         }
-
+        DB::commit();
         Session::flash('message', 'Fournisseur created successfully.'.$formFields['type_achat']);
     
         return response()->json(['error' => false, 'id' => $achat->id]);
@@ -243,34 +244,54 @@ public function update(Request $request, $id)
         }
         $formFields['facture'] = $request->file('facture')->store('factures', 'public');
     }
+    if ($request->hasFile('devis')) {
+        // Delete old file if exists
+        if ($achat->facture) {
+            Storage::disk('public')->delete($achat->devis);
+        }
+        $formFields['devis'] = $request->file('devis')->store('devis', 'public');
+    }
 
     // Update Achat instance
     $achat->update($formFields);
 
     if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
-        // Remove old achat_product entries
-        $achat->products()->detach();
-
         foreach ($request->products as $productData) {
-            $achat->products()->attach($productData['product_id'], [
-                'quantity' => $productData['quantity'],
-                'price' => $productData['price'],
-            ]);
+            // Check if the product is already attached to the achat
+            $existingProduct = $achat->products()->where('product_id', $productData['product_id'])->first();
 
-            // Update product stock
-            $product = Product::find($productData['product_id']);
-            $oldQuantity = $achat->products()->where('product_id', $productData['product_id'])->first()->pivot->quantity ?? 0;
+            if ($existingProduct) {
+                // Update the existing pivot entry
+                $oldQuantity = $existingProduct->pivot->quantity;
+                $achat->products()->updateExistingPivot($productData['product_id'], [
+                    'quantity' => $productData['quantity'],
+                    'price' => $productData['price'],
+                ]);
+            } else {
+                // Attach the new product to the achat
+                $achat->products()->attach($productData['product_id'], [
+                    'quantity' => $productData['quantity'],
+                    'price' => $productData['price'],
+                ]);
+                $oldQuantity = 0; // Since this is a new product, old quantity is 0
+            }
+
+            // Calculate the difference in quantity
             $quantityDifference = $productData['quantity'] - $oldQuantity;
 
-            mouvements_stock::create([
-                'product_id' => $product->id,
-                'achat_id' => $achat->id,
-                'quantitéajoutée' => $quantityDifference,
-                'quantitéprecedente' => $product->stock,
-                'date_mouvement' => now(),
-                'type_mouvement' => $quantityDifference > 0 ? 'entrée' : 'sortie',
-                'reference' => $achat->reference,
-            ]);
+            // Find the product to update its stock
+            $product = Product::find($productData['product_id']);
+            if($quantityDifference!=0){
+                mouvements_stock::create([
+                    'product_id' => $product->id,
+                    'achat_id' => $achat->id,
+                    'quantitéajoutée' => $quantityDifference,
+                    'quantitéprecedente' => $product->stock,
+                    'date_mouvement' => now(),
+                    'type_mouvement' => $quantityDifference > 0 ? 'entrée' : 'sortie',
+                    'reference' => $achat->reference,
+                ]);
+            }
 
             $product->stock += $quantityDifference;
             $product->save();

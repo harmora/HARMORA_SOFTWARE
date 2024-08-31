@@ -2,6 +2,9 @@
 use App\Models\Workspace;
 $auth_user = getAuthenticatedUser();
 $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
+$fileExtension = '';
+$fileExtension2 = '';
+
 @endphp
 @extends('layout')
 @section('title')
@@ -34,7 +37,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <div class="mb-3 col-md-6">
                         <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
                         <select class="form-select" id="type_achat" name="type_achat">
-                            <option value="materielle/produits" {{ $achat->type_achat == 'materielle/produits' ? 'selected' : '' }}><?= get_label('materielle_produits', 'Materielle/Produits') ?></option>
+                            <option value="Matériel/Produits" {{ $achat->type_achat == 'materielle/produits' ? 'selected' : '' }}><?= get_label('materielle_produits', 'Materielle/Produits') ?></option>
                             <option value="recherche/developpement" {{ $achat->type_achat == 'recherche/developpement' ? 'selected' : '' }}><?= get_label('recherche_developpement', 'Recherche/Developpement') ?></option>
                             <option value="investissements" {{ $achat->type_achat == 'investissements' ? 'selected' : '' }}><?= get_label('investissements', 'Investissements') ?></option>
                             <option value="salaires/avantages sociaux" {{ $achat->type_achat == 'salaires/avantages sociaux' ? 'selected' : '' }}><?= get_label('salaires_avantages_sociaux', 'Salaires/Avantages Sociaux') ?></option>
