@@ -48,12 +48,13 @@ $visibleColumns = getUserPreferences('Factures');
                             <td>{{ $facture->invoice_number }}</td>
                             <td>{{ $facture->commande_name }}</td>
                             <td>
-                                <a href="{{ url('/factures/' . $facture->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('view', 'View') ?>">
-                                    <i class='bx bx-eye'></i>
-                                </a>
-                                <a href="{{ url('/factures/' . $facture->id . '/edit') }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('edit', 'Edit') ?>">
-                                    <i class='bx bx-edit'></i>
-                                </a>
+
+
+                                <a href="{{ route('commandes.edit', $facture->commande_id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top">
+    <i class='bx bx-edit text-primary'></i> <?= get_label('edit_commande', 'Edit Commande') ?>
+</a>
+
+
                                 <form action="{{ url('/factures/' . $facture->id) }}" method="POST" class="delete-facture-form" style="display:inline;">
                                     @csrf
                                     @method('DELETE')

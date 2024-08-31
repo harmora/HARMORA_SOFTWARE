@@ -149,9 +149,9 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </div>
     </div>
 </div>
-@endsection
+<!-- @endsection
 
-@section('scripts')
+@section('scripts') -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let productCount = 1;

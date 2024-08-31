@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AchatController;
+use App\Http\Controllers\ImportController;
 use App\Models\ActivityLog;
 use App\Http\Middleware\Authorize;
 use Illuminate\Support\Facades\DB;
@@ -184,7 +185,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         //products
-        Route::get('/products', [ProductController::class, 'index']);
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
         Route::get('/products/movements', [ProductController::class, 'render_mv'])->name('products.movements');
         Route::get('/products/get/{id}', [ProductController::class, 'show']);
         Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
@@ -309,10 +310,10 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
         Route::get('fournisseurs/list', [FournisseurController::class,'list']);
         Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
-        Route::get('/fournisseurs/import', [FournisseurController::class, 'showForm'])->name('import.form');
-        Route::post('/fournisseurs/import/step1', [FournisseurController::class, 'step1'])->name('import.step1');
-        Route::post('/fournisseurs/import/step2', [FournisseurController::class, 'step2'])->name('import.step2');
-        Route::post('/fournisseurs/import/save', [FournisseurController::class, 'save'])->name('import.save');
+        Route::get('/home/import', [ImportController::class, 'showForm'])->name('import.form');
+        Route::post('/home/import/step1', [ImportController::class, 'step1'])->name('import.step1');
+        Route::post('/home/import/step2', [ImportController::class, 'step2'])->name('import.step2');
+        Route::post('/home/import/save', [ImportController::class, 'save'])->name('import.save');
 
         // //test excrl -------------------------------------------------------------------------------
         // Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1');
@@ -334,9 +335,10 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/factures', [FactureController::class, 'index'])->name('factures.show');
         Route::get('/factures/create', [FactureController::class, 'create'])->name('factures.create_factures');
         Route::post('/factures/store', [FactureController::class, 'store'])->name('factures.store');
-        Route::get('/factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit_facture');
-        Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
+        // Route::get('/factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit_facture');
+        // Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
         Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
+        Route::resource('commandes', CommandesController::class);
 
 
 
@@ -344,7 +346,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         //Clients-------------------------------------------------------------
-        Route::get('/clients', [ClientController::class, 'index']);
+        Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
         Route::get('/clients/profile/{id}', [ClientController::class, 'show']);
         Route::get('/clients/create', [ClientController::class, 'create']);
         Route::post('/clients/store', [ClientController::class, 'store']);

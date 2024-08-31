@@ -39,9 +39,7 @@ class CommandesController extends Controller
      */
     public function index($id = '')
     {
-        //$productId = isset($product->id) ? $product->id : (request()->has('product') ? request('product') : '');
 
-        //$toSelectCommandeUsers = []; // Default empty array for safety
 
         $users = User::all();
        // $users = User::all();  // Fetch all users
@@ -171,96 +169,7 @@ class CommandesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request)
-    // {
-    //     $formFields = $request->validate([
-    //         'id' => 'required|exists:commandes,id',
-    //         'title' => ['required'],
-    //         'status_id' => ['required'],
-    //         'start_date' => ['required', 'before_or_equal:due_date'],
-    //         'due_date' => ['required'],
-    //         'description' => ['nullable']
-    //     ], [
-    //         'status_id.required' => 'The status field is required.'
-    //     ]);
 
-    //     $status = Status::findOrFail($request->input('status_id'));
-    //     $id = $request->input('id');
-    //     $commande = Commande::findOrFail($id);
-    //     $currentStatusId = $commande->status_id;
-
-    //     // Check if the status has changed
-    //     if ($currentStatusId != $request->input('status_id')) {
-    //         $status = Status::findOrFail($request->input('status_id'));
-    //         if (!canSetStatus($status)) {
-    //             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-    //         }
-    //     }
-    //     $start_date = $request->input('start_date');
-    //     $due_date = $request->input('due_date');
-    //     $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
-    //     $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
-
-    //     $userIds = $request->input('user_id', []);
-
-    //     $commande = Commande::findOrFail($id);
-    //     $commande->update($formFields);
-
-    //     // Get the current users associated with the commande
-    //     $currentUsers = $commande->users->pluck('id')->toArray();
-    //     $currentClients = $commande->product->clients->pluck('id')->toArray();
-
-    //     // Sync the users for the commande
-    //     $commande->users()->sync($userIds);
-
-    //     // Get the new users associated with the commande
-    //     $newUsers = array_diff($userIds, $currentUsers);
-
-    //     // Prepare notification data for new users
-    //     $notification_data = [
-    //         'type' => 'commande',
-    //         'type_id' => $id,
-    //         'type_title' => $commande->title,
-    //         'access_url' => 'commandes/information/' . $commande->id,
-    //         'action' => 'assigned'
-    //     ];
-
-    //     // Notify only the new users
-    //     $recipients = array_map(function ($userId) {
-    //         return 'u_' . $userId;
-    //     }, $newUsers);
-
-    //     // Process notifications for new users
-    //     processNotifications($notification_data, $recipients);
-
-    //     if ($currentStatusId != $request->input('status_id')) {
-    //         $currentStatus = Status::findOrFail($currentStatusId);
-    //         $newStatus = Status::findOrFail($request->input('status_id'));
-
-    //         $notification_data = [
-    //             'type' => 'commande_status_updation',
-    //             'type_id' => $id,
-    //             'type_title' => $commande->title,
-    //             'updater_first_name' => $this->user->first_name,
-    //             'updater_last_name' => $this->user->last_name,
-    //             'old_status' => $currentStatus->title,
-    //             'new_status' => $newStatus->title,
-    //             'access_url' => 'commandes/information/' . $id,
-    //             'action' => 'status_updated'
-    //         ];
-
-    //         $currentRecipients = array_merge(
-    //             array_map(function ($userId) {
-    //                 return 'u_' . $userId;
-    //             }, $currentUsers),
-    //             array_map(function ($clientId) {
-    //                 return 'c_' . $clientId;
-    //             }, $currentClients)
-    //         );
-    //         processNotifications($notification_data, $currentRecipients);
-    //     }
-    //     return response()->json(['error' => false, 'id' => $id, 'parent_id' => $commande->product->id, 'parent_type' => 'product',  'message' => 'Commande updated successfully.']);
-    // }
 
     public function edit($id)
     {
@@ -271,19 +180,7 @@ class CommandesController extends Controller
         return view('commandes.edit', compact('commande', 'clients', 'users'));
     }
     
-//     public function update(Request $request, $id)
-// {
-//     $request->validate([
-//         'title' => 'required|string|max:255',
-//         'status' => 'required|string',
-//         // Add other fields validations as needed
-//     ]);
 
-//     $commande = Commande::findOrFail($id);
-//     $commande->update($request->all());
-
-//     return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
-// }
 
 public function update(Request $request, $id)
 {

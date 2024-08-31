@@ -39,7 +39,8 @@ class Client extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'acct_create_mail_sent',
         'email_verification_mail_sent',
-        'internal_purpose'
+        'internal_purpose',
+        'entreprise_id',
     ];
 
     /**

@@ -31,9 +31,11 @@ class FactureController extends Controller
     {
         // Fetch all factures
         $factures = Facture::all();
+        $commandes = Commande::all();
+
 
         // Return the view with factures data
-        return view('factures.show', compact('factures'));
+        return view('factures.show', compact('factures', 'commandes'));
     }
 
     public function create(Request $request)
@@ -106,14 +108,17 @@ class FactureController extends Controller
     $fournisseurs = fournisseur::all();
     $categories = ProdCategory::all();
     $clients = Client::all();
+    $commande = Commande::findOrFail($id);
 
-    return view('factures.edit_facture', [
+    // return view('commandes.edit', [
+   return view('factures.edit_facture', [
         'facture' => $facture,
         'entreprises' => $entreprises,
         'products' => $products,
         'fournisseurs' => $fournisseurs,
         'categories' => $categories,
-        'clients' => $clients 
+        'clients' => $clients,
+        'commande' => $commande
     ]);
 }
 

@@ -1,3 +1,4 @@
+
 @extends('layout')
 
 @section('title')
@@ -5,13 +6,48 @@
 @endsection
 
 @section('content')
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <ul class="progressbar">
+            <li class="active"> Upload File</li>
+            <li>Map Columns</li>
+            <li>Import Data</li>
+        </ul>
+    </div>
 <div class="container-fluid mt-3">
-    <div class="row">
+
+
+    {{-- <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills nav-justified">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">1. Sélection du fichier</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">2. Configuration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">3. Importation</a>
+                </li>
+            </ul>
+        </div>
+    </div> --}}
+    <div class="row mt-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <form action="{{ route('import.step1') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <div class="form-group">
+                            <label for="table">Select Table</label>
+                            <select name="table" id="table" class="form-control" required>
+                                <option value="">Choose a table</option>
+                                <option value="fournisseurs">Fournisseurs</option>
+                                <option value="achats">Achats</option>
+                                <option value="products">Products</option>
+                                <option value="clients">Clients</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="fileInput" class="form-label">Choisir un fichier</label>
                             <div class="input-group">
@@ -29,13 +65,81 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
-<script>
-    document.getElementById('fileInput').addEventListener('change', function(e) {
-        var fileName = e.target.files[0].name;
-        document.getElementById('fileNameDisplay').textContent = fileName;
-    });
-</script>
+<style>
+.progress-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.progressbar {
+    counter-reset: step;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.progressbar li {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    color: gray;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.progressbar li::before {
+    counter-increment: step;
+    content: counter(step);
+    width: 30px;
+    height: 30px;
+    border: 2px solid gray;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    background-color: white;
+    line-height: 30px;
+}
+
+.progressbar li.active::before, .progressbar li.completed::before {
+    border-color: green;
+}
+
+.progressbar li.completed::before {
+    content: '\f00c'; /* FontAwesome check-circle */
+    font-family: FontAwesome;
+    color: white;
+    background-color: green;
+}
+
+.progressbar li.active {
+    color: green;
+}
+
+.progressbar li.active + li::after, .progressbar li.completed + li::after {
+    background-color: gray;
+}
+
+.progressbar li::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: gray;
+    top: 15px;
+    left: 0%;
+    z-index: -1;
+    transform: translateX(-50%);
+
+}
+
+.progressbar li:first-child::after {
+    content: none;
+}
+
+</style>
+
 @endsection
