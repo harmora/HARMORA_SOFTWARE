@@ -151,7 +151,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/home', [HomeController::class, 'index']);
 
         Route::get('/chiffre-affaires', [HomeController::class, 'getChiffreAffaires']);
-
+        Route::get('/get-chiffre-affaire', [HomeController::class, 'getChiffreAffaireParCategorie']);
 
 
 
@@ -231,9 +231,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         // commandes
         Route::get('/commandes', [CommandesController::class, 'index']);
         Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
-        Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
-        Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
-        Route::get('/commandes/get/{        Route::get('commandes/create', [CommandesController::class, 'create'])->name('commandes.create');
+        Route::get('commandes/create', [CommandesController::class, 'create'])->name('commandes.create');
         Route::post('/commandes/store', [CommandesController::class, 'store'])->name('commandes.store');
         Route::get('/commandes/duplicate/{id}', [CommandesController::class, 'duplicate']);
         Route::get('/commandes/get/{id}', [CommandesController::class, 'get'])->name('commande.get');
@@ -248,7 +246,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
         // Route::get('/commandes/{id}/edit', [CommandeController::class, 'edit']);
         Route::get('/commandes/{id}/edit', [CommandesController::class, 'edit'])->name('commandes.edit');
-        Route::delete('/commandes/{id}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
+        Route::delete('/commandes/{id}', [CommandesController::class, 'destroy'])->name('commandes.destroy');
         Route::put('/commandes/{id}', [CommandesController::class, 'update'])->name('commandes.update');
 
 
@@ -353,7 +351,15 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/clients/get/{id}', [ClientController::class, 'get']);
         Route::get('/clients/edit/{id}', [ClientController::class, 'edit']);
         Route::put('/clients/update/{id}', [ClientController::class, 'update']);
-h']);
+        Route::delete('/clients/destroy/{id}', [ClientController::class, 'destroy']);
+        Route::post('/clients/destroy_multiple', [ClientController::class, 'destroy_multiple']);
+        Route::get('/clients/list', [ClientController::class, 'list']);
+
+
+
+
+        //Settings-------------------------------------------------------------
+            Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);
 
             Route::put("settings/languages/set-default", [LanguageController::class, 'set_default'])->middleware(['demo_restriction']);
 

@@ -237,70 +237,59 @@ background-repeat: no-repeat;
             @endif
         </div>
         <div class="row">
+
             <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
                 <div class="card overflow-hidden mb-4 statisticsDiv">
                     <div class="card-header pt-3 pb-1">
                         <div class="card-title d-flex justify-content-between mb-0">
-                            <h5 class="m-0 me-2"><?= get_label('todos_overview', 'Todos overview') ?></h5>
-                            <div>
-                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_todo', 'Create todo') ?>"><i class='bx bx-plus'></i></a></span>
-                                <a href="/todos"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_more', 'View more') ?>"><i class="bx bx-list-ul"></i></button></a>
+                            <h5 class="m-0 me-2"><?= get_label('chiffre d affaire par cathegorie', 'Chiffre d affaire par categorie') ?></h5>
+                          <div>
+                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View COmmandes') ?>"><i class='bx bx-box'></i></a></span>
+
                             </div>
                         </div>
-                        <div class="my-3">
-                            <div id="todoStatisticsChart"></div>
+                        <div class="my-3 mt-5">
+                            <div id="caparcategorie"></div>
                         </div>
-                    </div>
-                    <div class="card-body" id="todos-statistics">
-                        <?php $total_tasks_count = 0; ?>
-                        <ul class="p-0 m-0">
-                            @if (is_countable($todos) && count($todos) > 0)
-                            @foreach($todos as $todo)
-                            <li class="d-flex mb-4 pb-1">
-                                <div class="avatar flex-shrink-0">
-                                    <input type="checkbox" id="{{$todo->id}}" onclick='update_status(this)' name="{{$todo->id}}" reload="true" class="form-check-input mt-0" {{$todo->is_completed ? 'checked' : ''}}>
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                    <div class="me-2">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <h6 class="mb-0 <?= $todo->is_completed ? 'striked' : '' ?>" id="{{$todo->id}}_title">{{ $todo->title }}</h6>
-                                            <div class="user-progress d-flex align-items-center gap-1">
-                                                <a href="javascript:void(0);" class="edit-todo" data-bs-toggle="modal" data-bs-target="#edit_todo_modal" data-id="{{ $todo->id }}" title="<?= get_label('update', 'Update') ?>"><i class='bx bx-edit mx-1'></i></a>
-                                                <a href="javascript:void(0);" class="delete" data-id="{{$todo->id}}" data-type="todos" title="<?= get_label('delete', 'Delete') ?>"><i class='bx bx-trash text-danger mx-1'></i></a>
-                                            </div>
-                                        </div>
-                                        <small class="text-muted d-block my-1">{{ format_date($todo->created_at,true)}}</small>
-                                    </div>
-                                </div>
-                            </li>
-                            @endforeach
-                            @else
-                            <div class=" h-100 d-flex justify-content-center align-items-center">
-                                <div>
-                                    <?= get_label('todos_not_found', 'Todos not found!') ?>
-                                </div>
-                            </div>
-                            @endif
-                        </ul>
+                        <div class="card-title d-flex justify-content-between mb-0">
+                            <h5 class="m-0 me-2"><?= get_label('status des commandes', 'Status des commandes') ?></h5>
+
+                        </div>
                     </div>
                 </div>
             </div>
 
 
 
-            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+
+            <div class="col-md-6 col-lg-4 col-xl-8 order-0 mb-4">
                 <div class="card overflow-hidden mb-4 statisticsDiv">
                     <div class="card-header pt-3 pb-1">
                         <div class="card-title d-flex justify-content-between mb-0">
                             <h5 class="m-0 me-2"><?= get_label('sales revenue', 'Sales revenue') ?></h5>
-                            {{-- <div>
-                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_todo', 'Create todo') ?>"><i class='bx bx-plus'></i></a></span>
-                                <a href="/todos"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_more', 'View more') ?>"><i class="bx bx-list-ul"></i></button></a>
-                            </div> --}}
+                          <div>
+                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>"><i class='bx bx-file'></i></a></span>
+                                <a href="/todos"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>"><i class="bx bx-user"></i></button></a>
+                            </div>
                         </div>
                         <div class="my-3">
+                            <div class="form-group">
+                                <label for="grouping">Group by:</label>
+                                <select id="grouping" class="form-control">
+                                    <option value="day">Day</option>
+                                    <option value="month" selected>Month</option>
+                                    <option value="year">Total</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="yearSelect">Year:</label>
+                                <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}">
+                            </div>
+
                             <div id="chart"></div>
                         </div>
+
                     </div>
                     <div class="card-body" id="todos-statistics">
                         <ul class="p-0 m-0">
@@ -323,60 +312,135 @@ background-repeat: no-repeat;
 
 
 
-
-
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/chiffre-affaires')
-                .then(response => response.json())
-                .then(data => {
-                    const dates = data.map(item => item.date);
-                    const totals = data.map(item => parseFloat(item.total));
+        $(document).ready(function() {
+            $.ajax({
+                url: '/get-chiffre-affaire',
+                method: 'GET',
+                success: function(response) {
+                    // Extract categories and percentages
+                    var categories = response.map(function(item) {
+                        return item.categorie;
+                    });
 
+                    var percentages = response.map(function(item) {
+                        return item.percentage;
+                    });
+
+                    // Define the chart options
                     var options = {
-                        series: [{
-                            name: 'Chiffre d\'Affaires',
-                            type: 'line',
-                            data: totals
-                        }],
+                        series: percentages,
                         chart: {
-                            height: 350,
-                            type: 'line',
+                            type: 'donut',
                         },
-                        stroke: {
-                            curve: 'smooth'
-                        },
-                        labels: dates,
-                        markers: {
-                            size: 0
-                        },
-                        yaxis: {
-                            title: {
-                                text: 'Chiffre d\'Affaires',
-                            },
-                        },
-                        tooltip: {
-                            shared: true,
-                            intersect: false,
-                            y: {
-                                formatter: function (y) {
-                                    if (typeof y !== "undefined") {
-                                        return y.toFixed(2) + " DH";
-                                    }
-                                    return y;
+                        labels: categories,
+                        responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                chart: {
+                                    width: 200
+                                },
+                                legend: {
+                                    position: 'bottom'
                                 }
                             }
-                        }
+                        }]
                     };
 
-                    var chart = new ApexCharts(document.querySelector("#chart"), options);
+                    // Render the chart
+                    var chart = new ApexCharts(document.querySelector("#caparcategorie"), options);
                     chart.render();
-                });
+                },
+                error: function(error) {
+                    console.log("Error fetching data:", error);
+                }
+            });
         });
+        </script>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let chart; // Declare chart variable outside the function to reuse it
+
+    function fetchDataAndRenderChart(groupBy, year) {
+        fetch(`/chiffre-affaires?group_by=${groupBy}&year=${year}`)
+            .then(response => response.json())
+            .then(data => {
+                const periods = data.map(item => item.period);
+                const totals = data.map(item => parseFloat(item.total));
+
+                const options = {
+                    series: [{
+                        name: 'Chiffre d\'Affaires',
+                        type: 'area',
+                        data: totals
+                    }],
+                    chart: {
+                        height: 350,
+                        type: 'area',
+                    },
+                    stroke: {
+                        curve: 'smooth'
+                    },
+                    fill: {
+                        type: 'solid',
+                        opacity: 0.35
+                    },
+                    labels: periods,
+                    markers: {
+                        size: 0
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Chiffre d\'Affaires',
+                        },
+                    },
+                    tooltip: {
+                        shared: true,
+                        intersect: false,
+                        y: {
+                            formatter: function (y) {
+                                if (typeof y !== "undefined") {
+                                    return y.toFixed(2) + " DH";
+                                }
+                                return y;
+                            }
+                        }
+                    }
+                };
+
+                // Check if chart already exists, if so, destroy it
+                if (chart) {
+                    chart.destroy();
+                }
+
+                // Create a new chart
+                chart = new ApexCharts(document.querySelector("#chart"), options);
+                chart.render();
+            });
+    }
+
+    // Get current year
+    const currentYear = new Date().getFullYear();
+
+    // Initial load with default grouping by month and current year
+    fetchDataAndRenderChart('month', currentYear);
+
+    // Update chart when grouping or year selection changes
+    document.getElementById('grouping').addEventListener('change', function () {
+        const groupBy = this.value;
+        const year = document.getElementById('yearSelect').value;
+        fetchDataAndRenderChart(groupBy, year);
+    });
+
+    document.getElementById('yearSelect').addEventListener('change', function () {
+        const year = this.value;
+        const groupBy = document.getElementById('grouping').value;
+        fetchDataAndRenderChart(groupBy, year);
+    });
+});
+
     </script>
-
-
-
 
 
 

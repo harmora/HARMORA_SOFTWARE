@@ -44,6 +44,7 @@
             <!-- Styled container for OCR result -->
             <div id="ocrResultContainer" class="ocr-result-container mt-3">
                 <p id="ocrResult" class="ocr-result"></p>
+
             </div>
         </div>
     </div>
