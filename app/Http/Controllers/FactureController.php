@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Facture;
 use App\Models\Entreprise;
 use App\Models\Client;
+use App\Models\Commande;
 use App\Models\fournisseur;
 use App\Models\ProdCategory;
 use App\Models\Product;
