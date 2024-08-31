@@ -335,9 +335,10 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/factures', [FactureController::class, 'index'])->name('factures.show');
         Route::get('/factures/create', [FactureController::class, 'create'])->name('factures.create_factures');
         Route::post('/factures/store', [FactureController::class, 'store'])->name('factures.store');
-        Route::get('/factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit_facture');
-        Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
+        // Route::get('/factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit_facture');
+        // Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
         Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
+        Route::resource('commandes', CommandesController::class);
 
 
 
