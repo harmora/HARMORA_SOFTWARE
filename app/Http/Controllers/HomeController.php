@@ -99,3 +99,31 @@ class HomeController extends Controller
     return response()->json($data);
 }
 }
+
+
+
+// public function getChiffreAffaireParCategorie()
+// {
+//     // Fetch the total revenue per category by joining related tables
+//     $revenues = DB::table('factures')
+//         ->join('commandes', 'factures.commande_id', '=', 'commandes.id')
+//         ->join('products', 'commandes.product_id', '=', 'products.id')
+//         ->join('categories', 'products.categorie_id', '=', 'categories.id')
+//         ->select('categories.name as categorie', DB::raw('SUM(products.price * factures.quantity) as total'))
+//         ->groupBy('categories.name')
+//         ->get();
+
+//     // Calculate the total revenue
+//     $totalRevenue = $revenues->sum('total');
+
+//     // Calculate the percentage of revenue per category
+//     $data = $revenues->map(function($revenue) use ($totalRevenue) {
+//         return [
+//             'categorie' => $revenue->categorie,
+//             'percentage' => round(($revenue->total / $totalRevenue) * 100, 2)
+//         ];
+//     });
+
+//     // Return the data as a JSON response
+//     return response()->json($data);
+// }

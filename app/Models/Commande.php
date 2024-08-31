@@ -52,10 +52,15 @@ class Commande extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function facture()
+    {
+        return $this->hasOne(Facture::class, 'client_id');
     }
 
     public function products()
