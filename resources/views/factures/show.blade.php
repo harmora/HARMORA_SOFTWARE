@@ -48,13 +48,8 @@ $visibleColumns = getUserPreferences('Factures');
                             <td>{{ $facture->invoice_number }}</td>
                             <td>{{ $facture->commande_name }}</td>
                             <td>
-                                <a href="{{ url('/factures/' . $facture->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('view', 'View') ?>">
-                                <i class='bx bx-info-circle text-info' data-bs-toggle="tooltip" data-bs-placement="right"></i>
-                                </a>
-                                <!-- <a href="{{ route('commandes.edit', $facture->id) }}" > -->
-                                <!-- <a href="{{ url('/commandes' . $facture->commande_id . '/edit') }}">
-                                    <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
-                                </a> -->
+
+
                                 <a href="{{ route('commandes.edit', $facture->commande_id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top">
     <i class='bx bx-edit text-primary'></i> <?= get_label('edit_commande', 'Edit Commande') ?>
 </a>

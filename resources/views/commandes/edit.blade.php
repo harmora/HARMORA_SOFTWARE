@@ -90,7 +90,10 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </div>
                     @endforeach
                 </div>
-                <button type="button" id="add-product">Add Product</button>
+                <!-- <button type="button" id="add-product">Add Product</button> -->
+                <div class="mb-3">
+                            <button type="button" id="add-product" class="btn btn-secondary"><?= get_label('add_another_product', 'Add Another Product') ?></button>
+                </div>
             </div>
 
             <!-- Add other fields as necessary -->
@@ -104,22 +107,56 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 @endsection
 
 @section('scripts')
-document.getElementById('add-product').addEventListener('click', function() {
-    let productFields = document.getElementById('product-fields');
-    let index = productFields.children.length;
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let productCount = {{ count($commande->products) }};
+        const addProductBtn = document.getElementById('add-product');
+        const removeProductBtn = document.getElementById('remove-product');
+        const productsContainer = document.getElementById('products-container');
 
-    let newField = document.createElement('div');
-    newField.classList.add('product-field');
-    newField.innerHTML = `
-        <select name="products[${index}][product_id]" class="form-control" required>
-            <!-- Add product options here -->
-        </select>
-        <input type="number" name="products[${index}][quantity]" class="form-control" required>
-        <input type="number" name="products[${index}][price]" class="form-control" required>
-    `;
-
-    productFields.appendChild(newField);
-});
-
+        addProductBtn.addEventListener('click', function() {
+            const newProductDiv = document.createElement('div');
+            newProductDiv.classList.add('product-entry', 'mb-3');
+            newProductDiv.innerHTML = `
+                <h5><?= get_label('product', 'Product') ?> ${++productCount}</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
+                        <select class="form-select" name="products[${productCount-1}][product_id]" required>
+                            <option value=""><?= get_label('select_product', 'Select product') ?></option>
+                            @foreach($products ?? [] as $product)
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="number" name="products[${productCount-1}][quantity]" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" required min="1">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="number" name="products[${productCount-1}][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" required>
+                    </div>
+                </div>
+            `;
+            productsContainer.appendChild(newProductDiv);
+            
+            if (productCount > 0) {
+                removeProductBtn.style.display = 'inline-block';
+            }
+        });
+    
+        removeProductBtn.addEventListener('click', function() {
+            if (productCount > 0) {
+                productsContainer.removeChild(productsContainer.lastElementChild);
+                productCount--;
+    
+                if (productCount === 0) {
+                    removeProductBtn.style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
 @endsection
 
