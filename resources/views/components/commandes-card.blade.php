@@ -46,6 +46,7 @@ $visibleColumns = getUserPreferences('commandes');
             </div>
             @endif
             @endif
+
             <div class="col-md-4 mb-3">
                 <select class="form-control" id="commande_status_filter" name="status_ids[]" multiple="multiple" data-placeholder="<?= get_label('select_statuses', 'Select Statuses') ?>">
                     @foreach ($statuses as $status)

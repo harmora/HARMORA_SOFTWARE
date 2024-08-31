@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Facture;
 use App\Models\Entreprise;
+use App\Models\Client;
+use App\Models\Commande;
 use App\Models\fournisseur;
 use App\Models\ProdCategory;
 use App\Models\Product;
@@ -41,12 +43,12 @@ class FactureController extends Controller
         $categories = ProdCategory::all();
         $user = auth()->user();
         $entreprise = Entreprise::find($user->entreprise_id);
-
-        // $company = $user->entreprise_id; // Assuming there's a relationship set up between User and Entreprise
+        $clients = Client::all();
 
         return view('factures.create_facture', [
             'entreprise' => $entreprise,
             'products' => $products,
+            'clients' => $clients,
             'fournisseurs' => $fournisseurs,
             'categories' => $categories,
             'company_name' => $entreprise->denomination, // Pass the company name to the view
@@ -64,9 +66,7 @@ class FactureController extends Controller
             'date' => 'required|date',
             'invoice_number' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'client_name' => 'required|string|max:255',
-            'client_address' => 'required|string',
-            'client_contact_details' => 'required|string',
+            'client_id' => 'required|exists:clients,id', // Validate client_id
             'item_description' => 'required|string',
             'item_quantity' => 'required|integer|min:1',
             'item_price' => 'required|numeric|min:0',
@@ -74,12 +74,19 @@ class FactureController extends Controller
             'tax_rate' => 'required|numeric|min:0',
             'tax_amount' => 'required|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',
+            'products' => 'nullable|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
         ]);
 
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('logos', 'public');
             $formFields['logo'] = $logoPath;
         }
+
+
+
 
         $formFields['entreprise_id'] = $this->user->entreprise_id;
 
@@ -98,13 +105,15 @@ class FactureController extends Controller
     $products = Product::all();
     $fournisseurs = fournisseur::all();
     $categories = ProdCategory::all();
+    $clients = Client::all();
 
     return view('factures.edit_facture', [
         'facture' => $facture,
         'entreprises' => $entreprises,
         'products' => $products,
         'fournisseurs' => $fournisseurs,
-        'categories' => $categories
+        'categories' => $categories,
+        'clients' => $clients 
     ]);
 }
 
@@ -122,9 +131,10 @@ public function update(Request $request, $id)
         'date' => 'required|date',
         'invoice_number' => 'required|string|max:255',
         'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'client_name' => 'required|string|max:255',
-        'client_address' => 'required|string',
-        'client_contact_details' => 'required|string',
+        'client_id' => 'required|exists:clients,id', // Validate client_id
+        // 'client_name' => 'required|string|max:255',
+        // 'client_address' => 'required|string',
+        // 'client_contact_details' => 'required|string',
         'item_description' => 'required|string',
         'item_quantity' => 'required|integer|min:1',
         'item_price' => 'required|numeric|min:0',

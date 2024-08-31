@@ -153,57 +153,56 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    let productIndex = 1;
-
-    document.getElementById('add-product').addEventListener('click', function () {
+    document.addEventListener('DOMContentLoaded', function() {
+        let productCount = 1;
+        const addProductBtn = document.getElementById('add-product');
+        const removeProductBtn = document.getElementById('remove-product');
         const productsContainer = document.getElementById('products-container');
-        
-        const productEntry = document.createElement('div');
-        productEntry.classList.add('product-entry', 'mb-3');
-        productEntry.innerHTML = `
-            <h5>{{ get_label('product', 'Product') }} ${productIndex + 1}</h5>
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="products[${productIndex}][product_id]" class="form-label">{{ get_label('select_product', 'Select product') }}</label>
-                    <select class="form-select" name="products[${productIndex}][product_id]" required>
-                        <option value="">{{ get_label('select_product', 'Select product') }}</option>
-                        @foreach($products ?? [] as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
+    
+        addProductBtn.addEventListener('click', function() {
+            const newProductDiv = document.createElement('div');
+            newProductDiv.classList.add('product-entry', 'mb-3');
+            newProductDiv.innerHTML = `
+                <h5><?= get_label('product', 'Product') ?> ${++productCount}</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
+                        <select class="form-select" id="products[${productCount-1}][product_id]" name="products[${productCount-1}][product_id]" required>
+                            <option value=""><?= get_label('select_product', 'Select product') ?></option>
+                            @foreach($products ?? [] as $product)
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="number" id="products[${productCount-1}][quantity]" name="products[${productCount-1}][quantity]" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" required min="1">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="products[${productCount-1}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                        <input class="form-control" type="number" id="products[${productCount-1}][price]" name="products[${productCount-1}][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" required>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="products[${productIndex}][quantity]" class="form-label">{{ get_label('quantity', 'Quantity') }} <span class="asterisk">*</span></label>
-                    <input class="form-control" type="number" id="products[${productIndex}][quantity]" name="products[${productIndex}][quantity]" placeholder="{{ get_label('enter_quantity', 'Enter quantity') }}" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="products[${productIndex}][price]" class="form-label">{{ get_label('price', 'Price') }} <span class="asterisk">*</span></label>
-                    <input class="form-control" id="products[${productIndex}][price]" type="number" name="products[${productIndex}][price]" step="0.01" placeholder="{{ get_label('enter_price', 'Enter price') }}" required>
-                </div>
-            </div>
-        `;
-
-        productsContainer.appendChild(productEntry);
-        productIndex++;
-
-        if (productIndex > 1) {
-            document.getElementById('remove-product').style.display = 'inline-block';
-        }
-    });
-
-    document.getElementById('remove-product').addEventListener('click', function () {
-        const productsContainer = document.getElementById('products-container');
-        
-        if (productIndex > 1) {
-            productsContainer.lastElementChild.remove();
-            productIndex--;
-
-            if (productIndex === 1) {
-                document.getElementById('remove-product').style.display = 'none';
+            `;
+            productsContainer.appendChild(newProductDiv);
+            
+            // Show the remove button when there's more than one product
+            if (productCount > 1) {
+                removeProductBtn.style.display = 'inline-block';
             }
-        }
+        });
+    
+        removeProductBtn.addEventListener('click', function() {
+            if (productCount > 1) {
+                productsContainer.removeChild(productsContainer.lastElementChild);
+                productCount--;
+    
+                // Hide the remove button when there's only one product left
+                if (productCount === 1) {
+                    removeProductBtn.style.display = 'none';
+                }
+            }
+        });
     });
-});
-</script>
+    </script>
 @endsection

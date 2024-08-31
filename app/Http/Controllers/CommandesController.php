@@ -431,15 +431,7 @@ public function update(Request $request, $id)
                 'updated_at' => $commande->updated_at,
                 'status' => $commande->status,
                 'actions' => $actions,
-                'products' => $commande->products->map(function ($product) {
-                    return [
-                        // 'product_id' => $product->id,
-                        'name' => $product->name,
-                        'quantity' => $product->pivot->quantity,
-                        'price' => $product->pivot->price,
-                    ];
-
-                }),
+                // 'products' => $products->name,  
             ];
         });
     

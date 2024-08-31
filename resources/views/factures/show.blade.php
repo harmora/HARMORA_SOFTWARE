@@ -21,7 +21,7 @@ $visibleColumns = getUserPreferences('Factures');
             </nav>
         </div>
         <div>
-            <a href="{{url('/factures/create')}}">
+            <a href="{{url('/commandes/create')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_facture', 'Create facture') ?>">
                     <i class='bx bx-plus'></i>
                 </button>
@@ -38,11 +38,7 @@ $visibleColumns = getUserPreferences('Factures');
                 <thead>
                     <tr>
                         <th><?= get_label('invoice_number', 'Invoice Number') ?></th>
-                        <th><?= get_label('company_name', 'Company Name') ?></th>
-                        <th><?= get_label('client_name', 'Client Name') ?></th>
-                        <th><?= get_label('date', 'Date') ?></th>
-                        <th><?= get_label('total_amount', 'Total Amount') ?></th>
-                        <th><?= get_label('status_payement', 'Payment Status') ?></th>
+                        <th><?= get_label('commande_name', 'Commande Name') ?></th>
                         <th><?= get_label('actions', 'Actions') ?></th>
                     </tr>
                 </thead>
@@ -50,11 +46,7 @@ $visibleColumns = getUserPreferences('Factures');
                     @foreach($factures as $facture)
                         <tr>
                             <td>{{ $facture->invoice_number }}</td>
-                            <td>{{ $facture->company_name }}</td>
-                            <td>{{ $facture->client_name }}</td>
-                            <td>{{ $facture->date }}</td>
-                            <td>{{ number_format($facture->total_amount, 2) }}</td>
-                            <td>{{ $facture->status_payement }}</td>
+                            <td>{{ $facture->commande_name }}</td>
                             <td>
                                 <a href="{{ url('/factures/' . $facture->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= get_label('view', 'View') ?>">
                                     <i class='bx bx-eye'></i>
