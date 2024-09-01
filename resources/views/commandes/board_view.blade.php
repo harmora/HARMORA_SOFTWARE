@@ -3,6 +3,109 @@
 @section('title', 'Commandes - Draggable')
 
 @section('content')
+<style>
+.progress-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.progressbar {
+    counter-reset: step;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.progressbar li {
+    text-align: center;
+    position: relative;
+    width: 33.33%;
+    color: gray;
+    text-transform: capitalize;
+    z-index: 1;
+}
+
+.progressbar li::before {
+    content: ''; /* Removed the counter content */
+    width: 25px;
+    height: 25px;
+    border: 2px solid gray;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    background-color: white;
+    line-height: 25px;
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+.progressbar li.active::before {
+    width: 40px; /* Increase size for active step */
+    height: 40px;
+    line-height: 40px;
+}
+
+.progressbar li::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: gray;
+    top: 15px;
+    left: 50%;
+    z-index: -1;
+    transform: translateX(-50%);
+}
+
+.progressbar li:first-child::after {
+    width: 100%;
+    left: 50%;
+    transform: translateX(0);
+}
+
+.progressbar li:last-child::after {
+    width: 50%;
+    left: 0;
+    transform: none;
+}
+
+/* Icons inside active steps */
+.progressbar li.active.pending::before {
+    background-color: orange;
+    border-color: orange;
+    color: white;
+    font-family: "FontAwesome"; /* Specify the font family for icons */
+    content: "\f254"; /* Unicode for the pending (clock) icon */
+    font-size: 18px; /* Adjust the font size for the icon */
+}
+
+.progressbar li.active.completed::before {
+    background-color: green;
+    border-color: green;
+    color: white;
+    font-family: "FontAwesome";
+    content: "\f00c"; /* Unicode for the completed (check) icon */
+    font-size: 18px;
+}
+
+.progressbar li.active.cancelled::before {
+    background-color: red;
+    border-color: red;
+    color: white;
+    font-family: "FontAwesome";
+    content: "\f00d"; /* Unicode for the cancelled (cross) icon */
+    font-size: 18px;
+}
+
+.progressbar li.active {
+    color: black; /* Color for active status text */
+}
+
+
+</style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between mb-2 mt-4">
         <div>
@@ -37,7 +140,18 @@
     <div class="d-flex card flex-row" style="overflow-x: scroll; overflow-y: hidden;">
         @foreach(['pending', 'completed', 'cancelled'] as $status)
             <div class="my-4 mx-2" style="min-width: 390px; max-width: 390px;">
-                <h4 class="fw-bold mx-4 my-2">{{ ucfirst($status) }}</h4>
+
+                <h4 class="fw-bold mx-4 my-2">
+                @if ($status === 'pending')
+                <i class="menu-icon tf-icons bx bx-hourglass bx-md text-warning"></i>
+                @elseif ($status === 'cancelled')
+               <i class="menu-icon tf-icons bx bx-x-circle bx-md text-danger"></i>
+               @elseif ($status === 'completed')
+                <i class="menu-icon tf-icons bx bx-check-circle bx-md text-success"></i>
+                @endif
+               {{ ucfirst($status) }}</h4>
+
+
                 <div class="row m-2 d-flex flex-column" id="{{ $status }}" style="height: 100%" data-status="{{ $status }}">
                     @forelse ($commandesByStatus[$status] ?? [] as $commande)
                         <x-kanban :commande="$commande" />
@@ -69,14 +183,14 @@
                     <h5 class="modal-title text-info">{{ get_label('view_commande', 'View Commande') }}</h5>
                     <div>
                         <a class="me-2">
-                            <button type="button" class="btn btn-sm btn-secondary">
-                                 {{ get_label('create devis', 'Create Devis') }} <i class='bx bx-file'></i>
+                            <button type="button" class="btn btn-success">
+                                 {{ get_label('validate commande', ' Validate Commande') }}
                             </button>
                         </a>
 
                         <a >
-                            <button type="button" class="btn btn-sm btn-primary" >
-                               {{ get_label('create facture', 'Create Facture') }} <i class='bx bx-dollar'></i>
+                            <button type="button" class="btn  btn-danger" >
+                               {{ get_label('cancel commande', 'Cancel Commande') }}
                             </button>
                         </a>
                     </div>
@@ -89,14 +203,18 @@
                 <form>
 
                     <div class="row">
-                        <div>
-                            <label for="statusSelect">Update Status</label>
-                            <select class="form-select select-bg-label-{{ "warning" }} mb-3" id="statusSelect"  data-type="commande" data-reload="true">
-                                <option value="pending" class="badge bg-label-light text-black" {{ 'pending' == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="completed" class="badge bg-label-light text-black" {{0 == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" class="badge bg-label-light text-black" {{ 0 == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
+
+
+                        <div class="progress-container">
+                            <ul class="progressbar">
+                                <li class="pending active">Pending</li>
+                                <li class="completed">Completed</li>
+                                <li class="cancelled">Cancelled</li>
+                            </ul>
                         </div>
+
+
+
 
                     </div>
                     <div class="row">
@@ -200,6 +318,26 @@
                             modalBody.querySelector('#total_amount').value = data.total_amount;
                             modalBody.querySelector('#status').value = data.status;
 
+
+                            const status = data.status; // Replace this with the actual status from your backend
+
+const steps = document.querySelectorAll('.progressbar li');
+
+steps.forEach(step => {
+    step.classList.remove('active', 'completed', 'cancelled');
+});
+
+if (status === 'pending') {
+    steps[0].classList.add('active');
+    steps[0].classList.add('pending');
+} else if (status === 'completed') {
+    steps[1].classList.add('active');
+    steps[1].classList.add('completed');
+} else if (status === 'cancelled') {
+    steps[2].classList.add('active');
+    steps[2].classList.add('cancelled');
+}
+
                             // Populate client info
                             var clientInfo = `<div class="avatar avatar-md pull-up" title="${data.client.name}">
                                 <img src="${data.client.picture_url}" alt="Avatar" class="rounded-circle">
@@ -230,6 +368,10 @@
                                 </div>`;
                             });
                             modalBody.querySelector('#products').innerHTML = productsHtml;
+
+
+
+
                         })
                         .catch(error => console.error('Error fetching data:', error));
                 }
@@ -237,6 +379,7 @@
         });
     });
 </script>
+
 
 
 <script src="{{ asset('assets/js/pages/commande-board.js') }}"></script>

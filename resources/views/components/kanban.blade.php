@@ -54,13 +54,18 @@ $user = getAuthenticatedUser();
             </div>
         </div>
         <div class="d-flex flex-column">
-            <div>
-                <label for="statusSelect">Status</label>
-                <select class="form-select form-select-sm select-bg-label-{{ $commande->status_color }} mb-3" id="statusSelect" data-id="{{ $commande->id }}" data-type="commande" data-reload="true">
-                    <option value="pending" class="badge bg-label-warning" {{ $commande->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="completed" class="badge bg-label-success" {{ $commande->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="cancelled" class="badge bg-label-danger" {{ $commande->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                </select>
+            <div class="mb-2">
+                <a class="me-2">
+                    <button type="button" class="btn btn-sm btn-secondary">
+                         {{ get_label('view devis', 'View Devis') }} <i class='bx bx-file'></i>
+                    </button>
+                </a>
+
+                <a >
+                    <button type="button" class="btn btn-sm btn-primary" >
+                       {{ get_label('view facture', 'View Facture') }} <i class='bx bx-dollar'></i>
+                    </button>
+                </a>
             </div>
             <div>
                 <small class="badge bg-label-primary">Created At: {{ format_date($commande->created_at) }}</small>
