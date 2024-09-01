@@ -1,5 +1,7 @@
 @extends('layout')
-
+@section('title')
+<?= get_label('import', 'Import') ?>
+@endsection
 @section('content')
 <!-- Progress Bar -->
 <div class="progress-container">
@@ -9,7 +11,7 @@
         <li class="active">Import Data</li>
     </ul>
 </div>
-<div class="container-fluid mt-3">
+<div class="container-fluid">
     <div class="card">
         <div class="card-header text-center">
             <h4>Review and Confirm Data</h4>

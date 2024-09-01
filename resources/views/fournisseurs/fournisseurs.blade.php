@@ -25,7 +25,7 @@ $visibleColumns = getUserPreferences('fournisseurs');
 
         <div>
 
-            <a href="/home/import">
+            <a href="/import">
                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="{{ get_label('import_file', 'Import File') }}">
                    import Excel <i class="bx bx-file"></i>
                 </button>

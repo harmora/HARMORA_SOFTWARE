@@ -54,6 +54,13 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('dashboard', 'Dashboard') ?></div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('import') ? 'active' : '' }}">
+            <a href="/import" class="menu-link">
+                {{-- <i class="menu-icon tf-icons bx bx-home-circle text-completed"></i> --}}
+                <i class="menu-icon fa-solid fa-file-import text-success"></i>
+                <div><?= get_label('import_file', 'Import file') ?></div>
+            </a>
+        </li>
 <!--codes i added-->
 
     @if(auth()->user()->role->rolename === 'user')

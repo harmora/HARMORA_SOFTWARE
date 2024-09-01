@@ -1,5 +1,7 @@
 @extends('layout')
-
+@section('title')
+<?= get_label('import', 'Import') ?>
+@endsection
 @section('content')
 <!-- Progress Bar -->
 <div class="progress-container">
@@ -12,7 +14,7 @@
 
 <!-- Your form code for mapping columns goes here -->
 
-<div class="container-fluid mt-3">
+<div class="container-fluid">
     <form action="{{ route('import.step2') }}" method="POST">
         @csrf
         <input type="hidden" name="path" value="{{ $path }}">
