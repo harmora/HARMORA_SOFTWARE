@@ -135,7 +135,11 @@
             </div>
         </div>
 
+        
+
     <script src="{{asset('assets/js/pages/disponibilities.js')}}"></script>
+
+
 
 
 </div>

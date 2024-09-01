@@ -63,7 +63,7 @@ class CommandesController extends Controller
             $products = Product::all();
             $clients = Client::all();
             $users = User::all();
-    
+
             return view('commandes.create_commande', compact('products', 'clients', 'users'));
         } catch (\Exception $e) {
             \Log::error('Error in create method: ' . $e->getMessage());
@@ -77,7 +77,7 @@ class CommandesController extends Controller
  * @return \Illuminate\Http\Response
  */
 
-    
+
     public function store(Request $request)
     {
         // Validate the request
@@ -96,7 +96,7 @@ class CommandesController extends Controller
             'total_amount' => 'nullable|integer',
             'client_id' => 'nullable|integer|exists:clients,id',
         ]);
-    
+
         // Create a new commande
         $commande = Commande::create([
             'client_id' => $request->client_id,
@@ -110,7 +110,7 @@ class CommandesController extends Controller
             'updated_at' => now(),
             'user_id' => $request->user_id,
         ]);
-    
+
         // Attach products to the commande
         $totalAmount = 0;
         foreach ($request->products as $productData) {
@@ -118,24 +118,24 @@ class CommandesController extends Controller
                 'quantity' => $productData['quantity'],
                 'price' => $productData['price'],
             ]);
-    
+
             // Update product stock
             $product = Product::find($productData['product_id']);
             $product->stock -= $productData['quantity'];
             $product->save();
-    
+
             // Calculate the total amount for the commande
             $totalAmount += $productData['quantity'] * $productData['price'];
         }
-    
+
         // Update the total amount in the commande
         $commande->total_amount = $totalAmount;
         $commande->save();
-    
+
         return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
     }
-    
-    
+
+
 
     /**
      * Display the specified commande.
@@ -179,7 +179,7 @@ class CommandesController extends Controller
 
         return view('commandes.edit', compact('commande', 'clients', 'users'));
     }
-    
+
 
 
 public function update(Request $request, $id)
@@ -286,89 +286,268 @@ public function update(Request $request, $id)
 
 
 
+    // public function list()
+    // {
+    //     // Fetch all commandes with their associated user, client, and products data
+    //     $commandes = Commande::with(['user', 'client', 'products'])->get();
+
+    //     // Format commandes data
+    //     $formattedCommandes = $commandes->map(function ($commande) {
+
+    //         $editUrl = route('commandes.edit', $commande->id);
+
+    //         $actions = '';
+
+    //         // Edit link
+    //         $actions .= '<a href="' . $editUrl . '" class="edit-commande">' .
+    //             '<li class="dropdown-item">' .
+    //             '<i class="menu-icon tf-icons bx bx-edit text-primary"></i> ' .
+    //             get_label('update', 'Update') .
+    //             '</li>' .
+    //             '</a>';
+
+
+    //         $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes" data-table="commande_table">' .
+    //             '<i class="bx bx-trash text-danger mx-1"></i>' .
+    //             '</button>';
+
+    //         $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
+    //             '<i class="bx bx-info-circle mx-3"></i>' .
+    //             '</a>';
+
+    //         $actions = $actions ?: '-';
+
+    //         return [
+    //             'id' => $commande->id,
+    //             'title' => $commande->title,
+    //             'users' =>  $commande->user->first_name ." ".$commande->user->last_name,
+    //             'clients' => $commande->client->first_name ." ".$commande->client->last_name,
+    //             'start_date' => $commande->start_date,
+    //             'end_date' => $commande->due_date,
+    //             'created_at' => $commande->created_at,
+    //             'updated_at' => $commande->updated_at,
+    //             'status' => $commande->status,
+    //             'actions' => $actions,
+    //             // 'products' => $products->name,
+    //         ];
+    //     });
+
+    //     // Return JSON response
+    //     return response()->json([
+    //         "rows" => $formattedCommandes->all(),
+    //         "total" => $formattedCommandes->count()
+    //     ]);
+    // }
+
+
     public function list()
-    {
-        // Fetch all commandes with their associated user, client, and products data
-        $commandes = Commande::with(['user', 'client', 'products'])->get();
-    
-        // Format commandes data
-        $formattedCommandes = $commandes->map(function ($commande) {
+{
+    $search = request('search');
+    $sort = request('sort') ?: 'id';
+    $order = request('order') ?: 'DESC';
+    $status = request('status', '');
 
-            $editUrl = route('commandes.edit', $commande->id);
-        
-            $actions = '';
-    
-            // Edit link
-            $actions .= '<a href="' . $editUrl . '" class="edit-commande">' .
-                '<li class="dropdown-item">' .
-                '<i class="menu-icon tf-icons bx bx-edit text-primary"></i> ' .
-                get_label('update', 'Update') .
-                '</li>' .
-                '</a>';
+    $query = Commande::with(['user', 'client', 'products']);
 
-    
-            $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes" data-table="commande_table">' .
-                '<i class="bx bx-trash text-danger mx-1"></i>' .
-                '</button>';
-    
-            $actions .= '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">' .
-                '<i class="bx bx-info-circle mx-3"></i>' .
-                '</a>';
-    
-            $actions = $actions ?: '-';
-
-            return [
-                'id' => $commande->id,
-                'title' => $commande->title,
-                'users' =>  $commande->user->first_name ." ".$commande->user->last_name,
-                'clients' => $commande->client->first_name ." ".$commande->client->last_name,
-                'start_date' => $commande->start_date,
-                'end_date' => $commande->due_date,
-                'created_at' => $commande->created_at,
-                'updated_at' => $commande->updated_at,
-                'status' => $commande->status,
-                'actions' => $actions,
-                // 'products' => $products->name,  
-            ];
+    // Search functionality
+    if ($search) {
+        $query->where(function ($query) use ($search) {
+            $query->where('title', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('first_name', 'like', '%' . $search . '%')
+                          ->orWhere('last_name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('client', function ($query) use ($search) {
+                    $query->where('first_name', 'like', '%' . $search . '%')
+                          ->orWhere('last_name', 'like', '%' . $search . '%')
+                          ->orWhere('denomenation', 'like', '%' . $search . '%');
+                });
         });
-    
-        // Return JSON response
-        return response()->json([
-            "rows" => $formattedCommandes->all(),
-            "total" => $formattedCommandes->count()
-        ]);
-    }
-    
-
-
-
-
-    public function dragula($id = '')
-    {
-
-        $users = User::all();
-        $clients = Client::all();  // Fetch all clients
-        $commandes = Commande::all();
-        $products= Product::all();
-        $commandesByStatus = $commandes->groupBy('status');
-
-
-
-        $statuses = ['pending', 'completed', 'cancelled'];
-
-
-        $total_commandes = $commandes->count();
-         return view('commandes.board_view',
-          compact('commandes', 'products', 'users', 'clients') ,
-        [
-            'commandesByStatus' => $commandesByStatus,
-            'clients' => $clients,
-            'users' => $users,
-            'total_commandes' => $total_commandes,
-         ]);
     }
 
-  
+    // Status filtering
+    if ($status !== '') {
+        $query->where('status', $status);
+    }
+
+    $totalCommandes = $query->count();
+
+    $commandes = $query->orderBy($sort, $order)
+        ->paginate(request("limit"));
+
+    $formattedCommandes = $commandes->through(function ($commande) {
+
+        // User profile picture
+        $userProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->user->first_name . " " . $commande->user->last_name . "'>
+                                <a href='/users/profile/" . $commande->user->id . "'>
+                                    <img src='" . ($commande->user->photo ? asset('storage/' . $commande->user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                </a>
+                            </div>";
+
+        // Client profile picture
+        $clientProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->client->first_name . " " . $commande->client->last_name . " " . $commande->client->denomenation . "'>
+                                <a href='/clients/profile/" . $commande->client->id . "'>
+                                    <img src='" . ($commande->client->photo ? asset('storage/' . $commande->client->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                </a>
+                            </div>";
+
+ // Products with small circle image
+$productsHtml = "<div style='display: flex; flex-wrap: nowrap; align-items: center; overflow-x: auto;'>" .
+    $commande->products->map(function ($product) {
+        return "<div class='avatar avatar-sm pull-up' title='" . $product->name . "' style='margin-right: 10px;'>
+                    <a href='/products/info/" . $product->id . "'>
+                        <img src='" . ($product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                    </a>
+                </div>
+                <span style='margin-right: 20px;'>" . $product->name . "</span>";
+    })->implode('') . "</div>";
+
+
+
+        // Actions
+
+        $actions = '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">
+        <i class="bx bx-info-circle text-info"></i>
+    </a>';
+
+        $actions .= '<a href="/commandes/edit/' . $commande->id . '" title="' . get_label('update', 'Update') . '">
+                        <i class="bx bx-edit mx-1"></i>
+                    </a>';
+
+        $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes">
+                        <i class="bx bx-trash text-danger mx-1"></i>
+                    </button>';
+
+
+
+
+                    $commandestatus = '<span class="badge ' .
+                    ($commande->status == 'pending' ? 'bg-warning' :
+                    ($commande->status == 'completed' ? 'bg-success' :
+                    ($commande->status == 'canceled' ? 'bg-danger' : 'bg-info'))) .
+                    '">' . $commande->status . '</span>';
+
+
+                    $id_holder = $commande->id . ' | ' .
+                    '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
+                        '<button type="button" class="btn btn-info btn-sm" ' .
+                            'data-id="' . htmlspecialchars($commande->id) . '" ' .
+                            'data-bs-toggle="tooltip" ' .
+                            'data-bs-placement="left" ' .
+                            'data-bs-original-title="' . htmlspecialchars(get_label('View Details', 'View Details')) . '">' .
+                            '<i class="bx bx-expand"></i> ' . htmlspecialchars(get_label('View Details', 'View Details')) .
+                        '</button>' .
+                    '</a>';
+
+
+
+
+        return [
+            'id' => $id_holder,
+            'title' => $commande->title,
+            'description' => $commande->description,
+            'start_date' => $commande->start_date,
+            'due_date' => $commande->due_date,
+            'total_amount' => $commande->total_amount,
+            'status' => $commandestatus,
+            'products' => $productsHtml,
+            'added_by' => $userProfileHtml . ' ' . $commande->user->first_name . ' ' . $commande->user->last_name,
+            'client' => $clientProfileHtml . ' ' . $commande->client->first_name . ' ' . $commande->client->last_name,
+            'created_at' => format_date($commande->created_at, true),
+            'updated_at' => format_date($commande->updated_at, true),
+            'actions' => $actions
+        ];
+    });
+
+    return response()->json([
+        "rows" => $formattedCommandes->items(),
+        "total" => $totalCommandes,
+    ]);
+}
+
+public function getCommande($id)
+{
+    // Fetch the commande with the related products, user, and client
+    $commande = Commande::with(['user', 'client', 'products'])
+        ->find($id);
+
+    if (!$commande) {
+        return response()->json(['error' => 'Commande not found'], 404);
+    }
+
+    // Prepare the response data
+    $response = [
+        'id' => $commande->id,
+        'title' => $commande->title,
+        'description' => $commande->description,
+        'start_date' => $commande->start_date,
+        'due_date' => $commande->due_date,
+        'total_amount' => $commande->total_amount,
+        'status' => $commande->status,
+        'client' => $commande->client ? [
+            'name' => $commande->client->first_name . ' ' . $commande->client->last_name,
+            'denomenation' => $commande->client->denomenation,
+            'picture_url' => $commande->client->photo ? asset('storage/' . $commande->client->photo) : asset('storage/photos/no-image.jpg'),
+        ] : null,
+        'added_by' => $commande->user ? [
+            'name' => $commande->user->first_name . ' ' . $commande->user->last_name,
+            'picture_url' => $commande->user->photo ? asset('storage/' . $commande->user->photo) : asset('storage/photos/no-image.jpg'),
+        ] : null,
+        'products' => $commande->products->map(function ($product) {
+            return [
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price, // Include price
+                'picture_url' => $product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg'),
+            ];
+        }),
+    ];
+
+    return response()->json($response);
+}
+
+
+
+public function listForCounter()
+{
+    $pendingCount = Commande::where('status', 'pending')->count();
+    $completedCount = Commande::where('status', 'completed')->count();
+    $canceledCount = Commande::where('status', 'cancelled')->count();
+
+    return response()->json([
+        'pending' => $pendingCount,
+        'completed' => $completedCount,
+        'canceled' => $canceledCount,
+    ]);
+}
+
+
+
+
+public function dragula($id = '')
+{
+    $user = auth()->user(); // Get the authenticated user
+    $clients = Client::all();  // Fetch all clients
+    $products = Product::all();
+
+    // Fetch commandes associated with the authenticated user
+    $commandes = Commande::where('user_id', $user->id)->get();
+
+    $commandesByStatus = $commandes->groupBy('status');
+    $statuses = ['pending', 'completed', 'cancelled'];
+    $total_commandes = $commandes->count();
+
+    return view('commandes.board_view', compact('commandes', 'products', 'clients', 'user'), [
+        'commandesByStatus' => $commandesByStatus,
+        'clients' => $clients,
+        'users' => $user, // Pass the authenticated user
+        'total_commandes' => $total_commandes,
+    ]);
+}
+
+
+
 
 
 

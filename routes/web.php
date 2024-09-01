@@ -244,11 +244,23 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
         Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
         Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
+
         Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
+
         // Route::get('/commandes/{id}/edit', [CommandeController::class, 'edit']);
         Route::get('/commandes/{id}/edit', [CommandesController::class, 'edit'])->name('commandes.edit');
         Route::delete('/commandes/{id}', [CommandesController::class, 'destroy'])->name('commandes.destroy');
         Route::put('/commandes/{id}', [CommandesController::class, 'update'])->name('commandes.update');
+
+
+        Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
+
+
+
+
+
+
+        Route::get('/commandes/getforaffiche/{id}', [CommandesController::class, 'getCommande']);
 
 
 

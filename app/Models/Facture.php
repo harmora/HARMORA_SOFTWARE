@@ -42,16 +42,16 @@ class Facture extends Model
         return $this->belongsTo(Commande::class);
     }
 
-    public function client()
-    {
-        // return $this->belongsTo(Client::class, 'client_id');
-        return $this->belongsTo(Client::class);
-    }
+    // public function client()
+    // {
+    //     // return $this->belongsTo(Client::class, 'client_id');
+    //     return $this->belongsTo(Client::class);
+    // }
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'commande_products')
-                    ->withPivot('quantity', 'price');
-    }
+    // public function products()
+    // {
+    //     return $this->belongsToMany(Product::class, 'commande_products')
+    //                 ->withPivot('quantity', 'price');
+    // }
 }
 

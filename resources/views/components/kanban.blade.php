@@ -13,31 +13,12 @@ $user = getAuthenticatedUser();
                 </a>
             </h6>
             <div class="d-flex align-items-center">
-                <!-- @if ($user->can('edit_commandes') || $user->can('delete_commandes')) -->
-                <!-- <div class="input-group">
-                    <a href="javascript:void(0);" class="mx-2" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class='bx bx-cog'></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        @if ($user->can('edit_commandes'))
-                        <a href="javascript:void(0);" class="edit-commande" data-id="{{ $commande->id }}">
-                            <li class="dropdown-item">
-                                <i class='menu-icon tf-icons bx bx-edit text-primary'></i> Edit
-                            </li>
-                        </a>
-                        @endif
-                        @if ($user->can('delete_commandes'))
-                        <a href="javascript:void(0);" class="delete" data-reload="true" data-type="commandes" data-id="{{ $commande->id }}">
-                            <li class="dropdown-item">
-                                <i class='menu-icon tf-icons bx bx-trash text-danger'></i> Delete
-                            </li>
-                        </a>
-                        @endif
-                    </ul>
-                </div>
-                @endif -->
 
 
+
+                {{-- <a href="javascript:void(0);" class="quick-view" data-id="{{ $commande->id }}" data-type="commande">
+                    <i class='bx bx-info-circle text-info' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Quick View"></i>
+                </a> --}}
 
                 <div class="input-group">
                     <a href="javascript:void(0);" class="mx-2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -60,15 +41,13 @@ $user = getAuthenticatedUser();
                     </ul>
                 </div>
 
-                <a href="javascript:void(0);" class="quick-view" data-id="{{ $commande->id }}" data-type="commande">
-                    <i class='bx bx-info-circle text-info' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Quick View"></i>
-                </a>
+
             </div>
         </div>
-        <div class="card-subtitle text-muted mb-3">{{ $commande->title }}</div>
+        <div class="card-subtitle text-muted mb-3">{{ $commande->description }}</div>
         <div class="row mt-2">
             <div class="col-md-12">
-
+                <div class="card-subtitle  mb-3"><span class="text-danger">Total Amount : </span>  {{ $commande->total_amount }}</div>
             </div>
             <div class="col-md-12">
 
@@ -84,8 +63,23 @@ $user = getAuthenticatedUser();
                 </select>
             </div>
             <div>
-                <small class="text-muted">Created At: {{ format_date($commande->created_at) }}</small>
+                <small class="badge bg-label-primary">Created At: {{ format_date($commande->created_at) }}</small>
+
+
             </div>
+
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%;" class="mt-4">
+                <a href="javascript:void(0);" class="mr-4"  data-bs-toggle="modal" data-bs-target="#commandeModal">
+                    <button type="button" class="btn btn-info btn-sm"
+                        data-id="{{ $commande->id }}"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="left"
+                        title="{{ __('View Details') }}">
+                        <i class="bx bx-expand"></i>
+                    </button>
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

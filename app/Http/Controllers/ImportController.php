@@ -59,15 +59,15 @@ class ImportController extends Controller
 
         // Save the file to a temporary location in storage
         $path = $file->storeAs('temp', $file->getClientOriginalName());
-    
+
         // Get the headings (first row) from the uploaded file
         $headings = Excel::toArray([], storage_path('app/' . $path))[0][0];
-    
+
         // Retrieve all columns from the table
         $allColumns = Schema::getColumnListing($table); // Replace 'your_table_name' with the actual table name
-        
+
         // Filter out 'id', 'created_at', and 'updated_at'
-    
+
         // Get the required columns from the database
         $requiredColumns = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails($table)->getColumns();
 
@@ -111,13 +111,14 @@ class ImportController extends Controller
                 return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at']));
             });
         }
-        
-
 
     
+
+
+
         return view('import.step2', compact('headings', 'dbColumns', 'path', 'requiredColumns','table'));
     }
-    
+
 
     public function step2(Request $request)
     {
@@ -125,17 +126,17 @@ class ImportController extends Controller
         $table = $request->input('table');
         $mappings = $request->input('mappings');
         $saveColumns = $request->input('save_columns', []);
-    
+
         // Read all rows from the stored file
         $rows = Excel::toArray([], storage_path('app/' . $path))[0];
         $rows = array_slice($rows, 1); // Remove the header row
         $rows = array_filter($rows, function($row) {
             return array_filter($row); // Keep rows that have at least one non-empty value
         });
-    
+
         return view('import.step3', compact('rows', 'mappings', 'saveColumns', 'path', 'table'));
     }
-    
+
     public function save(Request $request)
     {
         $data = $request->input('data');
@@ -146,7 +147,7 @@ class ImportController extends Controller
         // Save data to the database
         foreach ($data as $row) {
             $dataToUpdate = array_intersect_key($row, array_flip($saveColumns));
-            
+
             if($table == 'fournisseurs'){
                 $fournisseur = Fournisseur::where('email', $row['email'])->first();
                 if (!$fournisseur){
@@ -162,20 +163,20 @@ class ImportController extends Controller
                     $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
                     if (!in_array('first_name', $saveColumns)) {
                         if (!empty($row['first_name'])) {
-                            $dataToUpdate['internal_purpose'] =1; 
+                            $dataToUpdate['internal_purpose'] =1;
                         } else {
-                            $dataToUpdate['internal_purpose'] =0; 
+                            $dataToUpdate['internal_purpose'] =0;
                         }
                     }
                     else{
-                        $dataToUpdate['internal_purpose'] =1; 
+                        $dataToUpdate['internal_purpose'] =1;
                     }
                     // Handle photo if selected
                     if (in_array('photo', $saveColumns)) {
                         if (!empty($row['photo'])) {
                             // Assuming the photo is a file path that needs to be stored
                             $photoPath = $row['photo'];
-                            
+
                             // Handle the photo upload if it's a new file
                             if (Storage::exists($photoPath)) {
                                 $dataToUpdate['photo'] = Storage::copy($photoPath, 'public/photos/' . basename($photoPath));
@@ -202,13 +203,13 @@ class ImportController extends Controller
                     $product->update($dataToUpdate);
                 }
             }
-            
+
         }
-    
+
         // Delete the temporary file
         Storage::delete($path);
         return redirect()->route($table . '.index');
     }
-    
+
 
 }

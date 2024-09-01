@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="name" class="form-label"><?= get_label('product_name', 'Product Name') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="name" name="name" placeholder="<?= get_label('please_enter_product_name', 'Please enter product name') ?>" value="{{ old('name') }}">
+                        <input class="form-control" type="text" id="name" name="name" placeholder="<?= get_label('please_enter_product_name', f'Please enter product name') ?>" value="{{ old('name') }}">
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
