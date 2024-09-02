@@ -38,6 +38,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Language::class,
+            // \App\Http\Middleware\CleanupTempFiles::class,
+
         ],
 
         'api' => [
@@ -78,6 +80,8 @@ class Kernel extends HttpKernel
         'custom.signature' => \App\Http\Middleware\CustomValidateSignature::class,
         'checkSignupEnabled' => \App\Http\Middleware\CheckSignupEnabled::class,
         'role' => \App\Http\Middleware\CheckRoleAuth::class,
+        'cleanup.temp' => \App\Http\Middleware\CleanUpTempFiles::class,
+
         
     ];
 }

@@ -31,8 +31,19 @@ $visibleColumns = getUserPreferences('Achats');
                 <div class="col-md-4 mb-3">
                     <select class="form-select" id="type_achat_filter" aria-label="Default select example">
                         <option value=""><?= get_label('select_status', 'Select status') ?></option>
-                        <option value="1">{{get_label('active','Active')}}</option>
-                        <option value="2">{{get_label('deactive','Deactive')}}</option>
+                        <option value="Matériel/Produits"><?= get_label('Matériel/Produits', 'Materielle/Products') ?></option>
+                        <option value="recherche/developpement"><?= get_label('recherche/developpement', 'Research/Development') ?></option>
+                        <option value="investissements"><?= get_label('investissements', 'Investments') ?></option>
+                        <option value="salaires/avantages sociaux"><?= get_label('salaires/avantages sociaux', 'Salaries/Social Benefits') ?></option>
+                        <option value="mainetenances/amélioration"><?= get_label('mainetenances/amélioration', 'Maintenance/Improvement') ?></option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <select class="form-select" id="status_filter" aria-label="Default select example">
+                        <option value=""><?= get_label('all', 'All') ?></option>
+                        <option value="paid">{{get_label('paid','Paid')}}</option>
+                        <option value="unpaid">{{get_label('unpaid','Unpaid')}}</option>
+                        <option value="partial">{{get_label('partial','Partial')}}</option>                        
                     </select>
                 </div>
             </div>
@@ -74,6 +85,6 @@ $visibleColumns = getUserPreferences('Achats');
     var label_projects = '<?= get_label('projects', 'Projects') ?>';
     var label_tasks = '<?= get_label('tasks', 'Tasks') ?>';
 </script>
-{{-- <script src="{{asset('assets/js/pages/entreprises.js')}}"> --}}
+    <script src="{{asset('assets/js/pages/achats.js')}}">
 </script>
 @endsection

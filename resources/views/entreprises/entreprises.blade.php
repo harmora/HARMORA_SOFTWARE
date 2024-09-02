@@ -30,9 +30,12 @@ $visibleColumns = getUserPreferences('Entreprises');
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <select class="form-select" id="forme_juridique_filter" aria-label="Default select example">
-                        <option value=""><?= get_label('select_status', 'Select status') ?></option>
-                        <option value="1">{{get_label('active','Active')}}</option>
-                        <option value="2">{{get_label('deactive','Deactive')}}</option>
+                        <option value=""><?= get_label('select_form', 'Select Form juridique') ?></option>
+                        <option value="1">{{get_label('sarl','SARL')}}</option>
+                        <option value="2">{{get_label('sarl_au','SARL AU')}}</option>
+                        <option value="3">{{get_label('sa','SA')}}</option>
+                        <option value="4">{{get_label('snc','SNC')}}</option>
+                        <option value="5">{{get_label('scs','SCS')}}</option>
                     </select>
                 </div>
             </div>

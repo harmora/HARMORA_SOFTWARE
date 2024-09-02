@@ -356,7 +356,7 @@ class ClientController extends Controller
             return $query->where(function ($query) use ($search) {
                 $query->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%')
-                    ->orWhere('company', 'like', '%' . $search . '%')
+                    ->orWhere('denomenation', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%')
                     ->orWhere('phone', 'like', '%' . $search . '%');
             });

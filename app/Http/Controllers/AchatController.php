@@ -320,6 +320,9 @@ public function list()
     $search = request('search');
     $sort = request('sort') ?: 'id';
     $order = request('order') ?: 'DESC';
+    $type_achat_filter = request('type_achat_filter', '');
+    $status_filter = request('status_filter', '');
+
 
     $query = Achat::query();
     // $fournisseurs=fournisseur::all();
@@ -328,9 +331,27 @@ public function list()
         $query->where(function ($query) use ($search) {
             $query->where('type_achat', 'like', '%' . $search . '%')
                 ->orWhere('status_payement', 'like', '%' . $search . '%')
-                ->orWhere('facture', 'like', '%' . $search . '%');
+                ->orWhere('facture', 'like', '%' . $search . '%')
+                ->orWhere('tva', 'like', '%' . $search . '%')
+                ->orWhere('date_paiement', 'like', '%' . $search . '%')
+                ->orWhere('date_limit', 'like', '%' . $search . '%')
+                ->orWhere('reference', 'like', '%' . $search . '%')
+                ->orWhereHas('fournisseur', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('entreprise', function ($query) use ($search) {
+                    $query->where('denomination', 'like', '%' . $search . '%');
+                });
         });
+    }     
+    //  Status filtering
+    if ($type_achat_filter !== '') {
+        $query->where('type_achat', $type_achat_filter);
     }
+    if ($status_filter !== '') {
+        $query->where('status_payement', $status_filter);
+    }
+
 
     $totalachats = $query->count();
 

@@ -85,116 +85,6 @@ class FournisseurController extends Controller
 
 
         }
-        // public function step2(Request $request)
-        // {
-        //     $file = $request->input('file');
-        //     $mappings = $request->input('mappings');
-
-        //     $rows = Excel::toArray([], $file)[0]; // Get all rows
-
-        //     return view('fournisseurs.step3', compact('rows', 'mappings'));
-        // }
-
-        // public function save(Request $request)
-        // {
-        //     $data = $request->input('data');
-
-        //     foreach ($data as $row) {
-        //         // Assuming you are working with the User model
-        //         Fournisseur::create($row);
-        //     }
-        //     Session::flash('message', 'Fournisseurs .');
-        //     return response()->json(['error' => false]);
-        // }
-        // public function showForm()
-        // {
-        //     return view('import.form');
-        // }
-        // public function step1(Request $request)
-        // {
-        //     $file = $request->file('file');
-        //     // Process the file and prepare data for the next step
-
-        //     // Return JSON response with HTML for the next step
-        //     return response()->json([
-        //         'success' => true,
-        //         'html' => view('import.step2', compact('data'))->render()
-        //     ]);
-        // }
-        // public function step1(Request $request)
-        // {
-        //     $file = $request->file('file');
-        //     // Save the file to a temporary location in storage
-        //     $path = $file->storeAs('temp', $file->getClientOriginalName());
-        //     // Get the headings (first row) from the uploaded file
-        //     $headings = Excel::toArray([], storage_path('app/' . $path))[0][0];
-        //     return view('import.step2', compact('headings', 'path'));
-
-        // }
-
-        // public function step1(Request $request)
-        // {
-        //     $file = $request->file('file');
-
-        //     // Save the file to a temporary location in storage
-        //     $path = $file->storeAs('temp', $file->getClientOriginalName());
-
-        //     // Get the headings (first row) from the uploaded file
-        //     $headings = Excel::toArray([], storage_path('app/' . $path))[0][0];
-
-        //     // Define the database column titles (adjust as needed)
-        //     $dbColumns = ['name', 'email', 'country','city','phone']; // Add your actual DB column names here
-
-        //     return view('import.step2', compact('headings', 'dbColumns', 'path'));
-        // }
-
-
-        // public function step2(Request $request)
-        // {
-        //     $path = $request->input('path');
-        //     $mappings = $request->input('mappings');
-
-        //     // Read all rows from the stored file
-        //     $rows = Excel::toArray([], storage_path('app/' . $path))[0];
-        //     $rows = array_slice($rows, 1);
-        //     $rows = array_filter($rows, function($row) {
-        //         return array_filter($row); // Keep rows that have at least one non-empty value
-        //     });
-
-        //     return view('import.step3', compact('rows', 'mappings', 'path'));
-        // }
-
-        // public function save(Request $request)
-        // {
-        //     $data = $request->input('data');
-        //     $path = $request->input('path');
-
-        //     // Save data to the database
-        //     foreach ($data as $row) {
-        //         $fournisseur = Fournisseur::where('email', $row['email'])->first();
-        //         if ($fournisseur) {
-        //             $fournisseur->update([
-        //                 'name' => $row['name'],
-        //                 'phone' => $row['phone'],
-        //                 'city' => $row['city'],
-        //                 'country' => $row['country'],
-        //             ]);
-        //         } else {
-        //             Fournisseur::create([
-        //                 'name' => $row['name'],
-        //                 'email' => $row['email'],
-        //                 'phone' => $row['phone'],
-        //                 'city' => $row['city'],
-        //                 'country' => $row['country'],
-        //                 'entreprise_id' => $this->user->entrepriseId,
-        //             ]);
-        //         }
-        //     }
-        //     // Delete the temporary file
-        //     Storage::delete($path);
-        //     return redirect()->route('fournisseurs.index');
-        // }
-
 
         public function edit($id)
         {
@@ -230,17 +120,22 @@ class FournisseurController extends Controller
         $search = request('search');
         $sort = request('sort') ?: 'id';
         $order = request('order') ?: 'DESC';
-
+        $fournisseur_status_filter = request('fournisseur_status_filter', '');
         $query = Fournisseur::query();
         // $fournisseurs=fournisseur::all();
         // Search functionality
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('entreprise', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
                     ->orWhere('phone', 'like', '%' . $search . '%');
             });
         }
+                //  Status filtering
+         if ($fournisseur_status_filter !== '') {
+             $query->where('fournisseurs.city', $fournisseur_status_filter);
+         }
+
 
         $totalFournisseurs = $query->count();
 
