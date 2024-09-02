@@ -9,9 +9,9 @@
     <!-- Progress Bar -->
     <div class="progress-container">
         <ul class="progressbar">
-            <li class="active"> Upload File</li>
-            <li>Map Columns</li>
-            <li>Import Data</li>
+            <li class="active"> <?= get_label('upload_file', 'upload file') ?></li>
+            <li><?= get_label('map_columns', 'map columns') ?></li>
+            <li><?= get_label('import_data', 'import data') ?></li>
         </ul>
     </div>
 <div class="container-fluid ">
@@ -23,26 +23,26 @@
                     <form action="{{ route('import.step1') }}" method="POST"  enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="table">Select Table</label>
+                            <label for="table"><?= get_label('select_table', 'Select table') ?> </label>
                             <select name="table" id="table" class="form-control" >
-                                <option value="">Choose a table</option>
-                                <option value="fournisseurs">Fournisseurs</option>
+                                <option value=""><?= get_label('select_table', 'Select table') ?></option>
+                                <option value="fournisseurs"><?= get_label('Suppliers', 'Suppliers') ?></option>
                                 {{-- <option value="achats">Achats</option> --}}
-                                <option value="products">Products</option>
-                                <option value="clients">Clients</option>
+                                <option value="products"><?= get_label('products', 'products') ?></option>
+                                <option value="clients"><?= get_label('clients', 'clients') ?></option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="fileInput" class="form-label">Choisir un fichier</label>
+                            <label for="fileInput" class="form-label"><?= get_label('choix', 'selectt') ?></label>
                             <div class="input-group">
                                 <input type="file" class="form-control" id="fileInput" name="file" >
-                                <label class="input-group-text" for="fileInput">Parcourir</label>
+                                <label class="input-group-text" for="fileInput"><?= get_label('parcourir', 'parcourir') ?></label>
                             </div>
-                            <div id="fileNameDisplay" class="form-text mt-2">Aucun fichier choisi</div>
+                            <div id="fileNameDisplay" class="form-text mt-2"><?= get_label('no_file_selected', 'No file selected') ?></div>
 
                         </div>
                         <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Proceed to Next Step</button>
+                            <button type="submit" class="btn btn-primary"><?= get_label('proceed_next_step', 'Proceed to the next step') ?></button>
                         </div>
                     </form>
                 </div>

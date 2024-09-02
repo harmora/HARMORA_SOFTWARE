@@ -6,9 +6,9 @@
 <!-- Progress Bar -->
 <div class="progress-container">
     <ul class="progressbar">
-        <li class="completed">Upload File</li>
-        <li class="active">Map Columns</li>
-        <li>Import Data</li>
+        <li class="completed"> <?= get_label('upload_file', 'upload file') ?></li>
+        <li class="active"><?= get_label('map_columns', 'map columns') ?></li>
+        <li><?= get_label('import_data', 'import data') ?></li>
     </ul>
 </div>
 
@@ -33,7 +33,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Next</button>
+            <button type="submit" class="btn btn-primary"><?= get_label('proceed_next_step', 'Proceed to the next step') ?></button>
         </div>
     </form>
 </div>

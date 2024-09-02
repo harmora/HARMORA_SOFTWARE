@@ -64,7 +64,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     </div>
                     <div class="mb-3 col-md-6" id="supplier_name_field" >
                         @include('partials.select_single', ['label' => get_label(
-                            'select_suppliers', 'Select supplier'), 'name' => 'fournisseur_id', 
+                            'select_supplier', 'Select supplier'), 'name' => 'fournisseur_id', 
                             'items' => $fournisseurs??[], 'authUserId' => $auth_user->id, 'for' => 'suppliers']
                             )
                     </div>

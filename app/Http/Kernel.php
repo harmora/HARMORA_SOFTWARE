@@ -66,7 +66,7 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'has_workspace' => \App\Http\Middleware\HasWorkspace::class,
+        // 'has_workspace' => \App\Http\Middleware\HasWorkspace::class,
         'demo_restriction' => \App\Http\Middleware\DemoRestriction::class,
         'multiguard' => \App\Http\Middleware\MultiGuardMiddleware::class,
         'custom-verified' => \App\Http\Middleware\CustomVerifiedMiddleware::class,

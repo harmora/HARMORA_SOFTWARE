@@ -401,7 +401,7 @@ public function list()
 
         return [
             'id' => $achat->id,
-            'status_payement' => $achat->status_payement,
+            'status_payement' => get_label($achat->status_payement, $achat->status_payement),
             // 'entreprise' => $fournisseur->denomenation,
             // 'company' => $client->denomenation,
             'montant' => $achat->montant,
