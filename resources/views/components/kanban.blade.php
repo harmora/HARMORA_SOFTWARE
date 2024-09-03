@@ -54,21 +54,36 @@ $user = getAuthenticatedUser();
             </div>
         </div>
         <div class="d-flex flex-column">
-            <div class="mb-2">
+
+
+            <div class="mb-3" style="display: flex; justify-content: center; align-items: center;">
                 <a class="me-2">
                     <button type="button" class="btn btn-sm btn-secondary">
-                         {{ get_label('view devis', 'View Devis') }} <i class='bx bx-file'></i>
+                         {{ get_label('devis', 'Devis') }} <i class='bx bx-file'></i>
                     </button>
                 </a>
 
+
+                @if ($commande->status == "completed")
                 <a >
                     <button type="button" class="btn btn-sm btn-primary" >
-                       {{ get_label('view facture', 'View Facture') }} <i class='bx bx-dollar'></i>
+                       {{ get_label('facture', 'Facture') }} <i class='bx bx-dollar'></i>
                     </button>
                 </a>
+                @endif
+
             </div>
             <div>
-                <small class="badge bg-label-primary">Created At: {{ format_date($commande->created_at) }}</small>
+                <small class="badge bg-label-primary mb-1">Created At: {{ format_date($commande->start_date) }}</small>
+
+                @if ($commande->status == "completed")
+              <small class="badge bg-label-dark">validated At: {{ format_date($commande->due_date) }}</small>
+                @endif
+
+                @if ($commande->status == "cancelled")
+                <small class="badge bg-label-danger">Canceled At: {{ format_date($commande->due_date) }}</small>
+                  @endif
+
 
 
             </div>

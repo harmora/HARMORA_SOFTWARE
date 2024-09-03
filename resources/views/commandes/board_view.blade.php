@@ -102,6 +102,8 @@
 
 .progressbar li.active {
     color: black; /* Color for active status text */
+    font-size: 20px;
+    font-weight: bold;
 }
 
 
@@ -133,7 +135,7 @@
 
     @if ($total_commandes > 0)
     <div class="alert alert-primary alert-dismissible" role="alert">
-        Drag and drop to update commande status!
+        Once the Commande is validated, you can get its facture.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -181,26 +183,35 @@
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     <h5 class="modal-title text-info">{{ get_label('view_commande', 'View Commande') }}</h5>
-                    <div>
-                        <a class="me-2">
-                            <button type="button" class="btn btn-success">
-                                 {{ get_label('validate commande', ' Validate Commande') }}
-                            </button>
-                        </a>
 
-                        <a >
-                            <button type="button" class="btn  btn-danger" >
-                               {{ get_label('cancel commande', 'Cancel Commande') }}
-                            </button>
-                        </a>
-                    </div>
                 </div>
 
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div id="loading-spinner" class="text-center" style="display: none;">
+                    <div class="text-center">
+
+                        <div class="spinner-grow text-warning" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
+                          <div class="spinner-grow text-success" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
+                          <div class="spinner-grow text-danger" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
+
+                    </div>
+
+                    <small class="badge bg-label-dark">loading ...</small>
+
+                </div>
+
                 <form>
+
+
 
                     <div class="row">
 
@@ -217,6 +228,15 @@
 
 
                     </div>
+
+
+                    <div class="row mb-3">
+                        <div id="commande-status" style="display: flex; justify-content: center;">
+                            <!-- Your content here -->
+                        </div>
+                    </div>
+
+
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label for="id" class="form-label">{{ get_label('id', 'ID') }}</label>
@@ -236,11 +256,11 @@
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label for="start_date" class="form-label">{{ get_label('start_date', 'Start Date') }}</label>
-                            <input style="background-color: #ffffff !important;" type="date" id="start_date" class="form-control" readonly>
+                            <input style="background-color: #ffffff !important;" type="text" id="starting_date" class="form-control" readonly>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="due_date" class="form-label">{{ get_label('due_date', 'Due Date') }}</label>
-                            <input style="background-color: #ffffff !important;" type="date" id="due_date" class="form-control" readonly>
+                            <input style="background-color: #ffffff !important;" type="text" id="dueing_date" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -291,93 +311,155 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var modalElement = document.getElementById('commandeModal');
-        var modalBody = modalElement.querySelector('.modal-body');
-
-        // Event delegation for buttons that open the modal
-        document.addEventListener('click', function (event) {
-            if (event.target.closest('button[data-id]')) {
-                var button = event.target.closest('button[data-id]');
-                var id = button.dataset.id; // Get the ID from data-id attribute
-
-                if (id) {
-                    // Construct the URL for fetching the data
-                    var url = "{{ url('commandes/getforaffiche') }}/" + id;
-
-                    // Fetch the commande details from the server
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Populate the modal fields
-                            modalBody.querySelector('#id').value = data.id;
-                            modalBody.querySelector('#title').value = data.title;
-                            modalBody.querySelector('#description').value = data.description;
-                            modalBody.querySelector('#start_date').value = data.start_date;
-                            modalBody.querySelector('#due_date').value = data.due_date;
-                            modalBody.querySelector('#total_amount').value = data.total_amount;
-                            modalBody.querySelector('#status').value = data.status;
+document.addEventListener('DOMContentLoaded', function () {
+    var modalElement = document.getElementById('commandeModal');
+    var modalBody = modalElement.querySelector('.modal-body');
+    var spinner = modalBody.querySelector('#loading-spinner');
+    var formContent = modalBody.querySelector('form');
+    var statusContainer = modalBody.querySelector('#commande-status');
 
 
-                            const status = data.status; // Replace this with the actual status from your backend
 
-const steps = document.querySelectorAll('.progressbar li');
 
-steps.forEach(step => {
-    step.classList.remove('active', 'completed', 'cancelled');
+    // Event delegation for buttons that open the modal
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('button[data-id]')) {
+            var button = event.target.closest('button[data-id]');
+            var id = button.dataset.id; // Get the ID from data-id attribute
+
+            if (id) {
+                // Show the spinner and hide the form content
+                spinner.style.display = 'block';
+                formContent.style.display = 'none';
+
+
+                // Construct the URL for fetching the data
+                var url = "{{ url('commandes/getforaffiche') }}/" + id;
+
+                // Fetch the commande details from the server
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hide the spinner and show the form content
+                        spinner.style.display = 'none';
+                        formContent.style.display = 'block';
+
+                        // Populate the modal fields
+                        modalBody.querySelector('#id').value = data.id;
+                        modalBody.querySelector('#title').value = data.title;
+                        modalBody.querySelector('#description').value = data.description;
+                        modalBody.querySelector('#starting_date').value = data.start_date;
+                        modalBody.querySelector('#dueing_date').value = data.due_date;
+                        modalBody.querySelector('#total_amount').value = data.total_amount;
+                        modalBody.querySelector('#status').value = data.status;
+
+                        let statusContainer = document.getElementById('commande-status');
+
+                        if (data.status === 'pending') {
+                            statusContainer.innerHTML =
+    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')">Validate Commande</button></a>' +
+    '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')">Cancel Commande</button></a>';
+
+            } else if (data.status === 'cancelled') {
+                            statusContainer.innerHTML =
+                                '<div class="badge bg-label-danger">This commande was canceled</div>';
+                        } else if (data.status === 'completed') {
+                            statusContainer.innerHTML =
+                                '<div class="badge bg-label-success">This commande was completed</div>';
+                        }
+
+                        const steps = document.querySelectorAll('.progressbar li');
+
+                        steps.forEach(step => {
+                            step.classList.remove('active', 'completed', 'cancelled');
+                        });
+
+                        if (data.status === 'pending') {
+                            steps[0].classList.add('active');
+                            steps[0].classList.add('pending');
+                        } else if (data.status === 'completed') {
+                            steps[1].classList.add('active');
+                            steps[1].classList.add('completed');
+                        } else if (data.status === 'cancelled') {
+                            steps[2].classList.add('active');
+                            steps[2].classList.add('cancelled');
+                        }
+
+                        var clientInfo = '<div class="avatar avatar-md pull-up" title="' + data.client.name + '">' +
+                            '<img src="' + data.client.picture_url + '" alt="Avatar" class="rounded-circle"></div>' ;
+
+                            if(data.client.denomenation)
+                        {
+                            clientInfo +=  '<p style="margin-bottom: 0 !IMPORTANT;">' + data.client.name + '</p>' + '<p class="badge bg-label-dark"> ' + data.client.denomenation + '</p>';
+                        }
+                        else
+                        {
+                            clientInfo +=  '<p>' + data.client.name + '</p>';
+                        }
+
+
+                        modalBody.querySelector('#client').innerHTML = clientInfo;
+
+                        var addedByInfo = '<div class="avatar avatar-md pull-up" title="' + data.added_by.name + '">' +
+                            '<img src="' + data.added_by.picture_url + '" alt="Avatar" class="rounded-circle"></div>' +
+                            '<p>' + data.added_by.name + '</p>';
+                        modalBody.querySelector('#added_by').innerHTML = addedByInfo;
+
+                        var productsHtml = '';
+                        data.products.forEach(product => {
+                            productsHtml += '<div class="col-md-3 mb-3">' +
+                                '<div class="card">' +
+                                '<img src="' + product.picture_url + '" class="card-img-top" alt="' + product.name + '">' +
+                                '<div class="card-body">' +
+                                '<h5 class="card-title">' + product.name + '</h5>' +
+                                '<p class="card-text">' + product.description + '</p>' +
+                                '<p class="card-text"><strong>Price:</strong>' + product.price + 'DH </p>' +
+                                '</div></div></div>';
+                        });
+                        modalBody.querySelector('#products').innerHTML = productsHtml;
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        // Optionally hide spinner and show an error message
+                        spinner.style.display = 'none';
+                        formContent.style.display = 'block';
+                    });
+            }
+        }
+    });
 });
 
-if (status === 'pending') {
-    steps[0].classList.add('active');
-    steps[0].classList.add('pending');
-} else if (status === 'completed') {
-    steps[1].classList.add('active');
-    steps[1].classList.add('completed');
-} else if (status === 'cancelled') {
-    steps[2].classList.add('active');
-    steps[2].classList.add('cancelled');
+
+
+function updateCommandeStatus(id, status) {
+    var url = "{{ url('commandes/updatestatus') }}/" + id; // Assuming you have a route for updating status
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Handle success: update the UI, show a message, etc.
+            alert('Commande status updated successfully!');
+            // Optionally reload the page or close the modal
+            location.reload();
+        } else {
+            // Handle error: show an error message
+            alert('Failed to update commande status.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating status:', error);
+    });
 }
 
-                            // Populate client info
-                            var clientInfo = `<div class="avatar avatar-md pull-up" title="${data.client.name}">
-                                <img src="${data.client.picture_url}" alt="Avatar" class="rounded-circle">
-                            </div>
-                            <p>${data.client.name}</p>
-                            <p>${data.client.denomenation}</p>`;
-                            modalBody.querySelector('#client').innerHTML = clientInfo;
-
-                            // Populate added by info
-                            var addedByInfo = `<div class="avatar avatar-md pull-up" title="${data.added_by.name}">
-                                <img src="${data.added_by.picture_url}" alt="Avatar" class="rounded-circle">
-                            </div>
-                            <p>${data.added_by.name}</p>`;
-                            modalBody.querySelector('#added_by').innerHTML = addedByInfo;
-
-                            // Populate products info
-                            var productsHtml = '';
-                            data.products.forEach(product => {
-                                productsHtml += `<div class="col-md-3 mb-3">
-                                    <div class="card">
-                                        <img src="${product.picture_url}" class="card-img-top" alt="${product.name}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${product.name}</h5>
-                                            <p class="card-text">${product.description}</p>
-                                            <p class="card-text"><strong>Price:</strong> $${product.price}</p>
-                                        </div>
-                                    </div>
-                                </div>`;
-                            });
-                            modalBody.querySelector('#products').innerHTML = productsHtml;
-
-
-
-
-                        })
-                        .catch(error => console.error('Error fetching data:', error));
-                }
-            }
-        });
-    });
 </script>
 
 

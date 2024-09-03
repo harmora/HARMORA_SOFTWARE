@@ -243,6 +243,18 @@ public function update(Request $request, $id)
 }
 
 
+
+public function updateStatus(Request $request, $id)
+{
+    $commande = Commande::findOrFail($id);
+    $commande->status = $request->status;
+    if ($commande->save()) {
+        return response()->json(['success' => true]);
+    } else {
+        return response()->json(['success' => false], 500);
+    }
+}
+
     /**
      * Remove the specified commande from storage.
      *
@@ -425,7 +437,7 @@ $productsHtml = "<div style='display: flex; flex-wrap: nowrap; align-items: cent
                     $commandestatus = '<span class="badge ' .
                     ($commande->status == 'pending' ? 'bg-warning' :
                     ($commande->status == 'completed' ? 'bg-success' :
-                    ($commande->status == 'canceled' ? 'bg-danger' : 'bg-info'))) .
+                    ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
                     '">' . $commande->status . '</span>';
 
 
@@ -509,6 +521,8 @@ public function getCommande($id)
 
 
 
+
+
 public function listForCounter()
 {
     $pendingCount = Commande::where('status', 'pending')->count();
@@ -523,8 +537,6 @@ public function listForCounter()
 }
 
 
-
-
 public function dragula($id = '')
 {
     $user = auth()->user(); // Get the authenticated user
@@ -532,9 +544,13 @@ public function dragula($id = '')
     $products = Product::all();
 
     // Fetch commandes associated with the authenticated user
-    $commandes = Commande::where('user_id', $user->id)->get();
+    $commandes = Commande::where('user_id', $user->id)
+    ->orderBy('start_date', 'desc') // Assuming 'date' is the column name
+    ->get();
 
     $commandesByStatus = $commandes->groupBy('status');
+
+
     $statuses = ['pending', 'completed', 'cancelled'];
     $total_commandes = $commandes->count();
 
@@ -603,14 +619,7 @@ public function dragula($id = '')
             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
         }
     }
-    public function updateStatus($id, $status)
-    {
-        $commande = Commande::findOrFail($id);
-        $commande->status_id = $status; // Ensure you're updating the correct field
-        $commande->save();
 
-        return response()->json(['error' => false, 'message' => 'Status updated successfully.']);
-    }
 
 
 

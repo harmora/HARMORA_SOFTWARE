@@ -254,7 +254,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
-
+        Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
 
 
 
