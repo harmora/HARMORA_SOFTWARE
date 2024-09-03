@@ -54,6 +54,13 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('dashboard', 'Dashboard') ?></div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('import') ? 'active' : '' }}">
+            <a href="/import" class="menu-link">
+                {{-- <i class="menu-icon tf-icons bx bx-home-circle text-completed"></i> --}}
+                <i class="menu-icon fa-solid fa-file-import text-success"></i>
+                <div><?= get_label('import_file', 'Import file') ?></div>
+            </a>
+        </li>
 <!--codes i added-->
 
     @if(auth()->user()->role->rolename === 'user')
@@ -146,7 +153,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         <li class="menu-item {{ Request::is('fournisseurs') || Request::is('fournisseurs/*') ? 'active' : '' }}">
             <a href="/fournisseurs" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-group text-secondary"></i>
-                <div><?= get_label('fournisseurs', 'Fournisseurs') ?></div>
+                <div><?= get_label('Suppliers', 'Suppliers') ?></div>
             </a>
         </li>
 
@@ -172,7 +179,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         <li class="menu-item">
             <a href="/documents" class="menu-link">
                 <i class='menu-icon tf-icons bx bx bx-file text-warning'></i>
-                <div><?= get_label('my documents', 'My Documents')  ?></div>
+                <div><?= get_label('my_documents', 'My Documents')  ?></div>
             </a>
         </li>
 

@@ -1,18 +1,20 @@
 @extends('layout')
-
+@section('title')
+<?= get_label('import', 'Import') ?>
+@endsection
 @section('content')
 <!-- Progress Bar -->
 <div class="progress-container">
     <ul class="progressbar">
-        <li class="completed"><i class="fas fa-check-circle"></i> Upload File</li>
-        <li class="completed"><i class="fas fa-check-circle"></i> Map Columns</li>
-        <li class="active">Import Data</li>
+        <li class="completed"><i class="fas fa-check-circle"></i><?= get_label('upload_file', 'upload file') ?></li>
+        <li class="completed"><i class="fas fa-check-circle"></i> <?= get_label('map_columns', 'map columns') ?></li>
+        <li class="active"><?= get_label('import_data', 'import data') ?></li>
     </ul>
 </div>
-<div class="container-fluid mt-3">
+<div class="container-fluid">
     <div class="card">
         <div class="card-header text-center">
-            <h4>Review and Confirm Data</h4>
+            <h4><?= get_label('review_confirm_data', 'Review and Confirm Data') ?></h4>
         </div>
         <div class="card-body">
             <form action="{{ route('import.save') }}" method="POST">
@@ -29,7 +31,7 @@
                             <tr>
                                 @foreach($mappings as $dbColumn => $excelIndex)
                                     @if(in_array($dbColumn, $saveColumns))
-                                        <th>{{ ucfirst($dbColumn) }}</th>
+                                        <th><?= get_label($dbColumn, $dbColumn) ?></th>
                                     @endif
                                 @endforeach
                             </tr>

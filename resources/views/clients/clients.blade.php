@@ -21,6 +21,11 @@ $visibleColumns = getUserPreferences('clients');
             </nav>
         </div>
         <div>
+            <a href="/import">
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="{{ get_label('import_file', 'Import File') }}">
+                   import Excel <i class="bx bx-file"></i>
+                </button>
+            </a>
             <a href="{{url('/clients/create')}}"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_client', 'Create client') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>

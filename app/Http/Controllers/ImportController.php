@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Entreprise;
 use App\Models\Achat;
+use App\Models\mouvements_stock;
 use App\Models\Product;
 use App\Models\Client;
 use App\Models\Forme_juridique;
@@ -59,15 +60,15 @@ class ImportController extends Controller
 
         // Save the file to a temporary location in storage
         $path = $file->storeAs('temp', $file->getClientOriginalName());
-
+    
         // Get the headings (first row) from the uploaded file
         $headings = Excel::toArray([], storage_path('app/' . $path))[0][0];
-
+    
         // Retrieve all columns from the table
         $allColumns = Schema::getColumnListing($table); // Replace 'your_table_name' with the actual table name
-
+        
         // Filter out 'id', 'created_at', and 'updated_at'
-
+    
         // Get the required columns from the database
         $requiredColumns = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails($table)->getColumns();
 
@@ -78,7 +79,7 @@ class ImportController extends Controller
             $requiredColumns = array_keys($requiredColumns);
             //remove column that ara in requiredColumns along with id, created_at, and updated_at
             $dbColumns = array_filter($allColumns, function($column) use ($requiredColumns) {
-                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at']));
+                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at','entreprise_id']));
             });
 
         }elseif($table == 'clients'){
@@ -111,14 +112,13 @@ class ImportController extends Controller
                 return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at']));
             });
         }
+        
+
 
     
-
-
-
         return view('import.step2', compact('headings', 'dbColumns', 'path', 'requiredColumns','table'));
     }
-
+    
 
     public function step2(Request $request)
     {
@@ -126,34 +126,35 @@ class ImportController extends Controller
         $table = $request->input('table');
         $mappings = $request->input('mappings');
         $saveColumns = $request->input('save_columns', []);
-
+    
         // Read all rows from the stored file
         $rows = Excel::toArray([], storage_path('app/' . $path))[0];
         $rows = array_slice($rows, 1); // Remove the header row
         $rows = array_filter($rows, function($row) {
             return array_filter($row); // Keep rows that have at least one non-empty value
         });
-
+    
         return view('import.step3', compact('rows', 'mappings', 'saveColumns', 'path', 'table'));
     }
-
+    
     public function save(Request $request)
     {
         $data = $request->input('data');
         $path = $request->input('path');
         $saveColumns = json_decode($request->input('save_columns', []), true);
         $table = $request->input('table');  // Get the table name from the request
-
+        $count = 0;
         // Save data to the database
         foreach ($data as $row) {
             $dataToUpdate = array_intersect_key($row, array_flip($saveColumns));
-
+            
             if($table == 'fournisseurs'){
                 $fournisseur = Fournisseur::where('email', $row['email'])->first();
                 if (!$fournisseur){
                     $dataToUpdate['email'] = $row['email']; // Make sure email is set for new entries
                     $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
                     Fournisseur::create($dataToUpdate);
+                    $count++;
                 };
 
             }elseif($table == 'clients'){
@@ -163,20 +164,20 @@ class ImportController extends Controller
                     $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
                     if (!in_array('first_name', $saveColumns)) {
                         if (!empty($row['first_name'])) {
-                            $dataToUpdate['internal_purpose'] =1;
+                            $dataToUpdate['internal_purpose'] =1; 
                         } else {
-                            $dataToUpdate['internal_purpose'] =0;
+                            $dataToUpdate['internal_purpose'] =0; 
                         }
                     }
                     else{
-                        $dataToUpdate['internal_purpose'] =1;
+                        $dataToUpdate['internal_purpose'] =1; 
                     }
                     // Handle photo if selected
                     if (in_array('photo', $saveColumns)) {
                         if (!empty($row['photo'])) {
                             // Assuming the photo is a file path that needs to be stored
                             $photoPath = $row['photo'];
-
+                            
                             // Handle the photo upload if it's a new file
                             if (Storage::exists($photoPath)) {
                                 $dataToUpdate['photo'] = Storage::copy($photoPath, 'public/photos/' . basename($photoPath));
@@ -192,24 +193,45 @@ class ImportController extends Controller
                     }
 
                     Client::create($dataToUpdate);
+                    $count++;
                 };
             }elseif($table=='products'){
                 $product = Product::where('name', $row['name'])->first();
                 $dataToUpdate['name'] = $row['name']; // Make sure email is set for new entries
                 if (!$product){
                     Product::create($dataToUpdate);
+                    $count++;
+                    // $product = Product::where('name', $row['name'])->first();
                 }else{
                     $dataToUpdate['stock'] = $row['stock']+$product['stock']; // Make sure email is set for new entries
                     $product->update($dataToUpdate);
+                    $count++;
                 }
+                // mouvements_stock::create([
+                //     'product_id'=>$product->id,
+                //     // 'achat_id'=>$achat->id,
+                //     'quantitéajoutée'=>$productd['quantity'],
+                //     'quantitéprecedente'=>$product->stock,
+                //     'date_mouvement'=>now(),
+                //     'type_mouvement'=>'entrée',
+                //     'reference'=>$product->id.'-'.,
+                // ]);
             }
-
+            
         }
-
+    
         // Delete the temporary file
         Storage::delete($path);
+        if($count == 0){
+            Session::flash('error',$table.' already exists .');
+        }else{
+            if($table=='products')
+                Session::flash('message',$count.' '.$table.' created/updated successfully.');
+            else
+                Session::flash('message',$count.' '.$table.' created successfully.');
+        }
         return redirect()->route($table . '.index');
     }
-
+    
 
 }

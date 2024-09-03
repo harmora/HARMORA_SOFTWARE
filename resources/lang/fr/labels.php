@@ -744,5 +744,15 @@
 'reference' => 'Référence',
 'please_enter_reference' => 'Veuillez entrer la référence',
 'please_enter_montant_ht'=> 'Veuillez entrer le montant hors taxe',
+'achats_types' => 'Types d\'Achats',
+'update_achat_type' => 'Mettre à jour le type d\'achat',
+'achat_date' => 'Date d\'achat',
+'factures' => 'Factures',
+'commandes' => 'Commandes',
+'please_enter_stock' => 'Veuillez entrer le stock',
+'partial' => 'Partiel',
+'documents' => 'Documents',
+'document_number' => 'Numéro de document',
+'denomination' => 'Dénomination',
 
 ];

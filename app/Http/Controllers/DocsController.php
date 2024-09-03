@@ -114,8 +114,8 @@ public function downloadZip($id)
         $search = $request->input('search', '');
         $sort = $request->input('sort', 'reference');
         $order = $request->input('order', 'DESC');
-        $limit = $request->input('limit', 10);
-    
+        $document_type_filter = request('document_type_filter', '');
+
         $query = Document::query();
     
         // Filtering based on search term
@@ -123,15 +123,26 @@ public function downloadZip($id)
             $query->where(function ($query) use ($search) {
                 $query->where('type', 'like', '%' . $search . '%')
                     ->orWhere('reference', 'like', '%' . $search . '%')
-                    ->orWhere('facture', 'like', '%' . $search . '%');
+                    ->orWhere('facture', 'like', '%' . $search . '%')
+                    ->orWhere('devis', 'like', '%' . $search . '%')
+                    ->orWhere('user', 'like', '%' . $search . '%')
+                    ->orWhere('from_to', 'like', '%' . $search . '%')
+                    ->orWhere('total_amount', 'like', '%' . $search . '%')
+                    ->orWhere('paid_amount', 'like', '%' . $search . '%')
+                    ->orWhere('remaining_amount', 'like', '%' . $search . '%')
+                    ;
+
             });
         }
-    
+        if ($document_type_filter !== '') {
+            $query->where('type', $document_type_filter);
+        }
+
         $totaldocuments = $query->count();
     
         $documents = $query->select('documents.*')
             ->orderBy($sort, $order)
-            ->paginate($limit);
+            ->paginate(request('limit'));
 
 
         // Format data for the table
@@ -151,12 +162,12 @@ public function downloadZip($id)
                 '</button>';
             $actions = $actions ?: '-';
             return [
-                'document_number' => $document->type.'_'.$document->reference,
+                'reference' => $document->type.'_'.$document->reference,
                 'client' => $document->from_to,
-                'total_price' => $document->total_amount,
+                'total_amount' => $document->total_amount,
                 'remaining_amount' => $document->remaining_amount,
                 'created_by' => $document->user,
-                'creation_date' => $document->created_at->format('Y-m-d'),
+                'created_at' => $document->created_at->format('Y-m-d'),
                 'actions' => $actions
             ];
         });

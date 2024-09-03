@@ -1,18 +1,20 @@
 @extends('layout')
-
+@section('title')
+<?= get_label('import', 'Import') ?>
+@endsection
 @section('content')
 <!-- Progress Bar -->
 <div class="progress-container">
     <ul class="progressbar">
-        <li class="completed">Upload File</li>
-        <li class="active">Map Columns</li>
-        <li>Import Data</li>
+        <li class="completed"> <?= get_label('upload_file', 'upload file') ?></li>
+        <li class="active"><?= get_label('map_columns', 'map columns') ?></li>
+        <li><?= get_label('import_data', 'import data') ?></li>
     </ul>
 </div>
 
 <!-- Your form code for mapping columns goes here -->
 
-<div class="container-fluid mt-3">
+<div class="container-fluid">
     <form action="{{ route('import.step2') }}" method="POST">
         @csrf
         <input type="hidden" name="path" value="{{ $path }}">
@@ -31,7 +33,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Next</button>
+            <button type="submit" class="btn btn-primary"><?= get_label('proceed_next_step', 'Proceed to the next step') ?></button>
         </div>
     </form>
 </div>

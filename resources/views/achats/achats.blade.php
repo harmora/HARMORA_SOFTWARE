@@ -31,8 +31,19 @@ $visibleColumns = getUserPreferences('Achats');
                 <div class="col-md-4 mb-3">
                     <select class="form-select" id="type_achat_filter" aria-label="Default select example">
                         <option value=""><?= get_label('select_status', 'Select status') ?></option>
-                        <option value="1">{{get_label('active','Active')}}</option>
-                        <option value="2">{{get_label('deactive','Deactive')}}</option>
+                        <option value="Matériel/Produits"><?= get_label('Matériel/Produits', 'Materielle/Products') ?></option>
+                        <option value="recherche/developpement"><?= get_label('recherche/developpement', 'Research/Development') ?></option>
+                        <option value="investissements"><?= get_label('investissements', 'Investments') ?></option>
+                        <option value="salaires/avantages sociaux"><?= get_label('salaires/avantages sociaux', 'Salaries/Social Benefits') ?></option>
+                        <option value="mainetenances/amélioration"><?= get_label('mainetenances/amélioration', 'Maintenance/Improvement') ?></option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <select class="form-select" id="status_filter" aria-label="Default select example">
+                        <option value=""><?= get_label('all', 'All') ?></option>
+                        <option value="paid">{{get_label('paid','Paid')}}</option>
+                        <option value="unpaid">{{get_label('unpaid','Unpaid')}}</option>
+                        <option value="partial">{{get_label('partial','Partial')}}</option>                        
                     </select>
                 </div>
             </div>
@@ -52,7 +63,7 @@ $visibleColumns = getUserPreferences('Achats');
                             <th data-field="facture" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('facture_bon', 'Facture/Bon') ?></th>
                             <th data-field="date_paiement" data-visible="{{ (in_array('date_paiement', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_paiement', 'Date de paiement') ?></th>
                             <th data-field="date_limit" data-visible="{{ (in_array('date_limit', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_limit', 'Date limite de paiement') ?></th>
-                            <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('reference', 'N°Cheque/Reference') ?></th>
+                            <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('reference', 'Reference') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
                             <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('actions', 'Actions') ?></th>
@@ -74,6 +85,6 @@ $visibleColumns = getUserPreferences('Achats');
     var label_projects = '<?= get_label('projects', 'Projects') ?>';
     var label_tasks = '<?= get_label('tasks', 'Tasks') ?>';
 </script>
-{{-- <script src="{{asset('assets/js/pages/entreprises.js')}}"> --}}
+    <script src="{{asset('assets/js/pages/achats.js')}}">
 </script>
 @endsection

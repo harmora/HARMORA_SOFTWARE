@@ -2,9 +2,9 @@
 
 function queryParams(p) {
     return {
-        "document_number": $('#document_number_filter').val(), // Filter for document number
-        "order": $('#order_filter').val(), // Filter for order
-        "client": $('#client_filter').val(), // Filter for client
+        "document_type_filter": $('#document_type_filter').val(), // Filter for document number
+        // "order": $('#order_filter').val(), // Filter for order
+        // "client": $('#client_filter').val(), // Filter for client
         page: p.offset / p.limit + 1,
         limit: p.limit,
         sort: p.sort,
@@ -17,8 +17,6 @@ function queryParams(p) {
 // Define icons for different actions
 window.icons = {
     refresh: 'bx-refresh',
-    toggleOff: 'bx-toggle-left',
-    toggleOn: 'bx-toggle-right'
 }
 
 // Template for loading spinner
@@ -27,7 +25,7 @@ function loadingTemplate(message) {
 }
 
 // Event listener for filter changes to refresh the table
-$('#document_number_filter, #order_filter, #client_filter').on('change', function (e) {
+$('#document_type_filter').on('change', function (e) {
     e.preventDefault();
     $('#table').bootstrapTable('refresh');
 });

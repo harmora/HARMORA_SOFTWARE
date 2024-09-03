@@ -20,7 +20,13 @@ $visibleColumns = getUserPreferences('products');
                 </ol>
             </nav>
         </div>
+        
         <div>
+            <a href="/import">
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="{{ get_label('import_file', 'Import File') }}">
+                   import Excel <i class="bx bx-file"></i>
+                </button>
+            </a>
             <a href="{{url('/products/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_stock', 'Add Stock') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>
