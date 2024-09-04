@@ -31,8 +31,23 @@
                 @csrf
                 @method('PUT')
                 <!-- Enterprise Information Section -->
-                <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>                
+                <h5 class="mt-4 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
                <div class="row">
+
+                <div class="mb-3 col-md-12">
+                    <label for="photo" class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
+                    <div class="d-flex align-items-start align-items-sm-center gap-4 my-3">
+                        <img src="{{ $entreprise->photo ? asset('storage/' . $entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="entreprise-logo" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                        <div class="button-wrapper">
+                            <div class="input-group d-flex">
+                                <input type="file" class="form-control" id="inputGroupFile02" name="upload">
+                            </div>
+                            <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
+                        </div>
+                    </div>
+                </div>
+
+
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ $entreprise->denomination }}">
@@ -47,7 +62,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>                          
+                    </div>
                     <div class="mb-3 col-md-6">
                         <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
                         <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ $entreprise->ICE }}">
@@ -76,8 +91,8 @@
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ $entreprise->country }}">
                     </div>
-                
-                    @if(isAdminOrHasAllDataAccess() && $user->getRoleNames()->first() !== 'admin')
+
+                    {{-- @if(isAdminOrHasAllDataAccess() && $user->getRoleNames()->first() !== 'admin')
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('deactivated_user_login_restricted', 'If Deactivated, the User Won\'t Be Able to Log In to Their Account') ?></small>)</label>
                         <div class="">
@@ -89,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
                     <div class="mt-4">
                         <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('update', 'Update') ?></button>
                         <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>

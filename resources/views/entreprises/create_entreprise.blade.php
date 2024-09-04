@@ -28,6 +28,13 @@
                 @csrf
                 <!-- User Information Section -->
                 <div class="row">
+                      <!-- Photo Upload Section -->
+                      <div class="mb-3 col-md-6">
+                        <label for="photo" class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
+                        <input class="form-control" type="file" id="photo" name="photo">
+                        <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
+                    </div>
+
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ old('denomenation') }}">
@@ -99,7 +106,7 @@
                     </div>
                     @endif
                 </div>
-                    
+
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
                     <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>

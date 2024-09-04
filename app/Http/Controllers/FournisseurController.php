@@ -168,6 +168,7 @@ class FournisseurController extends Controller
 
             $profileHtml = "<div class='avatar avatar-md pull-up' title='" . $fournisseur->name . " '>
                 <a href='/clients/profile/" . $fournisseur->id . "'>
+                <img src='https://cdn-icons-png.flaticon.com/512/4003/4003697.png' alt='Avatar' class='rounded-circle'>
                 </a>
                 </div>";//when hover the photo display infos as popup
 

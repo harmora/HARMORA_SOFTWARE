@@ -49,7 +49,7 @@ class EntrepriseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
      public function create()
      {
          $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
@@ -68,7 +68,13 @@ class EntrepriseController extends Controller
             'state' => 'required|string|max:255',
             'country' => 'required|string|max:255',
          ]);
- 
+
+         if ($request->hasFile('photo')) {
+            $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+        } else {
+            $formFields['photo'] = 'photos/no-image.jpg';
+        }
+
          $entreprise = Entreprise::create([
              'denomination' => $formFields['denomenation_u'],
              'ICE' => $formFields['ICE'],
@@ -79,12 +85,14 @@ class EntrepriseController extends Controller
              'state' => $formFields['state'],
              'country' => $formFields['country'],
              'forme_juridique_id' => $formFields['forme_juridique_id'],
+             'photo' => $formFields['photo'],
+
          ]);
- 
+
          Session::flash('message', 'Entreprise created successfully.');
          return response()->json(['error' => false, 'id' => $entreprise->id]);
      }
-     
+
      public function edit($id)
      {
          $entreprise =Entreprise::findOrFail($id);
@@ -114,6 +122,22 @@ class EntrepriseController extends Controller
         ]);
         $entreprise = Entreprise::findOrFail($id);
 
+        if ($request->hasFile('upload')) {
+            // Check if the enterprise already has a photo that is not the default image
+            if ($entreprise->photo != 'photos/no-image.jpg' && $entreprise->photo !== null) {
+                // Delete the existing photo from storage
+                Storage::disk('public')->delete($entreprise->photo);
+            }
+
+            // Store the new photo and update the 'photo' field
+            $formFields['photo'] = $request->file('upload')->store('photos', 'public');
+        } else {
+            // If no new photo is uploaded, keep the old one
+            $formFields['photo'] = $entreprise->photo;
+        }
+
+
+
         $entreprise->update([
             'denomination' => $formFields['denomenation_u'],
             'ICE' => $formFields['ICE'],
@@ -123,6 +147,7 @@ class EntrepriseController extends Controller
             'city' => $formFields['city'],
             'state' => $formFields['state'],
             'country' => $formFields['country'],
+            'photo' => $formFields['photo'],
             'forme_juridique_id' => $formFields['forme_juridique_id'], // Update this field
         ]);
 
@@ -144,9 +169,9 @@ class EntrepriseController extends Controller
          $sort = request('sort') ?: 'id';
          $order = request('order') ?: 'DESC';
          $forme_juridique_filter = request('forme_juridique_filter', '');
- 
+
          $query = Entreprise::query();
- 
+
          // Search functionality
          if ($search) {
              $query->where(function ($query) use ($search) {
@@ -156,63 +181,60 @@ class EntrepriseController extends Controller
                      ->orWhere('city', 'like', '%' . $search . '%');
              });
          }
- 
+
         //  Status filtering
          if ($forme_juridique_filter !== '') {
              $query->where('forme_juridique_id', $forme_juridique_filter);
          }
- 
+
          // Role filtering
         //  if (!empty($role_ids)) {
         //      $query->whereHas('roles', function ($query) use ($role_ids) {
         //          $query->whereIn('roles.id', $role_ids);
         //      });
         //  }
- 
+
          $totalentreprises = $query->count();
- 
+
 
          $entreprises = $query->select('entreprises.*')
          ->leftJoin('forme_juridiques', 'entreprises.forme_juridique_id', '=', 'forme_juridiques.id')
          ->orderBy($sort, $order)
          ->paginate(request("limit"));
- 
+
          $entreprises = $entreprises->through(function ($entreprise) {
- 
+
              $actions = '';
- 
+
                  $actions .= '<a href="/entreprises/edit/' . $entreprise->id . '" title="' . get_label('update', 'Update') . '">' .
                      '<i class="bx bx-edit mx-1"></i>' .
                      '</a>';
- 
- 
- 
+
+
+
                  $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $entreprise->id . '" data-type="entreprise">' .
                      '<i class="bx bx-trash text-danger mx-1"></i>' .
                      '</button>';
- 
- 
+
+
              $actions = $actions ?: '-';
- 
- 
-             $photoHtml = "<div class='pull-up' title='" . $entreprise->denomination . "'>
+
+             $photoHtml = "<div class='avatar avatar-md pull-up' title='" . $entreprise->denomination . "'>
              <a href='/entreprises/profile/" . $entreprise->id . "'>
+                 <img src='" . ($entreprise->photo ? asset('storage/' . $entreprise->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Logo' class='rounded-circle'>
              </a>
            </div>";
- 
-             $statusBadge = $entreprise->status === 1
-                 ? '<span class="badge bg-success">' . get_label('active', 'Active') . '</span>'
-                 : '<span class="badge bg-danger">' . get_label('deactive', 'Deactive') . '</span>';
- 
-             $formattedHtml = '<div class="d-flex mt-2">' .
+
+$formattedHtml = '<div class="d-flex mt-2">' .
                  $photoHtml .
                  '<div class="mx-2">' .
                  '<h6 class="mb-1">' .
-                 $entreprise->denomination . 
+                 $entreprise->denomination .
                  '</h6>' .
+                 '<p class="text-muted">' . $entreprise->city . ', ' . $entreprise->country . '</p>' .
                  '</div>' .
-                 '</div>';
- 
+               '</div>';
+
 
              return [
                  'id' => $entreprise->id,
@@ -225,12 +247,11 @@ class EntrepriseController extends Controller
                  'actions' => $actions
              ];
          });
- 
+
          return response()->json([
              "rows" => $entreprises->items(),
              "total" => $totalentreprises,
          ]);
      }
- 
+
  }
- 

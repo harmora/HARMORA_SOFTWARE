@@ -311,6 +311,10 @@
 
 
 <script>
+
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     var modalElement = document.getElementById('commandeModal');
     var modalBody = modalElement.querySelector('.modal-body');

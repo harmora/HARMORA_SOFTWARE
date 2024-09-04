@@ -182,6 +182,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::delete('/disponibilities/destroy/{id}', [DisponibiliteController::class, 'destroy']);
         Route::get('/disponibility/edit/{id}', [DisponibiliteController::class, 'edit']);
         Route::put('/disponibility/update/{id}', [DisponibiliteController::class, 'update']);
+        Route::get('/disponibility/calendar', [DisponibiliteController::class, 'calendar']);
+
+
 
 
         //products
@@ -255,6 +258,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
+
+
+        Route::get('commandes/updatestatus/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
 
 
 

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 use App\Models\Commande;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Entreprise;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 
 use Illuminate\Support\Arr;
 use App\Services\DeletionService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -560,6 +562,17 @@ public function dragula($id = '')
         'users' => $user, // Pass the authenticated user
         'total_commandes' => $total_commandes,
     ]);
+}
+
+
+public function generateDevis($id)
+{
+    $commande = Commande::with('products')->findOrFail($id);
+    $entreprise = $this->user->entreprise;
+    $pdf = Pdf::loadView('pdf.devis', compact('commande'),compact('entreprise'));
+
+    $pdfname = 'devis-'.$commande->id.'.pdf';
+    return $pdf->stream($pdfname);
 }
 
 

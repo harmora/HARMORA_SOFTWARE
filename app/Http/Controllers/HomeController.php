@@ -46,41 +46,94 @@ class HomeController extends Controller
     }
 
 
-    public function getChiffreAffaires(Request $request)
-    {
-        $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
-        $year = $request->query('year', date('Y')); // Default to current year
+//     public function getChiffreAffaires(Request $request)
+//     {
+//         $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
+//         $year = $request->query('year', date('Y')); // Default to current year
 
-        $query = DB::table('factures')->whereYear('date', $year);
+//         $query = DB::table('factures')->whereYear('date', $year);
 
-        if ($grouping === 'year') {
-            $chiffreAffaires = $query->select(DB::raw('YEAR(date) as period'), DB::raw('SUM(grand_total) as total'))
-                ->groupBy('period')
-                ->orderBy('period', 'asc')
-                ->get();
-        } elseif ($grouping === 'day') {
-            $chiffreAffaires = $query->select(DB::raw('DATE(date) as period'), DB::raw('SUM(grand_total) as total'))
-                ->groupBy('period')
-                ->orderBy('period', 'asc')
-                ->get();
-        } else {
-            // Default to grouping by month
-            $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(date, "%Y-%m") as period'), DB::raw('SUM(grand_total) as total'))
-                ->groupBy('period')
-                ->orderBy('period', 'asc')
-                ->get();
-        }
+//         if ($grouping === 'year') {
+//             $chiffreAffaires = $query->select(DB::raw('YEAR(date) as period'), DB::raw('SUM(grand_total) as total'))
+//                 ->groupBy('period')
+//                 ->orderBy('period', 'asc')
+//                 ->get();
+//         } elseif ($grouping === 'day') {
+//             $chiffreAffaires = $query->select(DB::raw('DATE(date) as period'), DB::raw('SUM(grand_total) as total'))
+//                 ->groupBy('period')
+//                 ->orderBy('period', 'asc')
+//                 ->get();
+//         } else {
+//             // Default to grouping by month
+//             $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(date, "%Y-%m") as period'), DB::raw('SUM(grand_total) as total'))
+//                 ->groupBy('period')
+//                 ->orderBy('period', 'asc')
+//                 ->get();
+//         }
 
-        return response()->json($chiffreAffaires);
+//         return response()->json($chiffreAffaires);
+//     }
+
+
+
+//     public function getChiffreAffaireParCategorie()
+// {
+//     // Fetch the total revenue per category from the facture table
+//     $revenues = DB::table('factures')
+//         ->select('categorie', DB::raw('SUM(grand_total) as total'))
+//         ->groupBy('categorie')
+//         ->get();
+
+//     // Calculate the total revenue
+//     $totalRevenue = $revenues->sum('total');
+
+//     // Calculate the percentage of revenue per category
+//     $data = $revenues->map(function($revenue) use ($totalRevenue) {
+//         return [
+//             'categorie' => $revenue->categorie,
+//             'percentage' => round(($revenue->total / $totalRevenue) * 100, 2)
+//         ];
+//     });
+
+//     // Return the data as a JSON response
+//     return response()->json($data);
+// }
+// }
+
+
+public function getChiffreAffaires(Request $request)
+{
+    $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
+    $year = $request->query('year', date('Y')); // Default to current year
+
+    $query = DB::table('commandes')->whereYear('start_date', $year);
+
+    if ($grouping === 'year') {
+        $chiffreAffaires = $query->select(DB::raw('YEAR(start_date) as period'), DB::raw('SUM(total_amount) as total'))
+            ->groupBy('period')
+            ->orderBy('period', 'asc')
+            ->get();
+    } elseif ($grouping === 'day') {
+        $chiffreAffaires = $query->select(DB::raw('DATE(start_date) as period'), DB::raw('SUM(total_amount) as total'))
+            ->groupBy('period')
+            ->orderBy('period', 'asc')
+            ->get();
+    } else {
+        // Default to grouping by month
+        $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(start_date, "%Y-%m") as period'), DB::raw('SUM(total_amount) as total'))
+            ->groupBy('period')
+            ->orderBy('period', 'asc')
+            ->get();
     }
 
+    return response()->json($chiffreAffaires);
+}
 
-
-    public function getChiffreAffaireParCategorie()
+public function getChiffreAffaireParCategorie()
 {
-    // Fetch the total revenue per category from the facture table
-    $revenues = DB::table('factures')
-        ->select('categorie', DB::raw('SUM(grand_total) as total'))
+    // Fetch the total revenue per category from the commandes table
+    $revenues = DB::table('commandes')
+        ->select('status as categorie', DB::raw('SUM(total_amount) as total'))
         ->groupBy('categorie')
         ->get();
 
@@ -98,32 +151,8 @@ class HomeController extends Controller
     // Return the data as a JSON response
     return response()->json($data);
 }
+
 }
 
 
 
-// public function getChiffreAffaireParCategorie()
-// {
-//     // Fetch the total revenue per category by joining related tables
-//     $revenues = DB::table('factures')
-//         ->join('commandes', 'factures.commande_id', '=', 'commandes.id')
-//         ->join('products', 'commandes.product_id', '=', 'products.id')
-//         ->join('categories', 'products.categorie_id', '=', 'categories.id')
-//         ->select('categories.name as categorie', DB::raw('SUM(products.price * factures.quantity) as total'))
-//         ->groupBy('categories.name')
-//         ->get();
-
-//     // Calculate the total revenue
-//     $totalRevenue = $revenues->sum('total');
-
-//     // Calculate the percentage of revenue per category
-//     $data = $revenues->map(function($revenue) use ($totalRevenue) {
-//         return [
-//             'categorie' => $revenue->categorie,
-//             'percentage' => round(($revenue->total / $totalRevenue) * 100, 2)
-//         ];
-//     });
-
-//     // Return the data as a JSON response
-//     return response()->json($data);
-// }

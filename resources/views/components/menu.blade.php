@@ -54,13 +54,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('dashboard', 'Dashboard') ?></div>
             </a>
         </li>
-        <li class="menu-item {{ Request::is('import') ? 'active' : '' }}">
-            <a href="/import" class="menu-link">
-                {{-- <i class="menu-icon tf-icons bx bx-home-circle text-completed"></i> --}}
-                <i class="menu-icon fa-solid fa-file-import text-success"></i>
-                <div><?= get_label('import_file', 'Import file') ?></div>
-            </a>
-        </li>
+
 <!--codes i added-->
 
     @if(auth()->user()->role->rolename === 'user')
@@ -110,7 +104,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         <li class="menu-item {{ Request::is('users') || Request::is('users/*') ? 'active' : '' }}">
             <a href="/users" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-group text-primary"></i>
-                <div><?= get_label('users', 'Users') ?></div>
+                <div><?= get_label('managers', 'Managers') ?></div>
             </a>
         </li>
     @elseif(auth()->user()->role->rolename === 'admin')
@@ -190,14 +184,18 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                 <div><?= get_label('disponibilite', 'Disponibility')  ?></div>
             </a>
         </li>
-        <li class="menu-item {{ Request::is('facture') || Request::is('facture/*') ? 'active' : '' }}">
-            <a href="/factures" class="menu-link">
-                <i class='menu-icon tf-icons bx bx-notepad text-primary'></i>
-                <div><?= get_label('factures', 'Factures') ?></div>
+
+        <li class="menu-item {{ Request::is('import') ? 'active' : '' }}">
+            <a href="/import" class="menu-link">
+                {{-- <i class="menu-icon tf-icons bx bx-home-circle text-completed"></i> --}}
+                <i class="menu-icon fa-solid fa-file-import text-success"></i>
+                <div><?= get_label('import_file', 'Import file') ?></div>
             </a>
         </li>
 
+
         @endif
+
 
         <li class="menu-item">
             <a href="/ocr" class="menu-link">

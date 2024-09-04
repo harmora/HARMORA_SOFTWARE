@@ -101,6 +101,7 @@ class UserController extends Controller
 
         $password = $request->input('password');
         $formFields['password'] = bcrypt($password);
+
         if ($request->hasFile('photo')) {
             $formFields['photo'] = $request->file('photo')->store('photos', 'public');
         } else {
@@ -270,6 +271,7 @@ class UserController extends Controller
             //'role' => 'required'
         ]);
         $user = User::findOrFail($id);
+        
         if ($request->hasFile('upload')) {
             if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
                 Storage::disk('public')->delete($user->photo);

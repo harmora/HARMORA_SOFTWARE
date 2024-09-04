@@ -104,7 +104,7 @@ background-repeat: no-repeat;
 
                         @if(auth()->user()->role->rolename === 'user')
                         <div class="admin-dashboard-card">
-                            <img src="https://marketplace.canva.com/EAFBazyZ4M8/1/0/1600w/canva-bleu-et-pourpre-d%C3%A9contract%C3%A9-soci%C3%A9t%C3%A9-application-d%C3%A9veloppement-start-up-entreprise-logo-0fa93Kmt5Oo.jpg" alt="Profile Picture" class="profile-pic">
+                            <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic">
                             <h2 class="admin-dashboard-title">Welcome to Your Dashboard</h2>
                             <p class="admin-dashboard-description">Here you can manage your Entreprise, view statistics, and perform tasks.</p>
                          </div>
@@ -146,7 +146,7 @@ background-repeat: no-repeat;
                                 <i class="menu-icon tf-icons bx bx-briefcase-alt-2 bx-md text-success"></i>
                             </div>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_projects', 'Total projects') ?></span>
+                        <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
                         <h3 class="card-title mb-2">{{is_countable($projects) && count($projects) > 0?count($projects):0}}</h3>
 
                         <a href="/{{getUserPreferences('projects', 'default_view')}}"><small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
@@ -242,7 +242,7 @@ background-repeat: no-repeat;
                 <div class="card overflow-hidden mb-4 statisticsDiv">
                     <div class="card-header pt-3 pb-1">
                         <div class="card-title d-flex justify-content-between mb-0">
-                            <h5 class="m-0 me-2"><?= get_label('chiffre d affaire par cathegorie', 'Chiffre d affaire par categorie') ?></h5>
+                            <h5 class="m-0 me-2"><?= get_label('status des commandes', 'Status des commandes') ?></h5>
                           <div>
                                 <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View COmmandes') ?>"><i class='bx bx-box'></i></a></span>
 
@@ -252,7 +252,7 @@ background-repeat: no-repeat;
                             <div id="caparcategorie"></div>
                         </div>
                         <div class="card-title d-flex justify-content-between mb-0">
-                            <h5 class="m-0 me-2"><?= get_label('status des commandes', 'Status des commandes') ?></h5>
+
 
                         </div>
                     </div>

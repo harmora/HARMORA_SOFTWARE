@@ -58,10 +58,11 @@ $user = getAuthenticatedUser();
 
             <div class="mb-3" style="display: flex; justify-content: center; align-items: center;">
                 <a class="me-2">
-                    <button type="button" class="btn btn-sm btn-secondary">
-                         {{ get_label('devis', 'Devis') }} <i class='bx bx-file'></i>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#devisModal-{{ $commande->id }}">
+                       {{ get_label('devis', 'Devis') }} <i class='bx bx-file'></i>
                     </button>
                 </a>
+
 
 
                 @if ($commande->status == "completed")
@@ -103,3 +104,72 @@ $user = getAuthenticatedUser();
         </div>
     </div>
 </div>
+
+
+<!-- Devis Modal -->
+<div class="modal fade" id="devisModal-{{ $commande->id }}" tabindex="-1" aria-labelledby="devisModalLabel-{{ $commande->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 class="modal-title text-info" id="devisModalLabel-{{ $commande->id }}">Devis</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <img src="{{ $commande->user->entreprise->photo ? asset('storage/' . $commande->user->entreprise->photo) : asset('storage/photos/no-image.jpg') }}"
+                         alt="Entreprise Logo"
+                         class="img-fluid rounded-circle"
+                         style="max-width: 100px;">
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12" >
+                        <labe ><strong>Title:</strong></label>
+                        <span >{{ $commande->title }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label ><strong>Description:</strong></label>
+                        <span >{{ $commande->description }}</span>
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <h6>Products:</h6>
+                        <ul class="list-group">
+                            @foreach ($commande->products as $product)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $product->name }}</span>
+                                    <span>{{ $product->pivot->quantity }} x {{ $product->pivot->price }} MAD</span>
+                                </li>
+                            @endforeach
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span >---</span>
+                                <span> <span class="text-danger mr-2">Total Amount : </span>{{ $commande->total_amount }} MAD</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-danger" id="generatePdfButton-{{ $commande->id }}"> Creer Devis [PDF]</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.getElementById('generatePdfButton-{{ $commande->id }}').addEventListener('click', function() {
+    window.open("{{ route('devis.pdf', $commande->id) }}", '_blank');
+});
+
+</script>
