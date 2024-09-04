@@ -216,7 +216,7 @@ public function getfactureinfo()
     $user = $fact['user'];
 
     $data = [
-        'title' => get_label('invoice', 'Invoice').' :',
+        'title' => get_label('facture', 'Invoice').' :',
         'content' => [
             'name' => $user['name'],
             'type' => $fact['type'],
@@ -268,7 +268,7 @@ public function getDownloadFile($id = null)
     $user = $fact['user'];
 
     $data = [
-        'title' => get_label('invoice', 'Invoice').' :',
+        'title' => get_label('facture', 'Invoice').' :',
         'content' => [
             'name' => $user['name'],
             'type' => $fact['type'],

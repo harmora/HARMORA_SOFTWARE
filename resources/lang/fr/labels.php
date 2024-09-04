@@ -518,7 +518,6 @@
 'declined' => 'Diminué',
 'expired' => 'Expiré',
 'estimate' => 'Estimation',
-'invoice' => 'Facture',
 'billing_details' => 'Détails de la facturation',
 'update_billing_details' => 'Mettre à jour les détails de facturation',
 'please_enter_name' => 'Veuillez entrer un nom',
@@ -754,5 +753,17 @@
 'documents' => 'Documents',
 'document_number' => 'Numéro de document',
 'denomination' => 'Dénomination',
+'update_achat' => 'Mettre à Jour l\'Achat',
+'stock_defective' => 'Stock Défectueux',
+'select_excel_column' => 'Sélectionner une Colonne Excel',
+'upload_file' => 'Télécharger le Fichier',
+'map_columns' => 'Mapper les Colonnes',
+'import_data' => 'Importer les Données',
+'save_column_visibility' => 'Enregistrer la Visibilité de la Colonne',
+'import_file' => 'Importer le Fichier',
+'my_documents' => 'Mes Documents',
+'select_supplier' => 'Sélectionner un Fournisseur',
+'total_amount' => 'Montant Total',
+
 
 ];
