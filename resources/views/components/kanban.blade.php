@@ -63,11 +63,9 @@ $user = getAuthenticatedUser();
                     </button>
                 </a>
 
-
-
                 @if ($commande->status == "completed")
-                <a >
-                    <button type="button" class="btn btn-sm btn-primary" >
+                <a class="me-2">
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#factureModal-{{ $commande->id }}">
                        {{ get_label('facture', 'Facture') }} <i class='bx bx-dollar'></i>
                     </button>
                 </a>
@@ -112,7 +110,7 @@ $user = getAuthenticatedUser();
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h5 class="modal-title text-info" id="devisModalLabel-{{ $commande->id }}">Devis</h5>
+                    <h1 class="modal-title text-primary" id="devisModalLabel-{{ $commande->id }}">Devis</h1>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -124,7 +122,7 @@ $user = getAuthenticatedUser();
                          style="max-width: 100px;">
                 </div>
 
-                <div class="row mb-3">
+                <div class="row">
                     <div class="col-md-12" >
                         <labe ><strong>Title:</strong></label>
                         <span >{{ $commande->title }}</span>
@@ -137,6 +135,15 @@ $user = getAuthenticatedUser();
                         <span >{{ $commande->description }}</span>
                     </div>
                 </div>
+
+                @if ($commande->client->first_name)
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label ><strong>Client:</strong></label>
+                        <span >{{ $commande->client->first_name .' '.$commande->client->last_name }}</span>
+                    </div>
+                </div>
+                @endif
 
 
                 <div class="row mb-3">
@@ -151,7 +158,13 @@ $user = getAuthenticatedUser();
                             @endforeach
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span >---</span>
-                                <span> <span class="text-danger mr-2">Total Amount : </span>{{ $commande->total_amount }} MAD</span>
+                                {{-- TVA --}}
+                                <span> <span class="text-danger mr-2">Total HT : </span>    {{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }}  MAD</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span >--- <b> TVA :</b>{{ $commande->tva }}%</span>
+                                {{-- TVA --}}
+                                <span> <span class="text-danger mr-2">total TTC : </span>{{ $commande->total_amount }} MAD</span>
                             </li>
                         </ul>
                     </div>
@@ -167,9 +180,104 @@ $user = getAuthenticatedUser();
 
 
 
+@if ($commande->status = 'completed')
+<!-- Facture Modal -->
+<div class="modal fade" id="factureModal-{{ $commande->id }}" tabindex="-1" aria-labelledby="factureModalLabel-{{ $commande->id }}" aria-hidden="true" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h1 class="modal-title text-primary" id="factureModalLabel-{{ $commande->id }}">Facture</h1>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <img src="{{ $commande->user->entreprise->photo ? asset('storage/' . $commande->user->entreprise->photo) : asset('storage/photos/no-image.jpg') }}"
+                         alt="Client Photo"
+                         class="img-fluid rounded-circle"
+                         style="max-width: 100px;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label><strong>Title:</strong></label>
+                        <span>{{ $commande->title }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label><strong>Description:</strong></label>
+                        <span>{{ $commande->description }}</span>
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        @if ($commande->client->first_name)
+                        <label><strong>Client:</strong></label>
+                        <span>{{ $commande->client->first_name . ' ' . $commande->client->last_name }}</span><br>
+                        @endif
+
+                        @if ($commande->client->denomenation)
+                        <label><strong>Denomination:</strong></label>
+                        <span>{{ $commande->client->denomenation }}</span><br>
+                        @endif
+                        <label><strong>Email:</strong></label>
+                        <span>{{ $commande->client->email }}</span><br>
+                        <label><strong>Phone:</strong></label>
+                        <span>{{ $commande->client->phone }}</span><br>
+
+                    </div>
+                </div>
+
+
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <h6>Products:</h6>
+                        <ul class="list-group">
+                            @foreach ($commande->products as $product)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $product->name }}</span>
+                                    <span>{{ $product->pivot->quantity }} x {{ $product->pivot->price }} MAD</span>
+                                </li>
+                            @endforeach
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span >---</span>
+                                <span><span class="text-danger mr-2">Total HT:</span>{{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }} MAD</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>--- <b>TVA:</b> {{ $commande->tva }}%</span>
+                                <span><span class="text-danger mr-2">Total TTC:</span>{{ $commande->total_amount }} MAD</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-danger" id="generatefactureButton-{{ $commande->id }}">Creer Facture [PDF]</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+
+
 <script>
 document.getElementById('generatePdfButton-{{ $commande->id }}').addEventListener('click', function() {
     window.open("{{ route('devis.pdf', $commande->id) }}", '_blank');
 });
 
 </script>
+
+
+<script>
+    document.getElementById('generatefactureButton-{{ $commande->id }}').addEventListener('click', function() {
+        window.open("{{ route('facture.pdf', $commande->id) }}", '_blank');
+    });
+    </script>

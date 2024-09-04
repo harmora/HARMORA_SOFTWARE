@@ -260,7 +260,10 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
 
 
-        Route::get('commandes/updatestatus/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
+        Route::get('commandes/devis/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
+        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
+
+        Route::get('/commandesfordevisfacture/{id}', [CommandesController::class, 'getCommandeDetails']);
 
 
 

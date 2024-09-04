@@ -80,62 +80,65 @@ class CommandesController extends Controller
  */
 
 
-    public function store(Request $request)
-    {
-        // Validate the request
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'status' => 'required|string',
-            'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.price' => 'required|numeric|min:0',
-            'user_id' => 'nullable|integer|exists:users,id',
-            'start_date' => 'nullable|date',
-            'due_date' => 'required|date',
-            'description' => 'nullable|string',
-            'note' => 'nullable|string',
-            'total_amount' => 'nullable|integer',
-            'client_id' => 'nullable|integer|exists:clients,id',
-        ]);
+ public function store(Request $request)
+ {
+     // Validate the request
+     $request->validate([
+         'title' => 'required|string|max:255',
+         'status' => 'required|string',
+         'products' => 'required|array|min:1',
+         'products.*.product_id' => 'required|exists:products,id',
+         'products.*.quantity' => 'required|integer|min:1',
+         'products.*.price' => 'required|numeric|min:0',
+         'user_id' => 'nullable|integer|exists:users,id',
+         'start_date' => 'nullable|date',
+         'due_date' => 'required|date',
+         'description' => 'nullable|string',
+         'note' => 'nullable|string',
+         'client_id' => 'nullable|integer|exists:clients,id',
+         'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
+     ]);
 
-        // Create a new commande
-        $commande = Commande::create([
-            'client_id' => $request->client_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'start_date' => $request->start_date,
-            'due_date' => $request->due_date,
-            'total_amount' => 0,
-            'status' => $request->status,
-            'created_at' => now(),
-            'updated_at' => now(),
-            'user_id' => $request->user_id,
-        ]);
+     // Calculate total amount before TVA
+     $totalAmount = 0;
+     foreach ($request->products as $productData) {
+         $totalAmount += $productData['quantity'] * $productData['price'];
+     }
 
-        // Attach products to the commande
-        $totalAmount = 0;
-        foreach ($request->products as $productData) {
-            $commande->products()->attach($productData['product_id'], [
-                'quantity' => $productData['quantity'],
-                'price' => $productData['price'],
-            ]);
+     // Calculate total amount after applying TVA
+     $tvaAmount = ($request->tva / 100) * $totalAmount;
+     $totalAmountWithTva = $totalAmount + $tvaAmount;
 
-            // Update product stock
-            $product = Product::find($productData['product_id']);
-            $product->stock -= $productData['quantity'];
-            $product->save();
+     // Create a new commande
+     $commande = Commande::create([
+         'client_id' => $request->client_id,
+         'title' => $request->title,
+         'description' => $request->description,
+         'start_date' => $request->start_date,
+         'due_date' => $request->due_date,
+         'total_amount' => $totalAmountWithTva,
+         'status' => $request->status,
+         'created_at' => now(),
+         'updated_at' => now(),
+         'user_id' => $request->user_id,
+         'tva' => $request->tva, // Store the TVA value
+     ]);
 
-            // Calculate the total amount for the commande
-            $totalAmount += $productData['quantity'] * $productData['price'];
-        }
+     // Attach products to the commande
+     foreach ($request->products as $productData) {
+         $commande->products()->attach($productData['product_id'], [
+             'quantity' => $productData['quantity'],
+             'price' => $productData['price'],
+         ]);
 
-        // Update the total amount in the commande
-        $commande->total_amount = $totalAmount;
-        $commande->save();
+         // Update product stock
+         $product = Product::find($productData['product_id']);
+         $product->stock -= $productData['quantity'];
+         $product->save();
+     }
 
-        return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
-    }
+     return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
+ }
 
 
 
@@ -183,66 +186,70 @@ class CommandesController extends Controller
     }
 
 
-
-public function update(Request $request, $id)
-{
-    // Validate the request
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'status' => 'required|string',
-        'products' => 'required|array|min:1',
-        'products.*.product_id' => 'required|exists:products,id',
-        'products.*.quantity' => 'required|integer|min:1',
-        'products.*.price' => 'required|numeric|min:0',
-        'user_id' => 'required|integer|exists:users,id',
-        'start_date' => 'nullable|date',
-        'due_date' => 'required|date',
-        'description' => 'nullable|string',
-        'note' => 'nullable|string',
-        'total_amount' => 'nullable|integer',
-        'client_id' => 'required|integer|exists:clients,id',
-    ]);
-
-    // Find the commande by ID
-    $commande = Commande::findOrFail($id);
-
-    // Update the commande fields
-    $commande->update([
-        'client_id' => $request->client_id,
-        'title' => $request->title,
-        'description' => $request->description,
-        'start_date' => $request->start_date,
-        'due_date' => $request->due_date,
-        'status' => $request->status,
-        'user_id' => $request->user_id,
-    ]);
-
-    // Detach old products
-    $commande->products()->detach();
-
-    // Attach new products and update stock
-    $totalAmount = 0;
-    foreach ($request->products as $productData) {
-        $commande->products()->attach($productData['product_id'], [
-            'quantity' => $productData['quantity'],
-            'price' => $productData['price'],
+    public function update(Request $request, $id)
+    {
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'status' => 'required|string',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
+            'user_id' => 'required|integer|exists:users,id',
+            'start_date' => 'nullable|date',
+            'due_date' => 'required|date',
+            'description' => 'nullable|string',
+            'note' => 'nullable|string',
+            'total_amount' => 'nullable|integer',
+            'client_id' => 'required|integer|exists:clients,id',
+            'tva' => 'required|numeric|min:0|max:100', // Validation rule for TVA
         ]);
 
-        // Update product stock
-        $product = Product::find($productData['product_id']);
-        $product->stock -= $productData['quantity'];
-        $product->save();
+        // Find the commande by ID
+        $commande = Commande::findOrFail($id);
 
-        // Calculate the total amount for the commande
-        $totalAmount += $productData['quantity'] * $productData['price'];
+        // Update the commande fields
+        $commande->update([
+            'client_id' => $request->client_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_date' => $request->start_date,
+            'due_date' => $request->due_date,
+            'status' => $request->status,
+            'user_id' => $request->user_id,
+            'tva' => $request->tva, // Save the TVA value
+        ]);
+
+        // Detach old products
+        $commande->products()->detach();
+
+        // Attach new products and update stock
+        $totalAmount = 0;
+        foreach ($request->products as $productData) {
+            $commande->products()->attach($productData['product_id'], [
+                'quantity' => $productData['quantity'],
+                'price' => $productData['price'],
+            ]);
+
+            // Update product stock
+            $product = Product::find($productData['product_id']);
+            $product->stock -= $productData['quantity'];
+            $product->save();
+
+            // Calculate the total amount for the commande
+            $totalAmount += $productData['quantity'] * $productData['price'];
+        }
+
+        // Calculate the total amount including TVA
+        $totalAmountWithTva = $totalAmount + ($totalAmount * $request->tva / 100);
+
+        // Update the total amount in the commande
+        $commande->total_amount = $totalAmountWithTva;
+        $commande->save();
+
+        return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
     }
-
-    // Update the total amount in the commande
-    $commande->total_amount = $totalAmount;
-    $commande->save();
-
-    return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
-}
 
 
 
@@ -355,130 +362,125 @@ public function updateStatus(Request $request, $id)
 
 
     public function list()
-{
-    $search = request('search');
-    $sort = request('sort') ?: 'id';
-    $order = request('order') ?: 'DESC';
-    $status = request('status', '');
+    {
+        $search = request('search');
+        $sort = request('sort') ?: 'id';
+        $order = request('order') ?: 'DESC';
+        $status = request('status', '');
 
-    $query = Commande::with(['user', 'client', 'products']);
+        $query = Commande::with(['user', 'client', 'products']);
 
-    // Search functionality
-    if ($search) {
-        $query->where(function ($query) use ($search) {
-            $query->where('title', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->orWhereHas('user', function ($query) use ($search) {
-                    $query->where('first_name', 'like', '%' . $search . '%')
-                          ->orWhere('last_name', 'like', '%' . $search . '%');
-                })
-                ->orWhereHas('client', function ($query) use ($search) {
-                    $query->where('first_name', 'like', '%' . $search . '%')
-                          ->orWhere('last_name', 'like', '%' . $search . '%')
-                          ->orWhere('denomenation', 'like', '%' . $search . '%');
-                });
+        // Search functionality
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('first_name', 'like', '%' . $search . '%')
+                              ->orWhere('last_name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('client', function ($query) use ($search) {
+                        $query->where('first_name', 'like', '%' . $search . '%')
+                              ->orWhere('last_name', 'like', '%' . $search . '%')
+                              ->orWhere('denomenation', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        // Status filtering
+        if ($status !== '') {
+            $query->where('status', $status);
+        }
+
+        $totalCommandes = $query->count();
+
+        $commandes = $query->orderBy($sort, $order)
+            ->paginate(request("limit"));
+
+        $formattedCommandes = $commandes->through(function ($commande) {
+
+            // User profile picture
+            $userProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->user->first_name . " " . $commande->user->last_name . "'>
+                                    <a href='/users/profile/" . $commande->user->id . "'>
+                                        <img src='" . ($commande->user->photo ? asset('storage/' . $commande->user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                    </a>
+                                </div>";
+
+            // Client profile picture
+            $clientProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->client->first_name . " " . $commande->client->last_name . " " . $commande->client->denomenation . "'>
+                                    <a href='/clients/profile/" . $commande->client->id . "'>
+                                        <img src='" . ($commande->client->photo ? asset('storage/' . $commande->client->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                    </a>
+                                </div>";
+
+            // Products with small circle image
+            $productsHtml = "<div style='display: flex; flex-wrap: nowrap; align-items: center; overflow-x: auto;'>" .
+                $commande->products->map(function ($product) {
+                    return "<div class='avatar avatar-sm pull-up' title='" . $product->name . "' style='margin-right: 10px;'>
+                                <a href='/products/info/" . $product->id . "'>
+                                    <img src='" . ($product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                </a>
+                            </div>
+                            <span style='margin-right: 20px;'>" . $product->name . "</span>";
+                })->implode('') . "</div>";
+
+            // TVA calculation and formatting
+            $tvaHtml = '<span>' . number_format($commande->tva, 2) . '%</span>';
+
+            // Actions
+            $actions = '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">
+                            <i class="bx bx-info-circle text-info"></i>
+                        </a>';
+
+            $actions .= '<a href="/commandes/edit/' . $commande->id . '" title="' . get_label('update', 'Update') . '">
+                            <i class="bx bx-edit mx-1"></i>
+                        </a>';
+
+            $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes">
+                            <i class="bx bx-trash text-danger mx-1"></i>
+                        </button>';
+
+            $commandestatus = '<span class="badge ' .
+                ($commande->status == 'pending' ? 'bg-warning' :
+                ($commande->status == 'completed' ? 'bg-success' :
+                ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
+                '">' . $commande->status . '</span>';
+
+            $id_holder = $commande->id . ' | ' .
+                '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
+                    '<button type="button" class="btn btn-info btn-sm" ' .
+                        'data-id="' . htmlspecialchars($commande->id) . '" ' .
+                        'data-bs-toggle="tooltip" ' .
+                        'data-bs-placement="left" ' .
+                        'data-bs-original-title="' . htmlspecialchars(get_label('View Details', 'View Details')) . '">' .
+                        '<i class="bx bx-expand"></i> ' . htmlspecialchars(get_label('View Details', 'View Details')) .
+                    '</button>' .
+                '</a>';
+
+            return [
+                'id' => $id_holder,
+                'title' => $commande->title,
+                'description' => $commande->description,
+                'start_date' => $commande->start_date,
+                'due_date' => $commande->due_date,
+                'total_amount' => $commande->total_amount,
+                'tva' => $tvaHtml,
+                'status' => $commandestatus,
+                'products' => $productsHtml,
+                'added_by' => $userProfileHtml . ' ' . $commande->user->first_name . ' ' . $commande->user->last_name,
+                'client' => $clientProfileHtml . ' ' . $commande->client->first_name . ' ' . $commande->client->last_name,
+                'created_at' => format_date($commande->created_at, true),
+                'updated_at' => format_date($commande->updated_at, true),
+                'actions' => $actions
+            ];
         });
+
+        return response()->json([
+            "rows" => $formattedCommandes->items(),
+            "total" => $totalCommandes,
+        ]);
     }
 
-    // Status filtering
-    if ($status !== '') {
-        $query->where('status', $status);
-    }
-
-    $totalCommandes = $query->count();
-
-    $commandes = $query->orderBy($sort, $order)
-        ->paginate(request("limit"));
-
-    $formattedCommandes = $commandes->through(function ($commande) {
-
-        // User profile picture
-        $userProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->user->first_name . " " . $commande->user->last_name . "'>
-                                <a href='/users/profile/" . $commande->user->id . "'>
-                                    <img src='" . ($commande->user->photo ? asset('storage/' . $commande->user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
-                                </a>
-                            </div>";
-
-        // Client profile picture
-        $clientProfileHtml = "<div class='avatar avatar-md pull-up' title='" . $commande->client->first_name . " " . $commande->client->last_name . " " . $commande->client->denomenation . "'>
-                                <a href='/clients/profile/" . $commande->client->id . "'>
-                                    <img src='" . ($commande->client->photo ? asset('storage/' . $commande->client->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
-                                </a>
-                            </div>";
-
- // Products with small circle image
-$productsHtml = "<div style='display: flex; flex-wrap: nowrap; align-items: center; overflow-x: auto;'>" .
-    $commande->products->map(function ($product) {
-        return "<div class='avatar avatar-sm pull-up' title='" . $product->name . "' style='margin-right: 10px;'>
-                    <a href='/products/info/" . $product->id . "'>
-                        <img src='" . ($product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
-                    </a>
-                </div>
-                <span style='margin-right: 20px;'>" . $product->name . "</span>";
-    })->implode('') . "</div>";
-
-
-
-        // Actions
-
-        $actions = '<a href="javascript:void(0);" class="quick-view" data-id="' . $commande->id . '" title="' . get_label('quick_view', 'Quick View') . '">
-        <i class="bx bx-info-circle text-info"></i>
-    </a>';
-
-        $actions .= '<a href="/commandes/edit/' . $commande->id . '" title="' . get_label('update', 'Update') . '">
-                        <i class="bx bx-edit mx-1"></i>
-                    </a>';
-
-        $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $commande->id . '" data-type="commandes">
-                        <i class="bx bx-trash text-danger mx-1"></i>
-                    </button>';
-
-
-
-
-                    $commandestatus = '<span class="badge ' .
-                    ($commande->status == 'pending' ? 'bg-warning' :
-                    ($commande->status == 'completed' ? 'bg-success' :
-                    ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
-                    '">' . $commande->status . '</span>';
-
-
-                    $id_holder = $commande->id . ' | ' .
-                    '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
-                        '<button type="button" class="btn btn-info btn-sm" ' .
-                            'data-id="' . htmlspecialchars($commande->id) . '" ' .
-                            'data-bs-toggle="tooltip" ' .
-                            'data-bs-placement="left" ' .
-                            'data-bs-original-title="' . htmlspecialchars(get_label('View Details', 'View Details')) . '">' .
-                            '<i class="bx bx-expand"></i> ' . htmlspecialchars(get_label('View Details', 'View Details')) .
-                        '</button>' .
-                    '</a>';
-
-
-
-
-        return [
-            'id' => $id_holder,
-            'title' => $commande->title,
-            'description' => $commande->description,
-            'start_date' => $commande->start_date,
-            'due_date' => $commande->due_date,
-            'total_amount' => $commande->total_amount,
-            'status' => $commandestatus,
-            'products' => $productsHtml,
-            'added_by' => $userProfileHtml . ' ' . $commande->user->first_name . ' ' . $commande->user->last_name,
-            'client' => $clientProfileHtml . ' ' . $commande->client->first_name . ' ' . $commande->client->last_name,
-            'created_at' => format_date($commande->created_at, true),
-            'updated_at' => format_date($commande->updated_at, true),
-            'actions' => $actions
-        ];
-    });
-
-    return response()->json([
-        "rows" => $formattedCommandes->items(),
-        "total" => $totalCommandes,
-    ]);
-}
 
 public function getCommande($id)
 {
@@ -522,6 +524,10 @@ public function getCommande($id)
 }
 
 
+public function getCommandeDetails($id) {
+    $commande = Commande::with(['client', 'products'])->find($id);
+    return response()->json($commande);
+}
 
 
 
@@ -574,6 +580,17 @@ public function generateDevis($id)
     $pdfname = 'devis-'.$commande->id.'.pdf';
     return $pdf->stream($pdfname);
 }
+
+public function generateFacture($id)
+{
+    $commande = Commande::with('products')->findOrFail($id);
+    $entreprise = $this->user->entreprise;
+    $pdf = Pdf::loadView('pdf.facture', compact('commande'),compact('entreprise'));
+
+    $pdfname = 'facture-'.$commande->id.'.pdf';
+    return $pdf->stream($pdfname);
+}
+
 
 
 

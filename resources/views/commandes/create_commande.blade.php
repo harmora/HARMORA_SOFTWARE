@@ -66,11 +66,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </select>
                     </div>
 
-                    <div class="mb-3 col-md-12">
-                        <label for="total_amount" class="form-label">{{ get_label('total_amount', 'Total Amount') }}</label>
-                        <input class="form-control" type="number" name="total_amount" placeholder="{{ get_label('please_enter_total_amount', 'Please enter total amount') }}" value="{{ old('total_amount') }}">
-                    </div>
-
+        
                     <div class="mb-3 col-md-6">
                         <label for="start_date" class="form-label">{{ get_label('starts_at', 'Starts at') }} <span class="asterisk">*</span></label>
                         <input type="text" id="commande_start_date" name="start_date" class="form-control" value="{{ old('start_date') }}" required>
@@ -105,10 +101,17 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </div>
                     </div>
 
+
                     <div class="mb-3">
                         <button type="button" id="add-product" class="btn btn-secondary">{{ get_label('add_another_product', 'Add Another Product') }}</button>
                         <button type="button" id="remove-product" class="btn btn-danger" style="display: none;">{{ get_label('remove_last_product', 'Remove Last Product') }}</button>
                     </div>
+
+                    <div class="mb-3 col-md-12">
+                        <label for="tva" class="form-label">{{ get_label('tva', 'TVA') }}</label>
+                        <input class="form-control" type="number" name="tva" placeholder="{{ get_label('please_enter_tva', 'Please enter TVA') }}" value="{{ old('tva', 20) }}" step="0.01" required>
+                    </div>
+
 
                     <div class="mb-3">
                         <label for="client_id" class="form-select">{{ get_label('select_client', 'Select Client') }}</label>
@@ -158,7 +161,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         const addProductBtn = document.getElementById('add-product');
         const removeProductBtn = document.getElementById('remove-product');
         const productsContainer = document.getElementById('products-container');
-    
+
         addProductBtn.addEventListener('click', function() {
             const newProductDiv = document.createElement('div');
             newProductDiv.classList.add('product-entry', 'mb-3');
@@ -185,18 +188,18 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 </div>
             `;
             productsContainer.appendChild(newProductDiv);
-            
+
             // Show the remove button when there's more than one product
             if (productCount > 1) {
                 removeProductBtn.style.display = 'inline-block';
             }
         });
-    
+
         removeProductBtn.addEventListener('click', function() {
             if (productCount > 1) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
                 productCount--;
-    
+
                 // Hide the remove button when there's only one product left
                 if (productCount === 1) {
                     removeProductBtn.style.display = 'none';

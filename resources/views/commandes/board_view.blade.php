@@ -305,6 +305,10 @@
 </div>
 
 
+
+
+
+
 <script>
     var statusArray = @json(['pending', 'completed', 'cancelled']);
 </script>

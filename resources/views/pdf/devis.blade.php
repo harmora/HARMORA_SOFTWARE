@@ -220,8 +220,8 @@
             margin-bottom: 10px;
         }
         .devis-header h3 {
-            font-size: 36px;
-            color: #006fe4;
+            font-size: 30px;
+            color: #000000;
             margin: 0;
         }
         .devis-details {
@@ -229,15 +229,16 @@
         }
         .devis-details p {
             margin: 5px 0;
-            font-size: 16px;
+            font-size: 14px;
         }
         .devis-details strong {
-            color: #006fe4;
+            color: #000000;
         }
         .products-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
+            font-size: 12px;
         }
         .products-table th, .products-table td {
             border: 1px solid #e0e0e0;
@@ -257,7 +258,7 @@
             font-size: 14px;
             margin-right: 16px;
             font-weight: bold;
-            color: #006fe4;
+            color: #000000;
         }
         .total-amount span {
             text-align: right;
@@ -299,14 +300,14 @@
     <div class="devis-container">
         <div style="display: flex; text-align: center; padding-top:8px;">{{ date('d/m/Y') }}</div>
 
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="width: 100%; border-collapse: collapse; font-size:12px !important;">
             <tr>
                 <td style="width: 50%; vertical-align: middle;">
-                    <img src="{{ $entreprise->photo ? 'storage/' . $entreprise->photo : 'storage/photos/no-image.jpg' }}"  class="entrepriselogo" alt="Logo">
+                    <img src="{{ $entreprise->photo ? 'storage/' . $entreprise->photo : 'storage/photos/no-image.jpg' }}" class="entrepriselogo" alt="Logo">
                 </td>
                 <td style="text-align: right; vertical-align: middle;">
                     <div style="margin-right: 26px">
-                        <div> <b>{{ $entreprise->denomination }}</b></div>
+                        <div><b>{{ $entreprise->denomination }}</b></div>
                         <div style="font-size: 14px">{{ $entreprise->address }} {{ $entreprise->city }}</div>
                     </div>
                 </td>
@@ -314,23 +315,23 @@
         </table>
 
         <div class="devis-header">
-            <h3>Devis</h3>
+            <h3>{{ get_label('devis', 'Devis') }}</h3>
         </div>
 
         <div class="devis-details">
-            <p><strong>Nom de la commande :</strong> {{ $commande->title }}</p>
-            <p><strong>Description :</strong> {{ $commande->description }}</p>
-            <p><strong>Client :</strong> {{ $commande->client->first_name." ".$commande->client->last_name }}</p>
+            <p><strong>{{ get_label('order_name', 'Nom de la commande') }} :</strong> {{ $commande->id  ." - ". $commande->title }}</p>
+            <p><strong>{{ get_label('description', 'Description') }} :</strong> {{ $commande->description }}</p>
+            <p><strong>{{ get_label('client', 'Client') }} :</strong> {{ $commande->client->id ." - ". $commande->client->first_name." ".$commande->client->last_name }}</p>
         </div>
 
-        <h4>Produits :</h4>
+        <h4>{{ get_label('products', 'Produits') }} :</h4>
         <table class="products-table">
             <thead>
                 <tr>
-                    <th>Nom du produit</th>
-                    <th>Quantité</th>
-                    <th>Prix HT (MAD)</th>
-                    <th>Total produit HT (MAD)</th>
+                    <th>{{ get_label('product_name', 'Nom du produit') }}</th>
+                    <th>{{ get_label('quantity', 'Quantité') }}</th>
+                    <th>{{ get_label('price_ht', 'Prix HT (MAD)') }}</th>
+                    <th>{{ get_label('total_product_ht', 'Total produit HT (MAD)') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -346,20 +347,20 @@
         </table>
 
         <div class="total-amount">
-            Total HT : <span>{{ number_format($commande->total_amount, 2) }} MAD</span>
+            {{ get_label('total_ht', 'Total HT') }} : <span>{{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }} MAD</span>
         </div>
 
         <div class="total-amount">
-            Total TVA : <span>{{ number_format($commande->total_amount * 0.2, 2) }} MAD</span>
+            {{ get_label('total_tva', 'Total TVA') }} : <span>{{ number_format($commande->total_amount - ($commande->total_amount / (1 + $commande->tva / 100)), 2) }} MAD</span>
         </div>
 
         <div class="total-amount">
-            Total TTC : <span>{{ number_format($commande->total_amount * 1.2, 2) }} MAD</span>
+            {{ get_label('total_ttc', 'Total TTC') }} : <span>{{ number_format($commande->total_amount, 2) }} MAD</span>
         </div>
 
         <div class="signatures">
             <div>
-                <p style="margin-bottom: 140px">Signature autorisée</p>
+                <p style="margin-bottom: 140px">{{ get_label('authorized_signature', 'Signature autorisée') }}</p>
             </div>
         </div>
 
@@ -369,4 +370,3 @@
     </div>
 </body>
 </html>
-

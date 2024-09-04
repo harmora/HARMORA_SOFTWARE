@@ -22,6 +22,7 @@ class Commande extends Model implements HasMedia
         'client_id',
         'total_amount',
         'status',
+        'tva',
     ];
 
     public function registerMediaCollections(): void

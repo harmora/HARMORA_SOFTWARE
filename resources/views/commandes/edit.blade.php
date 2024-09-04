@@ -69,7 +69,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             <div class="form-group">
                 <label for="start_date">Start Date</label>
                 <input type="date" name="start_date" class="form-control" value="{{ old('stat_date', $commande->start_date) }}" required>
-            </div>            
+            </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
@@ -94,6 +94,11 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <div class="mb-3">
                             <button type="button" id="add-product" class="btn btn-secondary"><?= get_label('add_another_product', 'Add Another Product') ?></button>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tva">TVA (%)</label>
+                <input type="number" name="tva" class="form-control" value="{{ old('tva', $commande->tva) }}" step="0.01" min="0" max="100">
             </div>
 
             <!-- Add other fields as necessary -->
@@ -140,17 +145,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             productsContainer.appendChild(newProductDiv);
-            
+
             if (productCount > 0) {
                 removeProductBtn.style.display = 'inline-block';
             }
         });
-    
+
         removeProductBtn.addEventListener('click', function() {
             if (productCount > 0) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
                 productCount--;
-    
+
                 if (productCount === 0) {
                     removeProductBtn.style.display = 'none';
                 }
