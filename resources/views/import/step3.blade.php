@@ -6,8 +6,8 @@
 <!-- Progress Bar -->
 <div class="progress-container">
     <ul class="progressbar">
-        <li class="completed"><i class="fas fa-check-circle"></i><?= get_label('upload_file', 'upload file') ?></li>
-        <li class="completed"><i class="fas fa-check-circle"></i> <?= get_label('map_columns', 'map columns') ?></li>
+        <li class="completed"><?= get_label('upload_file', 'upload file')  ?></li>
+        <li class="completed"> <?= get_label('map_columns', 'map columns') ?></li>
         <li class="active"><?= get_label('import_data', 'import data') ?></li>
     </ul>
 </div>

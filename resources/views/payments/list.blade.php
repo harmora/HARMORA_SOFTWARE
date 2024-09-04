@@ -74,7 +74,7 @@
                             <th data-field="user_id" data-sortable="true" data-visible="{{ (in_array('user_id', $visibleColumns)) ? 'true' : 'false' }}"><?= get_label('user_id', 'User ID') ?></th>
                             <th data-field="user" data-sortable="true" data-visible="{{ (in_array('user', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('user', 'User') ?></th>
                             <th data-field="invoice_id" data-sortable="true" data-visible="{{ (in_array('invoice_id', $visibleColumns)) ? 'true' : 'false' }}"><?= get_label('invoice_id', 'Invoice ID') ?></th>
-                            <th data-field="invoice" data-sortable="true" data-visible="{{ (in_array('invoice', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('invoice', 'Invoice') ?></th>
+                            <th data-field="invoice" data-sortable="true" data-visible="{{ (in_array('invoice', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('facture', 'Invoice') ?></th>
                             <th data-field="payment_method_id" data-sortable="true" data-visible="{{ (in_array('payment_method_id', $visibleColumns)) ? 'true' : 'false' }}"><?= get_label('payment_method_id', 'Payment method ID') ?></th>
                             <th data-field="payment_method" data-sortable="true" data-visible="{{ (in_array('payment_method', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('payment_method', 'Payment method') ?></th>
                             <th data-field="amount" data-sortable="true" data-visible="{{ (in_array('amount', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('amount', 'Amount') ?></th>

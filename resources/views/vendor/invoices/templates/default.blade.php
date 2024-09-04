@@ -163,7 +163,7 @@
             <tr>
                 <td class="border-0 pl-0" width="70%">
                     <h4 class="text-uppercase">
-                        <strong>{{ $estimate_invoice->type == 'estimate' ? get_label('estimate', 'Estimate') : get_label('invoice', 'Invoice') }}</strong>
+                        <strong>{{ $estimate_invoice->type == 'estimate' ? get_label('estimate', 'Estimate') : get_label('facture', 'Invoice') }}</strong>
                     </h4>
                 </td>
                 <td class="border-0 pl-0">

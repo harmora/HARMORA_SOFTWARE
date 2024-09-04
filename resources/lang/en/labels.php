@@ -918,4 +918,8 @@
 'documents' => 'Documents',
 'document_number' => 'Document Number',
 'denomination' => 'Denomination',
+'import_file' => 'Import File',
+'my_documents' => 'My Documents',
+'select_supplier' => 'Select Supplier',
+// -----------------------------------------------
 ];

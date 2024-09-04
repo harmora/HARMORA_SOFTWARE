@@ -34,7 +34,7 @@
                             <select class="form-select" name="type" id="type">
                                 <option value=""><?= get_label('please_select', 'Please select') ?></option>
                                 <option value="estimate"><?= get_label('estimate', 'Estimate') ?></option>
-                                <option value="invoice"><?= get_label('invoice', 'Invoice') ?></option>
+                                <option value="invoice"><?= get_label('facture', 'Invoice') ?></option>
                             </select>
                         </div>
                         <span class="text-danger text-xs mt-1 error-message"></span>
