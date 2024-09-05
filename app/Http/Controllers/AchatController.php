@@ -160,7 +160,8 @@ class AchatController extends Controller
                 $documentField['from_to'] = $achat->fournisseur->name;
                 $documentField['total_amount'] = $formFields['montant'];
                 $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
-                $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;           
+                $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
+                $documentField['origin'] ='achat'; ;         
                 Document::create($documentField);
             }
         }
