@@ -122,6 +122,8 @@
                 </ol>
             </nav>
         </div>
+
+        
         <div>
             <a href="{{url('/commandes/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_commande', 'Add Commande') ?>"><i class='bx bx-plus'></i></button></a>
 
@@ -455,12 +457,8 @@ function updateCommandeStatus(id, status) {
     .then(data => {
         if (data.success) {
             // Handle success: update the UI, show a message, etc.
-            alert('Commande status updated successfully!');
             // Optionally reload the page or close the modal
             location.reload();
-        } else {
-            // Handle error: show an error message
-            alert('Failed to update commande status.');
         }
     })
     .catch(error => {

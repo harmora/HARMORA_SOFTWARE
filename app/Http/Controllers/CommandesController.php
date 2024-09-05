@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Commande;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Document;
 use App\Models\Entreprise;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -92,7 +93,6 @@ class CommandesController extends Controller
          'products.*.price' => 'required|numeric|min:0',
          'user_id' => 'nullable|integer|exists:users,id',
          'start_date' => 'nullable|date',
-         'due_date' => 'required|date',
          'description' => 'nullable|string',
          'note' => 'nullable|string',
          'client_id' => 'nullable|integer|exists:clients,id',
@@ -115,9 +115,8 @@ class CommandesController extends Controller
          'title' => $request->title,
          'description' => $request->description,
          'start_date' => $request->start_date,
-         'due_date' => $request->due_date,
          'total_amount' => $totalAmountWithTva,
-         'status' => $request->status,
+         'status' => 'pending',
          'created_at' => now(),
          'updated_at' => now(),
          'user_id' => $request->user_id,
@@ -198,7 +197,6 @@ class CommandesController extends Controller
             'products.*.price' => 'required|numeric|min:0',
             'user_id' => 'required|integer|exists:users,id',
             'start_date' => 'nullable|date',
-            'due_date' => 'required|date',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
             'total_amount' => 'nullable|integer',
@@ -215,7 +213,6 @@ class CommandesController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'start_date' => $request->start_date,
-            'due_date' => $request->due_date,
             'status' => $request->status,
             'user_id' => $request->user_id,
             'tva' => $request->tva, // Save the TVA value
@@ -256,7 +253,45 @@ class CommandesController extends Controller
 public function updateStatus(Request $request, $id)
 {
     $commande = Commande::findOrFail($id);
+    $entreprise = $this->user->entreprise;
+
     $commande->status = $request->status;
+    $commande->due_date = date('Y-m-d');
+
+    if( $commande->status == "cancelled")
+    {
+        Session::flash('message', 'Commande was validated successfully, you can now get its facture !');
+    }
+    else if ( $commande->status == "completed")
+    {
+
+
+        $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
+
+            $filePath = 'factures/facture_' . time() . '.pdf';
+
+            $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
+
+            $documentField['type'] ='facture';
+            $documentField['facture'] = $facturefile;
+            $documentField['devis'] = null;
+
+            $documentField['reference'] = $commande->id."-".$commande->title;
+
+            $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+
+            $documentField['total_amount'] = $commande->total_amount;
+
+            $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+
+            Document::create($documentField);
+
+            Session::flash('message', 'Commande was canceled successfully');
+
+    }
+
+
+
     if ($commande->save()) {
         return response()->json(['success' => true]);
     } else {

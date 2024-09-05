@@ -62,11 +62,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             </div>
 
             <div class="form-group">
-                <label for="due_date">Due Date</label>
-                <input type="date" name="due_date" class="form-control" value="{{ old('due_date', $commande->due_date) }}" required>
-            </div>
-
-            <div class="form-group">
                 <label for="start_date">Start Date</label>
                 <input type="date" name="start_date" class="form-control" value="{{ old('stat_date', $commande->start_date) }}" required>
             </div>
