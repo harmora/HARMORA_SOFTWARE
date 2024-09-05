@@ -98,6 +98,7 @@ class CommandesController extends Controller
          'client_id' => 'nullable|integer|exists:clients,id',
          'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
      ]);
+     
 
      // Calculate total amount before TVA
      $totalAmount = 0;
@@ -180,8 +181,10 @@ class CommandesController extends Controller
         $commande = Commande::findOrFail($id);
         $clients = Client::all(); // Retrieve all clients
         $users = User::all(); // Retrieve all clients
+        $allProducts = Product::all(); // Fetch all available products
+        $products = Product::all();
 
-        return view('commandes.edit', compact('commande', 'clients', 'users'));
+        return view('commandes.edit', compact('commande', 'clients', 'users', 'allProducts', 'products'));  
     }
 
 

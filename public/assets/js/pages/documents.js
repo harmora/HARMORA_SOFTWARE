@@ -3,6 +3,7 @@
 function queryParams(p) {
     return {
         "document_type_filter": $('#document_type_filter').val(), // Filter for document number
+        "document_origin_filter": $('#document_origin_filter').val(), // Filter for document origin
         // "order": $('#order_filter').val(), // Filter for order
         // "client": $('#client_filter').val(), // Filter for client
         page: p.offset / p.limit + 1,
@@ -25,7 +26,7 @@ function loadingTemplate(message) {
 }
 
 // Event listener for filter changes to refresh the table
-$('#document_type_filter').on('change', function (e) {
+$('#document_type_filter,#document_origin_filter').on('change', function (e) {
     e.preventDefault();
     $('#table').bootstrapTable('refresh');
 });

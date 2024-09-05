@@ -35,6 +35,13 @@
                         <option value="devis">{{get_label('devis','Devis')}}</option>
                     </select>
                 </div>
+                <div class="col-md-4 mb-3">
+                    <select class="form-select" id="document_origin_filter" aria-label="Default select example">
+                        <option value=""><?= get_label('document_from', 'Document origin') ?></option>
+                        <option value="commande">{{get_label('commande','Commande')}}</option>
+                        <option value="achat">{{get_label('achat','Achat')}}</option>
+                    </select>
+                </div>
             </div>
             <div class="table-responsive text-nowrap">
                 <input type="hidden" id="data_type" value="documents">
@@ -47,6 +54,7 @@
                             <th data-field="client" data-visible="{{ (in_array('client', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('client', 'Client') }}</th>
                             <th data-field="total_amount" data-visible="{{ (in_array('total_amount', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('total_amount', 'Total Price') }}</th>
                             <th data-field="remaining_amount" data-visible="{{ (in_array('remaining_amount', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('montant_restant', 'Remaining Amount') }}</th>
+                            <th data-field="origin" data-visible="{{ (in_array('origin', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('origin', 'Document From') }}</th>
                             <th data-field="created_by" data-visible="{{ (in_array('created_by', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('created_by', 'Created By') }}</th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">{{ get_label('created_at', 'Creation Date') }}</th>
                             <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('actions', 'Actions') ?></th>

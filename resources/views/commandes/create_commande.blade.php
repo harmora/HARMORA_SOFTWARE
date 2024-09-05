@@ -118,7 +118,13 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <select class="form-control" name="client_id">
                             <option value=""></option>
                             @foreach($clients as $client)
-                                <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+=                                <option value="{{ $client->id }}"> 
+                                    @if ($client->first_name)
+                                        {{$client->first_name }} {{ $client->last_name }}
+                                    @else
+                                        {{$client->denomenation}}
+                                    @endif
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -152,16 +158,15 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </div>
     </div>
 </div>
-<!-- @endsection
 
-@section('scripts') -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let productCount = 1;
         const addProductBtn = document.getElementById('add-product');
         const removeProductBtn = document.getElementById('remove-product');
         const productsContainer = document.getElementById('products-container');
-
+    
         addProductBtn.addEventListener('click', function() {
             const newProductDiv = document.createElement('div');
             newProductDiv.classList.add('product-entry', 'mb-3');
@@ -188,18 +193,18 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 </div>
             `;
             productsContainer.appendChild(newProductDiv);
-
+            
             // Show the remove button when there's more than one product
             if (productCount > 1) {
                 removeProductBtn.style.display = 'inline-block';
             }
         });
-
+    
         removeProductBtn.addEventListener('click', function() {
             if (productCount > 1) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
                 productCount--;
-
+    
                 // Hide the remove button when there's only one product left
                 if (productCount === 1) {
                     removeProductBtn.style.display = 'none';
@@ -208,4 +213,5 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         });
     });
     </script>
-@endsection
+
+<!-- @endsection
