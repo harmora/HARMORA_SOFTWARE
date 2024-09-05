@@ -90,23 +90,14 @@ class DocsController extends Controller
     }
 public function downloadZip($id)
 {
-    $document = Document::findOrFail($id);
-
-    $zip = new ZipArchive;
-    $fileName = 'document_' . $document->id . '.zip';
-    $zipPath = storage_path('app/public/' . $fileName);
-
-    if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
-        if ($document->devis) {
-            $zip->addFile(storage_path('app/public/' . $document->devis), 'devis_' . $document->id . '.' . pathinfo($document->devis, PATHINFO_EXTENSION));
-        }
-        if ($document->facture) {
-            $zip->addFile(storage_path('app/public/' . $document->facture), 'facture_' . $document->id . '.' . pathinfo($document->facture, PATHINFO_EXTENSION));
-        }
-        $zip->close();
+    $document = Document::findOrFail($id);       
+    if ($document->type=="facture") {
+        return response()->download(storage_path('app/public/' . $document->facture));
     }
+    if ($document->type=="devis") {
+        return response()->download(storage_path('app/public/' . $document->devis));
 
-    return response()->download($zipPath);
+    }
 }
 
     public function list(Request $request)
