@@ -87,9 +87,6 @@ $visibleColumns = getUserPreferences('commandes');
             </div>
         </div>
     </div>
-
-
-
     @if (is_countable($commandes) && count($commandes) > 0)
     <div class="card">
         <div class="card-body">

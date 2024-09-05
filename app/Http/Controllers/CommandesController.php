@@ -92,14 +92,13 @@ class CommandesController extends Controller
          'products.*.quantity' => 'required|integer|min:1',
          'products.*.price' => 'required|numeric|min:0',
          'user_id' => 'nullable|integer|exists:users,id',
-         'start_date' => 'nullable|date',
+         'start' => 'nullable|date',
+         'due_date' => 'nullable|date',
          'description' => 'nullable|string',
          'note' => 'nullable|string',
          'client_id' => 'nullable|integer|exists:clients,id',
          'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
      ]);
-     
-
      // Calculate total amount before TVA
      $totalAmount = 0;
      foreach ($request->products as $productData) {
@@ -115,7 +114,8 @@ class CommandesController extends Controller
          'client_id' => $request->client_id,
          'title' => $request->title,
          'description' => $request->description,
-         'start_date' => $request->start_date,
+         'start_date' => $request->start,
+         'due_date' => $request->due_date,  
          'total_amount' => $totalAmountWithTva,
          'status' => 'pending',
          'created_at' => now(),
@@ -124,7 +124,7 @@ class CommandesController extends Controller
          'tva' => $request->tva, // Store the TVA value
      ]);
 
-     // Attach products to the commande
+    //  Attach products to the commande
      foreach ($request->products as $productData) {
          $commande->products()->attach($productData['product_id'], [
              'quantity' => $productData['quantity'],

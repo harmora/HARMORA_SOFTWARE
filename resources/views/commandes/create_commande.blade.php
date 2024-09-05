@@ -68,12 +68,12 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
         
                     <div class="mb-3 col-md-6">
-                        <label for="start_date" class="form-label">{{ get_label('starts_at', 'Starts at') }} <span class="asterisk">*</span></label>
-                        <input type="text" id="commande_start_date" name="start_date" class="form-control" value="{{ old('start_date') }}" required>
+                        <label for="start" class="form-label"><?= get_label('starts_at', 'Starts at') ?></label>
+                        <input class="form-control" type="date" id="start" name="start" value="{{ old('start') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="due_date" class="form-label">{{ get_label('ends_at', 'Ends at') }} <span class="asterisk">*</span></label>
-                        <input type="text" id="commande_end_date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
+                        <label for="due_date" class="form-label"><?= get_label('ends_at', 'Ends at') ?></label>
+                        <input class="form-control" type="date" id="due_date" name="due_date" value="{{ old('due_date') }}">
                     </div>
 
                     <div id="products-container">
