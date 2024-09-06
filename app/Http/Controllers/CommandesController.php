@@ -99,10 +99,26 @@ class CommandesController extends Controller
          'client_id' => 'nullable|integer|exists:clients,id',
          'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
      ]);
+
+
+
+
      // Calculate total amount before TVA
      $totalAmount = 0;
      foreach ($request->products as $productData) {
-         $totalAmount += $productData['quantity'] * $productData['price'];
+
+
+        if($productData['quantity'] > $productData['stock'])
+        {
+            return response()->json(['error' => true, 'message' => 'Quantity of product : '.$productData['name'].' is not availiable. [ Stock : '.$productData['stock'].' ]']);
+        }
+        else
+        {
+            $totalAmount += $productData['quantity'] * $productData['price'];
+        }
+
+
+
      }
 
      // Calculate total amount after applying TVA
@@ -115,7 +131,7 @@ class CommandesController extends Controller
          'title' => $request->title,
          'description' => $request->description,
          'start_date' => $request->start,
-         'due_date' => $request->due_date,  
+         'due_date' => $request->due_date,
          'total_amount' => $totalAmountWithTva,
          'status' => 'pending',
          'created_at' => now(),
@@ -136,6 +152,31 @@ class CommandesController extends Controller
          $product->stock -= $productData['quantity'];
          $product->save();
      }
+
+
+
+     $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
+
+     $filePath = 'devis/devis_' . time() . '.pdf';
+
+     $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
+
+     $documentField['type'] ='facture';
+     $documentField['facture'] = $facturefile;
+     $documentField['devis'] = null;
+     $documentField['origin'] = 'commande';
+
+
+
+     $documentField['reference'] = $commande->id."-".$commande->title;
+
+     $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+
+     $documentField['total_amount'] = $commande->total_amount;
+
+     $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+
+     Document::create($documentField);
 
      return response()->json(['error' => false, 'message' => 'Commande created successfully.']);
  }
@@ -184,7 +225,7 @@ class CommandesController extends Controller
         $allProducts = Product::all(); // Fetch all available products
         $products = Product::all();
 
-        return view('commandes.edit', compact('commande', 'clients', 'users', 'allProducts', 'products'));  
+        return view('commandes.edit', compact('commande', 'clients', 'users', 'allProducts', 'products'));
     }
 
 
@@ -269,7 +310,7 @@ public function updateStatus(Request $request, $id)
     {
 
 
-        $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
+           $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
 
             $filePath = 'factures/facture_' . time() . '.pdf';
 
