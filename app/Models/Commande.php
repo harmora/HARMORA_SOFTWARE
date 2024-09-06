@@ -36,18 +36,18 @@ class Commande extends Model implements HasMedia
         }
     }
 
-    protected static function booted()
-    {
-        static::created(function ($commande) {
-            // Create a corresponding facture
-            Facture::create([
-                'commande_id' => $commande->id,
-                'commande_name' => $commande->title, // Assuming there's a `name` field in your commandes table
-                'payement_state' => 'unpaid',
-                'created_at' => $commande->created_at,
-            ]);
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::created(function ($commande) {
+    //         // Create a corresponding facture
+    //         Facture::create([
+    //             'commande_id' => $commande->id,
+    //             'commande_name' => $commande->title, // Assuming there's a `name` field in your commandes table
+    //             'payement_state' => 'unpaid',
+    //             'created_at' => $commande->created_at,
+    //         ]);
+    //     });
+    // }
 
     public function user()
     {

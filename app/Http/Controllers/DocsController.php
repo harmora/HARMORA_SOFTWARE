@@ -106,6 +106,7 @@ public function downloadZip($id)
         $sort = $request->input('sort', 'reference');
         $order = $request->input('order', 'DESC');
         $document_type_filter = request('document_type_filter', '');
+        $document_origin_filter = request('document_origin_filter', '');
 
         $query = Document::query();
     
@@ -127,6 +128,9 @@ public function downloadZip($id)
         }
         if ($document_type_filter !== '') {
             $query->where('type', $document_type_filter);
+        }
+        if ($document_origin_filter !== '') {
+            $query->where('origin', $document_origin_filter);
         }
 
         $totaldocuments = $query->count();
@@ -159,6 +163,7 @@ public function downloadZip($id)
                 'remaining_amount' => $document->remaining_amount,
                 'created_by' => $document->user,
                 'created_at' => $document->created_at->format('Y-m-d'),
+                'origin' => $document->origin,
                 'actions' => $actions
             ];
         });

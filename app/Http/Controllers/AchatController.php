@@ -34,8 +34,9 @@ class AchatController extends Controller
         $entreprises = Entreprise::all();
         $formesjuridique= Forme_juridique::all();
         $products = Product::all();
+        $achats = Achat::all();
         // $visibleColumns = getUserPreferences('entreprises'); // Adjust this based on how you get user preferences
-        return view('achats.achats',['fournisseurs'=> $fournisseurs,'entreprises'=> $entreprises,'fomesJuridique'=> $formesjuridique,'products'=>$products]);
+        return view('achats.achats',['fournisseurs'=> $fournisseurs,'entreprises'=> $entreprises,'fomesJuridique'=> $formesjuridique,'products'=>$products,'achats'=>$achats]);
     }
     public function create(Request $request)
     {
@@ -161,7 +162,7 @@ class AchatController extends Controller
                 $documentField['total_amount'] = $formFields['montant'];
                 $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
                 $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
-                $documentField['origin'] ='achat'; ;         
+                $documentField['origin'] ='achat';         
                 Document::create($documentField);
             }
         }
@@ -316,6 +317,44 @@ public function update(Request $request, $id)
         return $response;
     }
 
+        
+public function getachat($id)
+{
+    // Fetch the commande with the related products, user, and client
+    $achat = Achat::with('products')->findOrFail($id);
+    if (!$achat) {
+        return response()->json(['error' => 'Commande not found'], 404);
+    }
+
+    // Prepare the response data
+    $response = [
+        'id' => $achat->id,
+        'type_achat' => $achat->type_achat,
+        'montant' => $achat->montant,
+        'tva' => $achat->tva,
+        'montant_ht' => $achat->montant_ht,
+        'montant_payée' => $achat->montant_payée,
+        'montant_restant' => $achat->montant_restant,
+        'status_payement' => $achat->status_payement,
+        'date_paiement' => $achat->date_paiement,
+        'date_limit' => $achat->date_limit,
+        'fournisseur' => $achat->fournisseur->name,
+        'reference' => $achat->reference,
+        'facture' => $achat->facture ? asset('storage/' . $achat->facture) : null,
+        'devis' => $achat->devis ? asset('storage/' . $achat->devis) : null,
+        'products' => $achat->products->map(function ($product) {
+            return [
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price, // Include price
+                'picture_url' => $product->photo ? asset('storage/' . $product->photo) : asset('storage/photos/no-image.jpg'),
+            ];
+        }),
+    ];
+
+    return response()->json($response);
+}
+
 public function list()
 {
     $search = request('search');
@@ -385,10 +424,16 @@ public function list()
 
         $actions = $actions ?: '-';
 
-        $profileHtml = "<div class='avatar avatar-md pull-up' title='" . $achat->fournisseur->name. " '>
-            <a href='/clients/profile/" . $achat->id . "'>
-            </a>
-            </div>";//when hover the photo display infos as popup
+        $profileHtml =       '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
+        '<button type="button" class="btn btn-info btn-sm" ' .
+            'data-id="' . htmlspecialchars($achat->id) . '" ' .
+            'data-bs-toggle="tooltip" ' .
+            'data-bs-placement="left" ' .
+            'data-bs-original-title="' . htmlspecialchars(get_label('View Details', 'View Details')) . '">' .
+            '<i class="bx bx-expand"></i> ' . htmlspecialchars(get_label('View Details', 'View Details')) .
+        '</button>' .
+    '</a>';
+//when hover the photo display infos as popup
 
         $formattedHtml = '<div class="d-flex mt-2">' .
             $profileHtml .

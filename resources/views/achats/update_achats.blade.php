@@ -223,11 +223,11 @@ $fileExtension2 = '';
         });
     
         removeProductBtn.addEventListener('click', function() {
-            if (productCount > 0) {
+            if (productCount > 1) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
                 productCount--;
     
-                if (productCount === 0) {
+                if (productCount === 1) {
                     removeProductBtn.style.display = 'none';
                 }
             }

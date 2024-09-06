@@ -24,7 +24,7 @@ $visibleColumns = getUserPreferences('Achats');
             <a href="{{url('/achats/create')}}"><button type="button" class="btn btn-sm btn-primary " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_achat', 'Create achat') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>
-    @if (is_countable($entreprises) && count($entreprises) > 0)
+    @if (is_countable($achats) && count($achats) > 0)
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -79,12 +79,280 @@ $visibleColumns = getUserPreferences('Achats');
     <x-empty-state-card :type="$type" />
     @endif
 </div>
+
+
+<!-- Commande Details Modal -->
+<div class="modal fade" id="commandeModal" tabindex="-1" role="dialog" aria-labelledby="commandeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 class="modal-title text-info">{{ get_label('view_achat', 'View Achat') }}</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    {{-- <div class="row">
+                        <div>
+                            <label for="statusSelect">Update Status</label>
+                            <select class="form-select select-bg-label-{{ "warning" }} mb-3" id="statusSelect"  data-type="commande" data-reload="true">
+                                <option value="pending" class="badge bg-label-light text-black" {{ 'pending' == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="completed" class="badge bg-label-light text-black" {{0 == 'completed' ? 'selected' : '' }}>Completed</option>
+                                <option value="cancelled" class="badge bg-label-light text-black" {{ 0 == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                        </div>
+
+                    </div> --}}
+
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="typeachat" class="form-label">{{ get_label('type', 'Type') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="typeachat" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="supplier" class="form-label">{{ get_label('supplier', 'supplier') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="supplier" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="ref" class="form-label">{{ get_label('reference', 'ref') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="ref" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="amount" class="form-label">{{ get_label('amount', 'amount') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="amount" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="amount_ht" class="form-label">{{ get_label('amount_ht', 'amount HT') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="amount_ht" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="statuspayement" class="form-label">{{ get_label('Payment_Status', 'Payment Status') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="statuspayement" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="row" id="partialdisplay">
+                        <div class="mb-3 col-md-6">
+                            <label for="payant" class="form-label">{{ get_label('montant_payée', 'montant_payée') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="payant" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="restant" class="form-label">{{ get_label('montant_restant', 'montant_restant') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="restant" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="date_paiement" class="form-label"><?= get_label('date_paiement', 'Payment Date') ?></label>
+                            <input style="background-color: #ffffff !important;" class="form-control" type="date" id="date_paiement" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="date_limit" class="form-label"><?= get_label('date_limit', 'Payment Due Date') ?></label>
+                            <input style="background-color: #ffffff !important;" class="form-control" type="date" id="date_limit" readonly >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-md-6"  id="factureaffiche">
+                            <label for="facture" class="form-label"><?= get_label('facture', 'Facture') ?></label>
+                            <div id="facture" >
+                                <!-- Product entries will be populated here -->
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-6"  id="devisaffiche">
+                            <label for="devis" class="form-label"><?= get_label('devis', 'Devis') ?></label>
+                            <div id="devis" >
+                                <!-- Product entries will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="prodaffiche">
+                        <div class="mb-3 col-md-12" >
+                            <label for="products" class="form-label">{{ get_label('products', 'Products') }}</label>
+                            <div id="products" class="row">
+                                <!-- Product entries will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    var label_update = '<?= get_label('update', 'Update') ?>';
+    var label_delete = '<?= get_label('delete', 'Delete') ?>';
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalElement = document.getElementById('commandeModal');
+        var modalBody = modalElement.querySelector('.modal-body');
+        // var prodaffiche = modalBody.querySelector('#prodaffiche');
+
+        // Event delegation for buttons that open the modal
+        document.addEventListener('click', function (event) {
+            if (event.target.closest('button[data-id]')) {
+                var button = event.target.closest('button[data-id]');
+                var id = button.dataset.id; // Get the ID from data-id attribute
+
+                if (id) {
+                    // Construct the URL for fetching the data
+                    var url = "{{ url('achats/getforaffiche') }}/" + id;
+
+                    // Fetch the commande details from the server
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Populate the modal fields
+                            modalBody.querySelector('#typeachat').value = data.type_achat;
+                            modalBody.querySelector('#supplier').value = data.fournisseur;
+                            modalBody.querySelector('#ref').value = data.reference;
+                            modalBody.querySelector('#amount').value = data.montant;
+                            modalBody.querySelector('#statuspayement').value = data.status_payement;
+                            modalBody.querySelector('#date_paiement').value = data.date_paiement;
+                            modalBody.querySelector('#date_limit').value = data.date_limit;
+                            modalBody.querySelector('#amount_ht').value = data.montant_ht;
+                            // modalBody.querySelector('#tva').value = data.tva;
+
+                            if(data.status_payement=='partial'){
+                                modalBody.querySelector('#restant').value = data.montant_restant;
+                                modalBody.querySelector('#payant').value = data.montant_payée;
+                                $('#partialdisplay').show();
+                            }
+                            else{
+                                $('#partialdisplay').hide();
+                            }
+
+                            if(data.facture){
+                                modalBody.querySelector('#facture').value = data.facture;
+                                var factureHtml = '';
+                                var fileExtension = data.facture.split('.').pop().toLowerCase(); // Get the file extension
+                                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                                    factureHtml += `<div class="card">
+                                            <img src="${data.facture}" class="card-img-top" alt="facture" height="130" width="130">
+                                        </div>`;
+                                } else if (fileExtension === 'pdf') {
+                                    factureHtml += `<div class="card">
+                                            <embed src="${data.facture}" type="application/pdf" height="auto" width="100%" style="overflow:auto;" />
+                                        </div>`;
+                                } else {
+                                    factureHtml += `<div class="col-md-3 mb-3">
+                                        <div class="card">
+                                            <p class="text-muted mt-2">File not supported.</p>
+                                        </div>
+                                    </div>`;
+                                }
+                                modalBody.querySelector('#facture').innerHTML = factureHtml;
+                                $('#factureaffiche').show();
+                            }
+                            else{
+                                $('#factureaffiche').hide();
+                            }
+
+
+                            
+                            if(data.devis){
+                                modalBody.querySelector('#devis').value = data.devis;
+                                var devisHtml = '';
+                                var fileExtension2 = data.facture.split('.').pop().toLowerCase(); // Get the file extension
+                                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension2)) {
+                                    devisHtml += `<div class="card">
+                                            <img src="${data.devis}" class="card-img-top" alt="facture" height="130" width="130">
+                                        </div>`;
+                                } else if (fileExtension2 === 'pdf') {
+                                    devisHtml += `<div class="card">
+                                            <embed src="${data.devis}" type="application/pdf" height="auto" width="100%" style="overflow:auto;" />
+                                        </div>`;
+                                } else {
+                                    devisHtml += `<div class="col-md-3 mb-3">
+                                        <div class="card">
+                                            <p class="text-muted mt-2">File not supported.</p>
+                                        </div>
+                                    </div>`;
+                                }
+                                modalBody.querySelector('#devis').innerHTML = devisHtml;
+                                $('#devisaffiche').show();
+                            }
+                            else{
+                                $('#devisaffiche').hide();
+                            }
+
+                            // Populate products info
+                            if (data.products && data.products.length > 0) {
+        
+                            var productsHtml = '';
+                            data.products.forEach(product => {
+                                productsHtml += `<div class="col-md-3 mb-3">
+                                    <div class="card">
+                                        <img src="${product.picture_url}" class="card-img-top" alt="${product.name}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${product.name}</h5>
+                                            <p class="card-text">${product.description}</p>
+                                            <p class="card-text"><strong>Price:</strong> $${product.price}</p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            });
+                            modalBody.querySelector('#products').innerHTML = productsHtml;  
+                            $('#prodaffiche').show();            
+                            }
+                            else {
+                                $('#prodaffiche').hide();
+                            }
+
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    function updateCounters() {
+        fetch('/commandes/counter')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('pending-count').innerText = data.pending;
+                document.getElementById('completed-count').innerText = data.completed;
+                document.getElementById('canceled-count').innerText = data.canceled;
+            })
+            .catch(error => console.error('Error fetching counter data:', error));
+    }
+
+    // Initial fetch to update counters
+    updateCounters();
+
+    // Add event listener to refresh counters on table refresh
+    const tableElement = document.getElementById('table');
+    tableElement.addEventListener('post-body.bs.table', function () {
+        updateCounters();
+    });
+});
+
+</script>
+
+
+
+
 <script>
     var label_update = '<?= get_label('update', 'Update') ?>';
     var label_delete = '<?= get_label('delete', 'Delete') ?>';
     var label_projects = '<?= get_label('projects', 'Projects') ?>';
     var label_tasks = '<?= get_label('tasks', 'Tasks') ?>';
 </script>
-    <script src="{{asset('assets/js/pages/achats.js')}}">
-</script>
+    <script src="{{asset('assets/js/pages/achats.js')}}"></script>
 @endsection

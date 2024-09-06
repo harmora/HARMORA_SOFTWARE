@@ -263,8 +263,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
-
-
+        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
         Route::get('commandes/updatestatus/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
 
         Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
@@ -336,7 +335,8 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1')->middleware('cleanup.temp');
         Route::post('/import/step2', [ImportController::class, 'step2'])->name('import.step2')->middleware('cleanup.temp');
         Route::post('/import/save', [ImportController::class, 'save'])->name('import.save')->middleware('cleanup.temp');
-        Route::get('/achats/{id}', [AchatController::class, 'show']);
+        
+        // Route::get('/achats/{id}', [AchatController::class, 'show']);
 
         // //test excrl -------------------------------------------------------------------------------
         // Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1');
@@ -352,6 +352,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::put('achats/update/{id}', [AchatController::class,'update'])->name('achats.update');
         Route::get('achats/list', [AchatController::class,'list']);
         Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
+        Route::get('/achats/getforaffiche/{id}', [AchatController::class, 'getachat']);
 
 
         //Factures-------------------------------------------------------------
