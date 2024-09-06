@@ -151,8 +151,13 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
 
+        Route::get('/client-chiffre-affaires', [HomeController::class, 'getClientChiffreAffaires']);
+
         Route::get('/chiffre-affaires', [HomeController::class, 'getChiffreAffaires']);
         Route::get('/get-chiffre-affaire', [HomeController::class, 'getChiffreAffaireParCategorie']);
+        Route::get('/get-chiffre-affaire-produits', [HomeController::class, 'getChiffreAffaireParCategorieProduit']);
+
+
 
 
 
@@ -262,8 +267,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('commandes/updatestatus/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
 
-
-
+        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
 
 
         Route::get('/commandes/getforaffiche/{id}', [CommandesController::class, 'getCommande']);

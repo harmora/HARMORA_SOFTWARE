@@ -275,6 +275,9 @@ public function updateStatus(Request $request, $id)
             $documentField['type'] ='facture';
             $documentField['facture'] = $facturefile;
             $documentField['devis'] = null;
+            $documentField['origin'] = 'commande';
+
+
 
             $documentField['reference'] = $commande->id."-".$commande->title;
 
