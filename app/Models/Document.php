@@ -9,5 +9,10 @@ class Document extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+
+    public function entreprises()
+    {
+        return $this->belongsTo(Entreprise::class);
+    }
     
 }

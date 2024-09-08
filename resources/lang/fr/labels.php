@@ -764,6 +764,8 @@
 'my_documents' => 'Mes Documents',
 'select_supplier' => 'Sélectionner un Fournisseur',
 'total_amount' => 'Montant Total',
-
+'if' => 'IDENTIFIANT FISCALE',
+'rc' => 'REGISTRE DU COMMERCE',
+'ice' => "Identifiant Commun de l'Entreprise",
 
 ];

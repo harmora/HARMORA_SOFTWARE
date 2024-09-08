@@ -46,23 +46,11 @@ class ClientController extends Controller
         $clients = Client::where('entreprise_id', $this->user->entreprise_id)->get();
         return view('clients.clients', ['clients' => $clients]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('clients.create_client');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         ini_set('max_execution_time', 300);
@@ -165,38 +153,23 @@ class ClientController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         // $workspace = Workspace::find(session()->get('workspace_id'));
         $client = Client::findOrFail($id);
+
+        // $users =User::all();
+        // $clients = Client::all();
         return view('clients.client_profile', ['client' => $client]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $client = Client::findOrFail($id);
         return view('clients.update_client')->with('client', $client);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         ini_set('max_execution_time', 300);
@@ -297,12 +270,6 @@ class ClientController extends Controller
         return response()->json(['client' => $client]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $client = Client::findOrFail($id);
@@ -346,38 +313,49 @@ class ClientController extends Controller
         $order = request('order') ?: 'DESC';
         $status = isset($_REQUEST['status']) && $_REQUEST['status'] !== '' ? $_REQUEST['status'] : "";
         $internal_purpose = isset($_REQUEST['internal_purpose']) && $_REQUEST['internal_purpose'] !== '' ? $_REQUEST['internal_purpose'] : "";
+        $query = Client::query();
 
-        $clients = Client::query();
-
-        $clients = $clients->when($search, function ($query) use ($search) {
-            return $query->where(function ($query) use ($search) {
+        if (!empty($search)) {
+            $query->where(function ($query) use ($search) {
                 $query->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%')
-                    ->orWhere('denomenation', 'like', '%' . $search . '%')
+                    ->orWhere('id', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%')
-                    ->orWhere('phone', 'like', '%' . $search . '%');
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('city', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('state', 'like', '%' . $search . '%')
+                    ->orWhere('country', 'like', '%' . $search . '%')
+                    ->orWhere('country_code', 'like', '%' . $search . '%')
+                    ->orWhere('denomenation', 'like', '%' . $search . '%')
+                    ->orWhere('rc', 'like', '%' . $search . '%')
+                    ->orWhere('if', 'like', '%' . $search . '%')
+                    ->orWhere('ice', 'like', '%' . $search . '%')
+                    ;
             });
-        });
+        }
+    
 
         if ($status != '') {
-            $clients = $clients->where('status', $status);
+            $query->where('status', $status);
         }
 
         if ($internal_purpose != '') {
-            $clients = $clients->where('internal_purpose', $internal_purpose);
+            $query->where('internal_purpose', $internal_purpose);
         }
 
-        $totalclients = $clients->where('.entreprise_id', $this->user->entreprise_id)->count();
+        $totalclients = $query->where('clients.entreprise_id', $this->user->entreprise_id)->count();
 
         // $canEdit = checkPermission('edit_clients');
         // $canDelete = checkPermission('delete_clients');
 
-        $clients = $clients->select('clients.*')
-            ->leftJoin('entreprises', 'clients.entreprise_id', '=', 'entreprises.id')
-            ->where('clients.entreprise_id', $this->user->entreprise_id)
-            ->orderBy($sort, $order)
-            ->paginate(request('limit'))
-            ->through(function ($client)  {
+        $clients = $query->select('clients.*')
+        ->leftJoin('entreprises', 'clients.entreprise_id', '=', 'entreprises.id')
+        ->where('clients.entreprise_id', $this->user->entreprise_id)
+        ->orderBy($sort, $order)
+        ->paginate(request('limit'));
+
+        $clients = $clients->through(function ($client){
                 $actions = '';
 
                     $actions .= '<a href="/clients/edit/' . $client->id . '" title="' . get_label('update', 'Update') . '">' .

@@ -45,8 +45,9 @@ class UserController extends Controller
     {
         // $workspace = Workspace::find(session()->get('workspace_id'));
 
-        $users = User::all();
+        $users = User::where('entreprise_id',17)->get();
         $roles = Role::where('guard_name', 'web')->get();
+        // dd($users);
         return view('users.users', ['users' => $users, 'roles' => $roles]);
     }
 

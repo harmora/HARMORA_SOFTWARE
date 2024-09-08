@@ -88,16 +88,16 @@
                         <input class="form-control" type="text" id="doj" name="doj" placeholder="<?= get_label('please_select', 'Please select') ?>" autocomplete="off">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="ICE" class="form-label"><?= get_label('Identifient_commun_entreprise', "Identifiant Commun de l'Entreprise") ?></label>
-                        <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('fe', "Identifiant Commun de l'Entreprise") ?>" value="{{ old('ICE') }}">
+                        <label for="ICE" class="form-label"><?= get_label('ice', "Identifiant Commun de l'Entreprise") ?></label>
+                        <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('ice', "Identifiant Commun de l'Entreprise") ?>" value="{{ old('ICE') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="RC" class="form-label"><?= get_label('REGISTRE_COMMERCE', "REGISTRE DU COMMERCE") ?></label>
-                        <input class="form-control" type="text" id="RC" name="RC" placeholder="<?= get_label('de', "REGISTRE DU COMMERCE") ?>" value="{{ old('RC') }}">
+                        <label for="RC" class="form-label"><?= get_label('rc', "REGISTRE DU COMMERCE") ?></label>
+                        <input class="form-control" type="text" id="RC" name="RC" placeholder="<?= get_label('rc', "REGISTRE DU COMMERCE") ?>" value="{{ old('RC') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="IF" class="form-label"><?= get_label('IDENTIFIANT_FISCALE', "IDENTIFIANT FISCALE") ?></label>
-                        <input class="form-control" type="text" id="IF" name="IF" placeholder="<?= get_label('dfg', "IDENTIFIANT FISCALE") ?>" value="{{ old('IF') }}">
+                        <label for="IF" class="form-label"><?= get_label('if', "IDENTIFIANT FISCALE") ?></label>
+                        <input class="form-control" type="text" id="IF" name="IF" placeholder="<?= get_label('if', "IDENTIFIANT FISCALE") ?>" value="{{ old('IF') }}">
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?></label>

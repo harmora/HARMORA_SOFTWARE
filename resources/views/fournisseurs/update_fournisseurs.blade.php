@@ -68,32 +68,20 @@
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="logo" class="form-label"><?= get_label('logo', 'Logo') ?></label>
-                        <input class="form-control" type="file" id="logo" name="logo">
-                        @if ($fournisseur->logo)
-                            <p class="text-muted mt-2"><?= get_label('current_logo', 'Current Logo') ?></p>
-                            <img src="{{ asset('storage/' . $fournisseur->logo) }}" alt="{{ $fournisseur->name }}" class="img-thumbnail" width="100">
-                        @endif
-                        <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
+                        <div class="d-flex align-items-start gap-4">
+                            @if($fournisseur->photo)
+                            <img src="{{ asset('storage/' . $fournisseur->photo) }}" alt="{{ $fournisseur->name }}" class="img-thumbnail" width="100">
+                            @endif
+                            <div class="button-wrapper">
+                                <div class="input-group d-flex">
+                                    <input class="form-control" type="file" id="logo" name="logo">
+                                </div>
+                                <p class="text-muted mt-2"><?= get_label('allowed_jpg_png_pdf', 'Allowed JPG or PNG or PDF .') ?></p>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
-
-                <h5 class="mt-2 mb-4"><?= get_label('enterprise_information', 'Enterprise Information') ?></h5>
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="entreprise_id"><?= get_label('entreprise', 'Entreprise') ?></label>
-                        <select class="form-select" id="entreprise_id" name="entreprise_id">
-                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
-                            @foreach ($entreprises as $etp)
-                                <option value="{{ $etp->id }}" {{ old('entreprise_id', $fournisseur->entreprise_id) == $etp->id ? "selected" : "" }}>
-                                    {{ ucfirst($etp->denomination) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Additional Information Section -->
-
                 <div class="mt-4">
                     <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('update', 'Update') ?></button>
                     <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>

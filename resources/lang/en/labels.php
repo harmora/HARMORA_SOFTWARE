@@ -921,5 +921,9 @@
 'import_file' => 'Import File',
 'my_documents' => 'My Documents',
 'select_supplier' => 'Select Supplier',
-// -----------------------------------------------
+
+'if' => 'Tax Identification Number',
+'rc' => 'Commercial Register',
+'ice' => 'Company Identification Number',
+// -----------------------------
 ];
