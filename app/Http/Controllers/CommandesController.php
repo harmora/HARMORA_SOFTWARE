@@ -22,6 +22,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CommandesController extends Controller
 {
@@ -71,6 +72,19 @@ $commandes = $this->user->entreprise->commande;
  * @return \Illuminate\Http\Response
  */
 
+ public function create()
+ {
+     try {
+         $products = $this->user->entreprise->product;
+         $clients = $this->user->entreprise->client;
+         $users =   $this->user->entreprise->user;
+
+         return view('commandes.create_commande', compact('products', 'clients', 'users'));
+     } catch (\Exception $e) {
+         Log::error('Error in create method: ' . $e->getMessage());
+         return abort(500, 'Something went wrong.');
+     }
+ }
 
  public function store(Request $request)
  {
