@@ -336,6 +336,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
         Route::get('fournisseurs/list', [FournisseurController::class,'list']);
         Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
+        Route::get('/fournisseurs/getforaffiche/{id}', [FournisseurController::class, 'getfournisseur']);
+
+        //imports-------------------------------------------------------------
         Route::get('/import', [ImportController::class, 'showForm'])->name('import.form')->middleware('cleanup.temp');
         Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1')->middleware('cleanup.temp');
         Route::post('/import/step2', [ImportController::class, 'step2'])->name('import.step2')->middleware('cleanup.temp');

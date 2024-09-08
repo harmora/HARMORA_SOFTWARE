@@ -9,14 +9,17 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 'description', 'product_category_id', 'price', 'stock', 'stock_defective','photo'
+        'name', 'description', 'product_category_id', 'price', 'stock', 'stock_defective','photo','entreprise_id'
     ];
 
     public function category()
     {
         return $this->belongsTo(ProdCategory::class);
     }
-
+    public function entreprises()
+    {
+        return $this->belongsTo(Entreprise::class);
+    }
     public function commandes()
     {
         return $this->belongsToMany(Commande::class, 'commande_products')

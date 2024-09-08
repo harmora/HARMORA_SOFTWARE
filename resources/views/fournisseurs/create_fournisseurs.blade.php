@@ -66,7 +66,7 @@
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="logo" class="form-label"><?= get_label('logo', 'Logo') ?></label>
+                        <label for="logo" class="form-label"><?= get_label('logo_photo', 'Logo / Photo') ?></label>
                         <input class="form-control" type="file" id="logo" name="logo">
                         <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
                     </div>

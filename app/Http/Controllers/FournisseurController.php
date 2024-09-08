@@ -47,17 +47,19 @@ class FournisseurController extends Controller
     }
     public function index()
     {
-        $fournisseurs = fournisseur::all();
+        // $fournisseurs = Fournisseur::where('entreprise_id', $this->user->entreprise_id)->get();
+        $fournisseurs=$this->user->entreprise->fournisseur;
         $entreprises = Entreprise::all();
-        $formesjuridique= Forme_juridique::all();
-        // $visibleColumns = getUserPreferences('entreprises'); // Adjust this based on how you get user preferences
-        return view('fournisseurs.fournisseurs',['fournisseurs'=> $fournisseurs,'entreprises'=> $entreprises,'fomesJuridique'=> $formesjuridique]);
+
+        // $formesjuridique= Forme_juridique::all();
+        $visibleColumns = getUserPreferences('fournisseurs'); // Adjust this based on how you get user preferences
+        return view('fournisseurs.fournisseurs',['fournisseurs'=> $fournisseurs]);
     }
 
     public function create()
     {
-        $entreprises = Entreprise::all();
-        return view('fournisseurs.create_fournisseurs', ['entreprises' => $entreprises]);
+        // $entreprises = Entreprise::all();
+        return view('fournisseurs.create_fournisseurs');
     }
     public function store(Request $request)
     {
@@ -65,9 +67,16 @@ class FournisseurController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:fournisseurs,email',
             'phone' => 'nullable',
-            'city' => 'nullable',
+            'city' => 'nullable', 
             'country' => 'nullable',
+            'country_code' => 'nullable',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $formFields['photo'] = $request->file('logo')->store('photos', 'public');
+        } else {
+            $formFields['photo'] = 'photos/no-supplier.jpg';
+        }
         $formFields['entreprise_id'] = $this->user->entreprise_id;
 
         $fournisseur = Fournisseur::create($formFields);
@@ -75,22 +84,13 @@ class FournisseurController extends Controller
         return response()->json(['error' => false, 'id' => $fournisseur->id]);
         }
 
-        public function importExcelData(Request $request)
-        {
-            $file = $request->file('import_file');
-            $headings = Excel::toArray([], $file)[0][0]; // Get the first row (column titles)
 
-            // return view('fournisseurs.step2', compact('headings', 'file'));
-            return view('fournisseurs.step2', ['headings' => $headings, 'file' => $file]);
-
-
-        }
 
         public function edit($id)
         {
             $fournisseur = Fournisseur::find($id);
-            $entreprises = Entreprise::all();
-            return view('fournisseurs.update_fournisseurs', ['fournisseur' => $fournisseur, 'entreprises' => $entreprises]);
+            // $entreprises = Entreprise::all();
+            return view('fournisseurs.update_fournisseurs', ['fournisseur' => $fournisseur]);
         }
         public function update(Request $request, $id)
         {
@@ -101,7 +101,7 @@ class FournisseurController extends Controller
                 'phone' => 'nullable',
                 'city' => 'nullable',
                 'country' => 'nullable',
-                'entreprise_id' => 'nullable|exists:entreprises,id'
+                // 'entreprise_id' => 'nullable|exists:entreprises,id'
             ]);
 
             $fournisseur->update($formFields);
@@ -115,6 +115,28 @@ class FournisseurController extends Controller
 
             return $response;
         }
+        public function getfournisseur($id)
+        {
+            // Fetch the commande with the related products, user, and client
+            $fournisseur = Fournisseur::findOrFail($id);
+            if (!$fournisseur) {
+                return response()->json(['error' => 'Commande not found'], 404);
+            }
+
+            // Prepare the response data
+            $response = [
+                'id' => $fournisseur->id,
+                'name' => $fournisseur->name,
+                'email' => $fournisseur->email,
+                'phone' => $fournisseur->phone,
+                'city' => $fournisseur->city,
+                'country' => $fournisseur->country,
+
+            ];
+
+            return response()->json($response);
+        }
+
         public function list()
         {
         $search = request('search');
@@ -137,12 +159,13 @@ class FournisseurController extends Controller
          }
 
 
-        $totalFournisseurs = $query->count();
+         $totalFournisseurs = $query->where('fournisseurs.entreprise_id', $this->user->entreprise_id)->count();
 
         // $fournisseurs = $query->orderBy($sort, $order)
         //     ->paginate(request("limit"));
         $fournisseurs = $query->select('fournisseurs.*')
         ->leftJoin('entreprises', 'fournisseurs.entreprise_id', '=', 'entreprises.id')
+        ->where('fournisseurs.entreprise_id', $this->user->entreprise_id)
         ->orderBy($sort, $order)
         ->paginate(request('limit'));
         // $fournisseurs = $fournisseurs->select('fournisseurs.*')
@@ -166,12 +189,15 @@ class FournisseurController extends Controller
 
             $actions = $actions ?: '-';
 
-            $profileHtml = "<div class='avatar avatar-md pull-up' title='" . $fournisseur->name . " '>
-                <a href='/clients/profile/" . $fournisseur->id . "'>
-                <img src='https://cdn-icons-png.flaticon.com/512/4003/4003697.png' alt='Avatar' class='rounded-circle'>
-                </a>
-                </div>";//when hover the photo display infos as popup
-
+            //when hover the photo display infos as popup
+            $profileHtml = "<div class='avatar avatar-md pull-up' title='" . htmlspecialchars($fournisseur->name) . "'>
+            <a href='javascript:void(0);' data-bs-toggle='modal' data-bs-target='#commandeModal' 
+               data-id='" . htmlspecialchars($fournisseur->id) . "' data-bs-toggle='tooltip' 
+               data-bs-placement='left' data-bs-original-title='" . htmlspecialchars(get_label('View Details', 'View Details')) . "'>
+                <img src='" . ($fournisseur->photo ? asset('storage/' . $fournisseur->photo) : asset('storage/photos/no-supplier.jpg')) . "' alt='Avatar' class='rounded-circle' style='cursor: pointer;' data-id='" . htmlspecialchars($fournisseur->id) . "'>
+            </a>
+        </div>";
+        
             $formattedHtml = '<div class="d-flex mt-2">' .
                 $profileHtml .
                 '<div class="mx-2">' .
