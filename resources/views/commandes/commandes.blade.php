@@ -281,8 +281,8 @@ $visibleColumns = getUserPreferences('commandes');
                         <div class="progress-container">
                             <ul class="progressbar">
                                 <li class="pending active"><?= get_label('Pending', 'Pending') ?></li>
-                                <li class="completed"><?= get_label('Completed', 'Completed') ?>Completed</li>
-                                <li class="cancelled"><?= get_label('Cancelled', 'Cancelled') ?>Cancelled</li>
+                                <li class="completed"><?= get_label('Completed', 'Completed') ?></li>
+                                <li class="cancelled"><?= get_label('Cancelled', 'Cancelled') ?></li>
                             </ul>
                         </div>
 
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 '<div class="card-body">' +
                                 '<h5 class="card-title">' + product.name + '</h5>' +
                                 '<p class="card-text">' + product.description + '</p>' +
-                                '<p class="card-text"><strong>Price:</strong>' + product.price + 'DH </p>' +
+                                '<p class="card-text"><strong><?= get_label('price', 'Price')?> : </strong>' + product.price + 'DH </p>' +
                                 '</div></div></div>';
                         });
                         modalBody.querySelector('#products').innerHTML = productsHtml;
