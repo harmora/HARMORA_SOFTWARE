@@ -199,7 +199,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
         <li class="menu-item">
             <a href="/ocr" class="menu-link">
-                <i class='menu-icon tf-icons  bx bx-spreadsheet text-primary'></i>
+                <i class='menu-icon tf-icons  bx bx-scan text-primary'></i>
                 <div><?= get_label('ocr', 'OCR')  ?></div>
             </a>
         </li>

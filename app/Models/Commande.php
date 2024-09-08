@@ -14,6 +14,7 @@ class Commande extends Model implements HasMedia
     use HasFactory;
 
     protected $fillable = [
+        'entreprise_id',
         'title',
         'description',
         'start_date',
@@ -58,6 +59,10 @@ class Commande extends Model implements HasMedia
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
+    public function entreprise()
+    {
+        return $this->belongsTo(Entreprise::class, 'entreprise_id');
+    }
 
     public function facture()
     {
@@ -69,6 +74,7 @@ class Commande extends Model implements HasMedia
         return $this->belongsToMany(Product::class, 'commande_products')
                     ->withPivot('quantity', 'price');
     }
+
 
 
     public function getresult()

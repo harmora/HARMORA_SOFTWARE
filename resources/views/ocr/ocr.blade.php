@@ -22,8 +22,22 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <h1 class="text-center ocr-header text-primary">OCR</h1>
-            <p class="text-center ocr-lead text-dark">Upload an image to extract text using OCR.</p>
+            <div class="container py-2">
+                <!-- Title Section -->
+                <div class="text-center">
+                    <div class="text-center mb-1">
+                        <i class="bx bx-scan" style="font-size: 3rem; color: #ff9c23;"></i>
+                    </div>
+                  <h1 class="ocr-header display-4" style="color:#228dd5;">
+                   OCR Text Extractor
+                  </h1>
+                  <p class="ocr-lead text-dark lead">
+                     Upload an image to extract text using OCR technology.
+                  </p>
+                </div>
+
+
+              </div>
 
             <!-- Language Selector -->
             <div class="mb-3">

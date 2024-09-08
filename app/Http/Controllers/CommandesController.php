@@ -44,35 +44,26 @@ class CommandesController extends Controller
     {
 
 
-        $users = User::all();
-       // $users = User::all();  // Fetch all users
-        $clients = Client::all();  // Fetch all clients
-        $products = Product::all();  // Fetch all products
-        $commandes = Commande::all();
-        //dd($commandes); // this will dump and die the $commandes data
+$users = $this->user->entreprise->user;
+
+
+$clients = $this->user->entreprise->client;
+
+
+$products = $this->user->entreprise->product;
+
+
+$commandes = $this->user->entreprise->commande;
+
+
 
 
         return view('commandes.commandes', compact('clients', 'users', 'products'), compact('commandes'));
     }
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'commande_products'); // Adjust 'quantity' if you have other fields
-    }
 
-    public function create()
-    {
-        try {
-            $products = Product::all();
-            $clients = Client::all();
-            $users = User::all();
 
-            return view('commandes.create_commande', compact('products', 'clients', 'users'));
-        } catch (\Exception $e) {
-            \Log::error('Error in create method: ' . $e->getMessage());
-            return abort(500, 'Something went wrong.');
-        }
-    }
+
    /**
  * Store a newly created resource in storage.
  *
@@ -126,6 +117,7 @@ class CommandesController extends Controller
      // Create a new commande
      $commande = Commande::create([
          'client_id' => $request->client_id,
+         'entreprise_id'=>$this->user->entreprise->id,
          'title' => $request->title,
          'description' => $request->description,
          'start_date' => $request->start,
@@ -183,28 +175,10 @@ class CommandesController extends Controller
 
 
 
-    /**
-     * Display the specified commande.
-     *
-     * @param  \App\Models\Commande  $commande
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $commande = Commande::findOrFail($id);
-        \Log::info('Commande data:', ['commande' => $commande]);
-        return view('commandes.commande_information', ['commande' => $commande, 'auth_user' => $this->user]);
-    }
 
 
-    public function get($id)
-    {
-        $commande = Commande::with('users')->findOrFail($id);
-        $product = $commande->product()->with('users')->firstOrFail();
-        \Log::info('Commande and Product data:', ['commande' => $commande, 'product' => $product]);
 
-        return response()->json(['error' => false, 'commande' => $commande, 'product' => $product]);
-    }
+
 
 
     /**
@@ -219,11 +193,17 @@ class CommandesController extends Controller
 
     public function edit($id)
     {
+
+$commandes = $this->user->entreprise->commande;
+
+
         $commande = Commande::findOrFail($id);
-        $clients = Client::all(); // Retrieve all clients
-        $users = User::all(); // Retrieve all clients
-        $allProducts = Product::all(); // Fetch all available products
-        $products = Product::all();
+        $clients = $this->user->entreprise->client;
+        $users = $this->user->entreprise->user;
+        $allProducts = $this->user->entreprise->product;
+
+        $products = $this->user->entreprise->product;
+
 
         return view('commandes.edit', compact('commande', 'clients', 'users', 'allProducts', 'products'));
     }
@@ -519,7 +499,8 @@ public function updateStatus(Request $request, $id)
         $order = request('order') ?: 'DESC';
         $status = request('status', '');
 
-        $query = Commande::with(['user', 'client', 'products']);
+        $query = Commande::with(['user', 'client', 'products'])
+        ->where('entreprise_id', $this->user->entreprise->id);
 
         // Search functionality
         if ($search) {
@@ -597,7 +578,7 @@ public function updateStatus(Request $request, $id)
                 ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
                 '">' . $commande->status . '</span>';
 
-            $id_holder = $commande->id . ' | ' .
+            $id_holder = 
                 '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
                     '<button type="button" class="btn btn-info btn-sm" ' .
                         'data-id="' . htmlspecialchars($commande->id) . '" ' .
@@ -708,9 +689,14 @@ public function getCommandeDetails($id) {
 
 public function listForCounter()
 {
-    $pendingCount = Commande::where('status', 'pending')->count();
-    $completedCount = Commande::where('status', 'completed')->count();
-    $canceledCount = Commande::where('status', 'cancelled')->count();
+    $pendingCount = Commande::where('status', 'pending')
+    ->where('entreprise_id', $this->user->entreprise->id)->count();
+
+    $completedCount = Commande::where('status', 'completed')
+    ->where('entreprise_id', $this->user->entreprise->id)->count();
+
+    $canceledCount = Commande::where('status', 'cancelled')
+    ->where('entreprise_id', $this->user->entreprise->id)->count();
 
     return response()->json([
         'pending' => $pendingCount,
@@ -723,11 +709,13 @@ public function listForCounter()
 public function dragula($id = '')
 {
     $user = auth()->user(); // Get the authenticated user
-    $clients = Client::all();  // Fetch all clients
-    $products = Product::all();
+    $clients =  $this->user->entreprise->client;  // Fetch all clients
+    $products =  $this->user->entreprise->product;
+
+
 
     // Fetch commandes associated with the authenticated user
-    $commandes = Commande::where('user_id', $user->id)
+    $commandes = Commande::where('entreprise_id', $this->user->entreprise->id)
     ->orderBy('start_date', 'desc') // Assuming 'date' is the column name
     ->get();
 
@@ -772,103 +760,6 @@ public function generateFacture($id)
 
 
 
-    //For status change from dropdown
-    public function update_status(Request $request)
-    {
-        $request->validate([
-            'id' => ['required'],
-            'statusId' => ['required']
-
-        ]);
-        $id = $request->id;
-        $statusId = $request->statusId;
-        $status = Status::findOrFail($statusId);
-        if (canSetStatus($status)) {
-            $commande = Commande::findOrFail($id);
-            $currentStatus = $commande->status->title;
-            $commande->status_id = $statusId;
-            $commande->note = $request->note;
-            if ($commande->save()) {
-                $commande = $commande->fresh();
-                $newStatus = $commande->status->title;
-
-                $notification_data = [
-                    'type' => 'commande_status_updation',
-                    'type_id' => $id,
-                    'type_title' => $commande->title,
-                    'updater_first_name' => $this->user->first_name,
-                    'updater_last_name' => $this->user->last_name,
-                    'old_status' => $currentStatus,
-                    'new_status' => $newStatus,
-                    'access_url' => 'commandes/information/' . $id,
-                    'action' => 'status_updated'
-                ];
-                $userIds = $commande->users->pluck('id')->toArray();
-                $clientIds = $commande->product->clients->pluck('id')->toArray();
-                $recipients = array_merge(
-                    array_map(function ($userId) {
-                        return 'u_' . $userId;
-                    }, $userIds),
-                    array_map(function ($clientId) {
-                        return 'c_' . $clientId;
-                    }, $clientIds)
-                );
-                processNotifications($notification_data, $recipients);
-
-
-                return response()->json(['error' => false, 'message' => 'Status updated successfully.', 'id' => $id, 'type' => 'commande', 'activity_message' => $this->user->first_name . ' ' . $this->user->last_name . ' updated commande status from ' . $currentStatus . ' to ' . $newStatus]);
-            } else {
-                return response()->json(['error' => true, 'message' => 'Status couldn\'t updated.']);
-            }
-        } else {
-            return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-        }
-    }
-
-
-
-
-
-    public function upload_media(Request $request)
-    {
-        try {
-            $validatedData = $request->validate([
-                'id' => 'integer|exists:commandes,id'
-            ]);
-
-            $mediaIds = [];
-
-            if ($request->hasFile('media_files')) {
-                $commande = Commande::find($validatedData['id']);
-                $mediaFiles = $request->file('media_files');
-
-                foreach ($mediaFiles as $mediaFile) {
-                    $mediaItem = $commande->addMedia($mediaFile)
-                        ->sanitizingFileName(function ($fileName) use ($commande) {
-                            // Replace special characters and spaces with hyphens
-                            $sanitizedFileName = strtolower(str_replace(['#', '/', '\\', ' '], '-', $fileName));
-
-                            // Generate a unique identifier based on timestamp and random component
-                            $uniqueId = time() . '_' . mt_rand(1000, 9999);
-
-                            $extension = pathinfo($sanitizedFileName, PATHINFO_EXTENSION);
-                            $baseName = pathinfo($sanitizedFileName, PATHINFO_FILENAME);
-
-                            return "{$baseName}-{$uniqueId}.{$extension}";
-                        })
-                        ->toMediaCollection('commande-media');
-
-                    $mediaIds[] = $mediaItem->id;
-                }
-                return response()->json(['error' => false, 'message' => 'File(s) uploaded successfully.', 'id' => $mediaIds, 'type' => 'media', 'parent_type' => 'commande', 'parent_id' => $commande->id]);
-            } else {
-                return response()->json(['error' => true, 'message' => 'No file(s) chosen.']);
-            }
-        } catch (Exception $e) {
-            // Handle the exception as needed
-            return response()->json(['error' => true, 'message' => 'An error occurred during file upload: ' . $e->getMessage()]);
-        }
-    }
 
 
     public function get_media($id)
@@ -990,18 +881,6 @@ public function generateFacture($id)
         return response()->json(['error' => false, 'message' => 'Files(s) deleted successfully.', 'id' => $deletedIds, 'titles' => $deletedTitles, 'parent_id' => $parentIds, 'type' => 'media', 'parent_type' => 'commande']);
     }
 
-
-
-    public function saveViewPreference(Request $request)
-    {
-        $view = $request->input('view');
-        $prefix = isClient() ? 'c_' : 'u_';
-        UserClientPreference::updateOrCreate(
-            ['user_id' => $prefix . $this->user->id, 'table_name' => 'commandes'],
-            ['default_view' => $view]
-        );
-        return response()->json(['error' => false, 'message' => 'Default View Set Successfully.']);
-    }
 }
 
 ?>

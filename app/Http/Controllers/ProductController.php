@@ -32,9 +32,9 @@ class ProductController extends Controller
     {
         // $meetings = isAdminOrHasAllDataAccess() ? $this->workspace->meetings : $this->user->meetings;
 
-        $products = Product::all();
-        $categories = ProdCategory::all();
+        $products = $this->user->entreprise->product;
 
+        $categories = ProdCategory::all();
         return view('products.products', ['products' => $products,'categories'=>$categories]);
     }
      /**
@@ -48,7 +48,7 @@ class ProductController extends Controller
      {
          // $meetings = isAdminOrHasAllDataAccess() ? $this->workspace->meetings : $this->user->meetings;
 
-         $movements = Product::all();
+         $movements = $this->user->entreprise->product;
          $visibleColumns = getUserPreferences('movements');
          return view('products.mouvement', ['movements' => $movements,compact('visibleColumns')]);
 
@@ -86,6 +86,8 @@ class ProductController extends Controller
          } else {
              $formFields['photo'] = 'photos/no-image.jpg';
          }
+
+         $formFields['entreprise_id'] = $this->user ->entreprise->id;
 
          $product = Product::create($formFields);
          $product->product_category_id = $request->input('category_id');
@@ -168,7 +170,7 @@ class ProductController extends Controller
         $category = request('category', '');
     //    ...
 
-        $query = Product::query();
+        $query = $this->user->entreprise->product();
 
         // Search functionality
         if ($search) {

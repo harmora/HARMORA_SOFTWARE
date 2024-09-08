@@ -36,10 +36,19 @@ class Entreprise extends Model
     {
         return $this->hasMany(Product::class);
     }
+    public function commande()
+    {
+        return $this->hasMany(Commande::class);
+    }
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
+    }
     public function disponibility()
     {
         return $this->hasMany(Disponibility::class);
     }
+
     public function forme_juridique()
     {
         return $this->belongsTo(Forme_juridique::class);

@@ -137,9 +137,9 @@
                         @foreach([
                             'denomination' => 'Denomination',
                             'Forme_juridique' => 'Legal Form',
-                            'Identifiant_commun_entreprise' => 'Enterprise ID',
-                            'REGISTRE_COMMERCE' => 'Commercial Register',
-                            'IDENTIFIANT_FISCALE' => 'Tax ID',
+                            'Identifiant_commun_entreprise' => 'ICE',
+                            'REGISTRE_COMMERCE' => 'IC',
+                            'IDENTIFIANT_FISCALE' => 'IF',
                             'address' => 'Address',
                             'city' => 'City',
                             'state' => 'State',
