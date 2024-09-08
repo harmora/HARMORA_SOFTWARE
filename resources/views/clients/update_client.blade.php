@@ -41,7 +41,7 @@
                     <div class="mb-3 col-md-12">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="internal_client" name="internal_purpose" {{$client->internal_purpose==1?'checked':''}}>
-                            <label class="form-check-label" for="update_internal_client"><?= get_label('internal_client', 'Is this a client for internal purpose only?') ?></label>
+                            <label class="form-check-label" for="update_internal_client"><?= get_label('individual', 'Is this an induvual representant?') ?></label>
                         </div>
                     </div>
                     <div class="mb-3 col-md-6">

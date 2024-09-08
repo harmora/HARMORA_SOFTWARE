@@ -67,7 +67,7 @@
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country', $fournisseur->country) }}">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="logo" class="form-label"><?= get_label('logo', 'Logo') ?></label>
+                        <label for="logo" class="form-label"><?= get_label('logo_photo', 'Logo') ?></label>
                         <div class="d-flex align-items-start gap-4">
                             @if($fournisseur->photo)
                             <img src="{{ asset('storage/' . $fournisseur->photo) }}" alt="{{ $fournisseur->name }}" class="img-thumbnail" width="100">

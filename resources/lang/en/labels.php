@@ -1027,5 +1027,12 @@
 'Completed' => 'Completed',
 'Cancelled' => 'Cancelled',
 'commande status' => 'Commande Status',
+'managers'=> 'Managers',
+'user_information' => 'User Information',
+'date_of_join'=>'Date of joining',
+'paque'=>'Pack',
+'individual'=> 'Is this an induvual representant?',
+'logo_photo' => 'Logo Photo',
+'amount_ht'=> 'Amount Excluding VAT',
 // -----------------------------
 ];

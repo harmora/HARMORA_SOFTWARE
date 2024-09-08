@@ -877,4 +877,12 @@
 //
 'Cancel Commande'=>'Annuler Commande',
 'Validate Commande'=>'Valider Commande',
+'managers'=>'comptes',
+'user_information'=>'Informations utilisateur',
+'date_of_join' => 'Date d\'adhésion',
+'paque'=>'Pack',
+'select_roles' => 'Sélectionner les rôles',
+'individual' => 'S\'agit-il d\'un représentant individuel ?',
+'logo_photo' => 'Logo/Photo',   
+'amount_ht'=>'Montant HT',
 ];

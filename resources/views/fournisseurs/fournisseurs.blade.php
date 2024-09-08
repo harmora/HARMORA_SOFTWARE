@@ -99,7 +99,7 @@
                             <input style="background-color: #ffffff !important;" type="text" id="typeachat" class="form-control" readonly>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="supplier" class="form-label">{{ get_label('supplier', 'supplier') }}</label>
+                            <label for="supplier" class="form-label">{{ get_label('Supplier', 'supplier') }}</label>
                             <input style="background-color: #ffffff !important;" type="text" id="supplier" class="form-control" readonly>
                         </div>
                     </div>
