@@ -33,8 +33,11 @@ class HomeController extends Controller
         // $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects ?? [] : $this->user->projects ?? [];
         // $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks ?? [] : $this->user->tasks() ?? [];
         // $tasks = $tasks ? $tasks->count() : 0;
-        $users = User::all();
-        $clients =  Client::all();
+
+
+        $users =  auth()->user()->entreprise->user;
+        $clients = auth()->user()->entreprise->client;
+        $products = auth()->user()->entreprise->product;
 
         $todos = $this->user->todos()
             ->orderBy('is_completed', 'asc')

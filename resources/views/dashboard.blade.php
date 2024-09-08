@@ -104,7 +104,9 @@ background-repeat: no-repeat;
 
                         @if(auth()->user()->role->rolename === 'user')
                         <div class="admin-dashboard-card">
+                            <a href="{{ route('enterprise.profile') }}">
                             <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic">
+                        </a>
                             <h2 class="admin-dashboard-title">Welcome to Your Dashboard</h2>
                             <p class="admin-dashboard-description">Here you can manage your Entreprise, view statistics, and perform tasks.</p>
                          </div>
@@ -143,7 +145,7 @@ background-repeat: no-repeat;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-briefcase-alt-2 bx-md text-success"></i>
+                                <i class="menu-icon tf-icons bx bx-pulse bx-md text-success"></i>
                             </div>
                         </div>
                         <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
@@ -159,10 +161,10 @@ background-repeat: no-repeat;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-task bx-md text-primary"></i>
+                                <i class="menu-icon tf-icons bx bx-cube bx-md text-primary"></i>
                             </div>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_tasks', 'Total tasks') ?></span>
+                        <span class="fw-semibold d-block mb-1"><?= get_label('total_products', 'Total products') ?></span>
                         <h3 class="card-title mb-2">{{$tasks}}</h3>
 
                         <a href="/{{getUserPreferences('tasks', 'default_view')}}"><small class="text-primary fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>

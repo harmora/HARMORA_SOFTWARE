@@ -86,14 +86,10 @@ class CommandesController extends Controller
      // Validate the request
      $request->validate([
          'title' => 'required|string|max:255',
-         'status' => 'required|string',
          'products' => 'required|array|min:1',
          'products.*.product_id' => 'required|exists:products,id',
          'products.*.quantity' => 'required|integer|min:1',
-         'products.*.price' => 'required|numeric|min:0',
-         'user_id' => 'nullable|integer|exists:users,id',
          'start' => 'nullable|date',
-         'due_date' => 'nullable|date',
          'description' => 'nullable|string',
          'note' => 'nullable|string',
          'client_id' => 'nullable|integer|exists:clients,id',
@@ -107,14 +103,16 @@ class CommandesController extends Controller
      $totalAmount = 0;
      foreach ($request->products as $productData) {
 
+        $product = Product::find($productData['product_id']);
 
-        if($productData['quantity'] > $productData['stock'])
+
+        if($productData['quantity'] > $product->stock)
         {
-            return response()->json(['error' => true, 'message' => 'Quantity of product : '.$productData['name'].' is not availiable. [ Stock : '.$productData['stock'].' ]']);
+            return response()->json(['error' => true, 'message' => 'Quantity of product : '.$product->name.' is not availiable. [ Stock available : '.$product->stock.' ]']);
         }
         else
         {
-            $totalAmount += $productData['quantity'] * $productData['price'];
+            $totalAmount += $productData['quantity'] * $product->price;
         }
 
 
@@ -136,34 +134,36 @@ class CommandesController extends Controller
          'status' => 'pending',
          'created_at' => now(),
          'updated_at' => now(),
-         'user_id' => $request->user_id,
+         'user_id' => $this->user->id,
          'tva' => $request->tva, // Store the TVA value
      ]);
 
     //  Attach products to the commande
      foreach ($request->products as $productData) {
+        $product = Product::find($productData['product_id']);
+
          $commande->products()->attach($productData['product_id'], [
              'quantity' => $productData['quantity'],
-             'price' => $productData['price'],
+             'price' => $product->price,
          ]);
 
          // Update product stock
-         $product = Product::find($productData['product_id']);
+
          $product->stock -= $productData['quantity'];
          $product->save();
      }
 
 
-
+     $entreprise = Entreprise::find($this->user->entreprise->id);
      $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
 
-     $filePath = 'devis/devis_' . time() . '.pdf';
+     $filePath = 'devis/devis_'.$commande->id.'_' . time() . '.pdf';
 
-     $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
+     $devisfile = Storage::disk('public')->put($filePath, $pdfContent);
 
-     $documentField['type'] ='facture';
-     $documentField['facture'] = $facturefile;
-     $documentField['devis'] = null;
+     $documentField['type'] ='devis';
+     $documentField['facture'] = Null;
+     $documentField['devis'] = $devisfile;
      $documentField['origin'] = 'commande';
 
 
@@ -234,12 +234,9 @@ class CommandesController extends Controller
         // Validate the request
         $request->validate([
             'title' => 'required|string|max:255',
-            'status' => 'required|string',
             'products' => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
-            'products.*.price' => 'required|numeric|min:0',
-            'user_id' => 'required|integer|exists:users,id',
             'start_date' => 'nullable|date',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
@@ -257,30 +254,47 @@ class CommandesController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'start_date' => $request->start_date,
-            'status' => $request->status,
-            'user_id' => $request->user_id,
             'tva' => $request->tva, // Save the TVA value
         ]);
 
-        // Detach old products
-        $commande->products()->detach();
+
 
         // Attach new products and update stock
         $totalAmount = 0;
         foreach ($request->products as $productData) {
-            $commande->products()->attach($productData['product_id'], [
-                'quantity' => $productData['quantity'],
-                'price' => $productData['price'],
-            ]);
 
-            // Update product stock
-            $product = Product::find($productData['product_id']);
-            $product->stock -= $productData['quantity'];
-            $product->save();
+           $product = Product::find($productData['product_id']);
 
-            // Calculate the total amount for the commande
-            $totalAmount += $productData['quantity'] * $productData['price'];
+
+           if($productData['quantity'] > $product->stock)
+           {
+               return response()->json(['error' => true, 'message' => 'Quantity of product : '.$product->name.' is not availiable. [ Stock available : '.$product->stock.' ]']);
+           }
+           else
+           {
+               $totalAmount += $productData['quantity'] * $product->price;
+           }
+
         }
+
+              // Detach old products
+              $commande->products()->detach();
+
+        foreach ($request->products as $productData) {
+            $product = Product::find($productData['product_id']);
+
+             $commande->products()->attach($productData['product_id'], [
+                 'quantity' => $productData['quantity'],
+                 'price' => $product->price,
+             ]);
+
+             // Update product stock
+
+             $product->stock -= $productData['quantity'];
+             $product->save();
+         }
+
+
 
         // Calculate the total amount including TVA
         $totalAmountWithTva = $totalAmount + ($totalAmount * $request->tva / 100);
@@ -288,6 +302,60 @@ class CommandesController extends Controller
         // Update the total amount in the commande
         $commande->total_amount = $totalAmountWithTva;
         $commande->save();
+
+
+        $entreprise = Entreprise::find($this->user->entreprise->id);
+        $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
+
+        $filePath = 'devis/updated_devis_'.$commande->id.'_' . time() . '.pdf';
+
+        $devisfile = Storage::disk('public')->put($filePath, $pdfContent);
+
+        $documentField['type'] ='devis';
+        $documentField['facture'] = Null;
+        $documentField['devis'] = $devisfile;
+        $documentField['origin'] = 'commande';
+
+
+
+        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
+
+        $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+
+        $documentField['total_amount'] = $commande->total_amount;
+
+        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+
+        Document::create($documentField);
+
+
+
+
+
+        $entreprise = Entreprise::find($this->user->entreprise->id);
+        $pdfContent = Pdf::loadView('pdf.facture', compact('commande', 'entreprise'))->output();
+
+        $filePath = 'factures/updated_factur_'.$commande->id.'_' . time() . '.pdf';
+
+        $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
+
+        $documentField['type'] ='devis';
+        $documentField['facture'] = $facturefile;
+        $documentField['devis'] = Null;
+        $documentField['origin'] = 'commande';
+
+
+
+        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
+
+        $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+
+        $documentField['total_amount'] = $commande->total_amount;
+
+        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+
+        Document::create($documentField);
+
 
         return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
     }
@@ -312,7 +380,8 @@ public function updateStatus(Request $request, $id)
 
            $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
 
-            $filePath = 'factures/facture_' . time() . '.pdf';
+            $filePath = 'factures/facture_' .$commande->id.'_' . time() . '.pdf';
+
 
             $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
 
@@ -539,6 +608,29 @@ public function updateStatus(Request $request, $id)
                     '</button>' .
                 '</a>';
 
+
+
+
+                $documentsHtml = '<div class="mb-3" style="display: flex; justify-content: center; align-items: center;">
+                <a class="me-2">
+                    <button id="generatePdfButton-' . $commande->id . '" data-url="' . route('devis.pdf', $commande->id) . '" type="button" class="btn btn-sm btn-secondary">
+                        ' . get_label('devis', 'Devis') . ' <i class="bx bx-file"></i>
+                    </button>
+                </a>';
+
+if ($commande->status == "completed") {
+$documentsHtml .= '<a class="me-2">
+                    <button id="generatefactureButton-' . $commande->id . '" data-url="' . route('facture.pdf', $commande->id) . '" type="button" class="btn btn-sm btn-primary">
+                        ' . get_label('facture', 'Facture') . ' <i class="bx bx-dollar"></i>
+                    </button>
+                </a>';
+}
+
+$documentsHtml .= '</div>';
+
+
+
+
             return [
                 'id' => $id_holder,
                 'title' => $commande->title,
@@ -553,7 +645,8 @@ public function updateStatus(Request $request, $id)
                 'client' => $clientProfileHtml . ' ' . $commande->client->first_name . ' ' . $commande->client->last_name,
                 'created_at' => format_date($commande->created_at, true),
                 'updated_at' => format_date($commande->updated_at, true),
-                'actions' => $actions
+                'actions' => $actions,
+                'documents' => $documentsHtml
             ];
         });
 

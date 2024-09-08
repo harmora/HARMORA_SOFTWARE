@@ -24,31 +24,17 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             </ol>
         </nav>
         <div>
-            <!-- <button type="button" id="add_client_btn" class="btn btn-outline-secondary me-2"><?= get_label('add_new_client', 'Add New Client') ?></button> -->
-            <button type="button" id="add_product_btn" class="btn btn-outline-secondary"><?= get_label('add_new_product', 'Add New Product') ?></button>
+            <button type="button" id="add_client_btn" class="btn btn-outline-secondary me-2"><?= get_label('add_new_client', 'Add New Client') ?></button>
+            <button type="button" id="add_product_btns" class="btn btn-outline-secondary me-2"><?= get_label('add_new_product', 'Add New Product') ?></button>
         </div>
     </div>
 
-    @role('admin')
-    @php
-    $account_creation_template = App\Models\Template::where('type', 'email')
-    ->where('name', 'account_creation')
-    ->first();
-    @endphp
 
-    @if (!$account_creation_template || $account_creation_template->status == 1)
-    <div class="alert alert-primary" role="alert">
-        {{ get_label('user_acc_crea_email_enabled_inf', 'As Account Creation Email Status Is Active, Please Ensure Email Settings Are Configured and Operational.') }}
-        <a href="/settings/templates" target="_blank">
-            {{ get_label('click_to_change_acc_crea_email_sts', 'Click Here to Change Account Creation Email Status.') }}
-        </a>
-    </div>
-    @endif
-    @endrole
 
     <div class="card">
         <div class="card-body">
             <form action="{{ route('commandes.store') }}" method="POST" class="form-submit-event" enctype="multipart/form-data">
+                <input type="hidden" name="redirect_url" value="/commandes">
                 @csrf
                 <div class="row">
                     <div class="mb-3 col-md-12">
@@ -56,24 +42,10 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <input class="form-control" type="text" name="title" placeholder="{{ get_label('please_enter_title', 'Please enter title') }}" value="{{ old('title') }}" required>
                     </div>
 
-                    <div class="mb-3 col-md-6">
-                        <label for="status" class="form-label">{{ get_label('status', 'Status') }}</label>
-                        <select class="form-select" id="status" name="status" required>
-                            <option value="">{{ get_label('select_status', 'Select status') }}</option>
-                            <option value="pending">{{ get_label('pending', 'Pending') }}</option>
-                            <option value="completed">{{ get_label('completed', 'Completed') }}</option>
-                            <option value="cancelled">{{ get_label('cancelled', 'Cancelled') }}</option>
-                        </select>
-                    </div>
 
-        
                     <div class="mb-3 col-md-6">
                         <label for="start" class="form-label"><?= get_label('starts_at', 'Starts at') ?></label>
                         <input class="form-control" type="date" id="start" name="start" value="{{ old('start') }}">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="due_date" class="form-label"><?= get_label('ends_at', 'Ends at') ?></label>
-                        <input class="form-control" type="date" id="due_date" name="due_date" value="{{ old('due_date') }}">
                     </div>
 
                     <div id="products-container">
@@ -92,10 +64,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                                 <div class="col-md-4">
                                     <label for="products[0][quantity]" class="form-label">{{ get_label('quantity', 'Quantity') }} <span class="asterisk">*</span></label>
                                     <input class="form-control" type="number" id="products[0][quantity]" name="products[0][quantity]" placeholder="{{ get_label('enter_quantity', 'Enter quantity') }}" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="products[0][price]" class="form-label">{{ get_label('price', 'Price') }} <span class="asterisk">*</span></label>
-                                    <input class="form-control" id="products[0][price]" type="number" name="products[0][price]" step="0.01" placeholder="{{ get_label('enter_price', 'Enter price') }}" required>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +86,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <select class="form-control" name="client_id">
                             <option value=""></option>
                             @foreach($clients as $client)
-=                                <option value="{{ $client->id }}"> 
+=                                <option value="{{ $client->id }}">
                                     @if ($client->first_name)
                                         {{$client->first_name }} {{ $client->last_name }}
                                     @else
@@ -129,15 +97,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="user_id" class="form-select">{{ get_label('select_user', 'Select User') }}</label>
-                        <select class="form-control" name="user_id">
-                            <option value=""></option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
 
                     <div class="mb-3">
                         <label for="description" class="form-label">{{ get_label('description', 'Description') }}</label>
@@ -166,7 +126,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         const addProductBtn = document.getElementById('add-product');
         const removeProductBtn = document.getElementById('remove-product');
         const productsContainer = document.getElementById('products-container');
-    
+
         addProductBtn.addEventListener('click', function() {
             const newProductDiv = document.createElement('div');
             newProductDiv.classList.add('product-entry', 'mb-3');
@@ -186,25 +146,21 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                         <label for="products[${productCount-1}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" id="products[${productCount-1}][quantity]" name="products[${productCount-1}][quantity]" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" required min="1">
                     </div>
-                    <div class="col-md-4">
-                        <label for="products[${productCount-1}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="number" id="products[${productCount-1}][price]" name="products[${productCount-1}][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" required>
-                    </div>
                 </div>
             `;
             productsContainer.appendChild(newProductDiv);
-            
+
             // Show the remove button when there's more than one product
             if (productCount > 1) {
                 removeProductBtn.style.display = 'inline-block';
             }
         });
-    
+
         removeProductBtn.addEventListener('click', function() {
             if (productCount > 1) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
                 productCount--;
-    
+
                 // Hide the remove button when there's only one product left
                 if (productCount === 1) {
                     removeProductBtn.style.display = 'none';

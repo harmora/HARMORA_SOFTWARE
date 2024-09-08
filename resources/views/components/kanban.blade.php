@@ -26,7 +26,7 @@ $user = getAuthenticatedUser();
                     </a>
                     <ul class="dropdown-menu">
 
-                        <a href="{{ route('commandes.edit', $commande->id) }}" class="edit-commande">
+                        <a href="{{ route('commandes.edit', $commande->id) }}">
                             <li class="dropdown-item">
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
                             </li>
@@ -70,7 +70,6 @@ $user = getAuthenticatedUser();
                     </button>
                 </a>
                 @endif
-
             </div>
             <div>
                 <small class="badge bg-label-primary mb-1">Created At: {{ format_date($commande->start_date) }}</small>
