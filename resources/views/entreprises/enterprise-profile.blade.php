@@ -6,83 +6,115 @@
 
 @section('content')
 <style>
-    .card-half-blue-half-white {
-    background: linear-gradient(135deg, #228dd5 50%, #ffffff 50%);
-    color: #fff;
-    border: none;
-}
+    .card-gradient {
+        background: linear-gradient(135deg, #228dd5 50%, #ffffff 50%);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+    }
 
-.profile-pic {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border: 5px solid #fff;
-}
+    .card-gradient::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        right: -20px;
+        bottom: -20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        filter: blur(30px);
+        z-index: -1;
+    }
 
-.admin-dashboard-card {
-    background: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
+    .profile-pic-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 8px solid #fff;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        background: #228dd5;
+        transition: transform 0.4s ease;
+    }
 
-.admin-dashboard-card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
+    .profile-pic-container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
 
-.admin-dashboard-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+    .profile-pic {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-.admin-dashboard-description-container {
-    display: flex;
-    justify-content: center; /* Centers the content horizontally */
-    align-items: center; /* Centers the content vertically, if needed */
-    text-align: center; /* Centers the text within the paragraph */
-    width: 100%; /* Ensures the container takes the full width */
-}
+    .admin-dashboard-card {
+        width: 550px;
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
 
+    .admin-dashboard-card:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        transform: translateY(-10px);
+    }
 
-.admin-dashboard-description {
-    max-width: 400px; /* Adjust this value as needed */
-    width: 100%; /* Make sure the paragraph takes the full width of its container */
-    overflow-wrap: break-word; /* Break long words onto the next line if necessary */
-    white-space: pre-wrap; /* Preserve spaces and line breaks */
-}
+    .admin-dashboard-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #228dd5;
+    }
 
+    .admin-dashboard-description-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
 
-.input-container {
-    position: relative;
-}
+    .admin-dashboard-description {
+        max-width: 450px;
+        width: 100%;
+        color: #333;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+    }
 
-.input-icon {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    background-color: #228dd5; /* Blue accent color */
-    border-radius: 50%;
-}
+    .input-container {
+        position: relative;
+    }
 
-.input-with-icon {
-    padding-left: 30px; /* Adjust padding to make space for the icon */
-    border: 1px solid #228dd5; /* Blue border for inputs */
-    border-radius: 5px; /* Rounded corners */
-}
+    .input-icon {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background-color: #228dd5;
+        border-radius: 50%;
+    }
 
-.input-with-icon:focus {
-    border-color: #228dd5; /* Darker blue on focus */
-    box-shadow: 0 0 0 0.2rem rgba(221, 223, 226, 0.25); /* Blue shadow on focus */
-}
+    .input-with-icon {
+        padding-left: 30px;
+        border: 1px solid #228dd5;
+        border-radius: 5px;
+    }
 
-
+    .input-with-icon:focus {
+        border-color: #228dd5;
+        box-shadow: 0 0 0 0.2rem rgba(221, 223, 226, 0.25);
+    }
 </style>
+
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between mb-2 mt-4">
@@ -93,7 +125,7 @@
                         <a href="{{ url('/') }}">{{ get_label('dashboard', 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a  href="{{ route('enterprise.profile') }}">{{ get_label('enterprise_profile', 'Enterprise Profile') }}</a>
+                        <a href="{{ route('enterprise.profile') }}">{{ get_label('enterprise_profile', 'Enterprise Profile') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ auth()->user()->entreprise->denomination }}
@@ -105,24 +137,17 @@
 
     <div class="row mb-4">
         <div class="col-lg-12 col-md-12 col-12 mb-4">
-            <div class="card card-half-blue-half-white text-center">
-                <div class="card-body">
-
-
-                    <div class="admin-dashboard-card ">
-                        <a href="{{ route('enterprise.profile') }}" class="d-block mb-3">
-                            <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic rounded-circle shadow-lg">
-                        </a>
-                        <h2 class="admin-dashboard-title" style="color: #228dd5">{{auth()->user()->entreprise->denomination}}</h2>
-
+            <div class="card-gradient text-center">
+                <div class="card-body" style="display: flex; justify-content:center;">
+                    <div class="admin-dashboard-card">
+                        <div class="profile-pic-container">
+                            <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic">
+                        </div>
+                        <h2 class="admin-dashboard-title">{{auth()->user()->entreprise->denomination}}</h2>
                         <div class="admin-dashboard-description-container">
-
-                        <p class="admin-dashboard-description text-dark">{{auth()->user()->entreprise->address." - ".auth()->user()->entreprise->city}}</p>
+                            <p class="admin-dashboard-description">{{auth()->user()->entreprise->address." - ".auth()->user()->entreprise->city}}</p>
+                        </div>
                     </div>
-
-                    </div>
-
-
                 </div>
             </div>
         </div>
@@ -158,8 +183,6 @@
             </div>
         </div>
     </div>
-
-
 
 </div>
 @endsection
