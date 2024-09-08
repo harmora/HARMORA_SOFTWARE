@@ -80,7 +80,92 @@
         <x-empty-state-card :type="$type" />
         @endif
     </div>
+    
+<!-- Commande Details Modal -->
+<div class="modal fade mt-5" id="commandeModal" tabindex="-1" role="dialog" aria-labelledby="commandeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 class="modal-title text-info">{{ get_label('view_fournisseur', 'View Fournisseur') }}</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="typeachat" class="form-label">{{ get_label('type', 'Type') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="typeachat" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="supplier" class="form-label">{{ get_label('Supplier', 'supplier') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="supplier" class="form-control" readonly>
+                        </div>
+                    </div>
 
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="ref" class="form-label">{{ get_label('reference', 'ref') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="ref" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="amount" class="form-label">{{ get_label('amount', 'amount') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="amount" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="amount_ht" class="form-label">{{ get_label('amount_ht', 'amount HT') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="amount_ht" class="form-control" readonly></input>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="statuspayement" class="form-label">{{ get_label('Payment_Status', 'Payment Status') }}</label>
+                            <input style="background-color: #ffffff !important;" type="text" id="statuspayement" class="form-control" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modalElement = document.getElementById('commandeModal');
+    var modalBody = modalElement.querySelector('.modal-body');
+
+    // Event delegation for elements that open the modal (buttons or images)
+    document.addEventListener('click', function (event) {
+        var target = event.target.closest('[data-id]'); // Capture both button and image clicks
+
+        if (target) {
+            var id = target.dataset.id; // Get the ID from data-id attribute
+
+            if (id) {
+                // Construct the URL for fetching the data
+                var url = "{{ url('fournisseurs/getforaffiche') }}/" + id;
+
+                // Fetch the commande details from the server
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the modal fields
+                        modalBody.querySelector('#typeachat').value = data.id??'--';
+                        modalBody.querySelector('#supplier').value = data.name??'--';
+                        modalBody.querySelector('#ref').value = data.email??'--';
+                        modalBody.querySelector('#amount').value = data.phone??'--';
+                        modalBody.querySelector('#statuspayement').value = data.country??'--';
+                        modalBody.querySelector('#amount_ht').value = data.montant_ht??'--';
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        }
+    });
+});
+</script>
 
     <script>
         var label_update = '<?= get_label('update', 'Update') ?>';

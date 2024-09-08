@@ -104,7 +104,9 @@ background-repeat: no-repeat;
 
                         @if(auth()->user()->role->rolename === 'user')
                         <div class="admin-dashboard-card">
+                            <a href="{{ route('enterprise.profile') }}">
                             <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic">
+                        </a>
                             <h2 class="admin-dashboard-title">Welcome to Your Dashboard</h2>
                             <p class="admin-dashboard-description">Here you can manage your Entreprise, view statistics, and perform tasks.</p>
                          </div>
@@ -121,8 +123,8 @@ background-repeat: no-repeat;
 
 
                             <img src="{{asset("assets/img/logos/Logo.png")}}" alt="Profile Picture" class="profile-pic">
-                            <h2 class="admin-dashboard-title">Welcome to Your Admin Dashboard</h2>
-                            <p class="admin-dashboard-description">Here you can manage your site, view statistics, and perform administrative tasks.</p>
+                            <h2 class="admin-dashboard-title"><?= get_label('Welcome to Your Admin Dashboard', 'Welcome to Your Admin Dashboard') ?></h2>
+                            <p class="admin-dashboard-description"><?= get_label('Here you can manage your site, view statistics, and perform administrative tasks.', 'Here you can manage your site, view statistics, and perform administrative tasks.') ?></p>
                         </div>
 
                     @endif
@@ -143,11 +145,11 @@ background-repeat: no-repeat;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-briefcase-alt-2 bx-md text-success"></i>
+                                <i class="menu-icon tf-icons bx bx-pulse bx-md text-success"></i>
                             </div>
                         </div>
                         <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
-                        <h3 class="card-title mb-2">{{is_countable($projects) && count($projects) > 0?count($projects):0}}</h3>
+                        <h3 class="card-title mb-2">{{$ca}}</h3>
 
                         <a href="/{{getUserPreferences('projects', 'default_view')}}"><small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
 
@@ -159,28 +161,28 @@ background-repeat: no-repeat;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-task bx-md text-primary"></i>
+                                <i class="menu-icon tf-icons bx bx-package bx-md text-primary"></i>
                             </div>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_tasks', 'Total tasks') ?></span>
-                        <h3 class="card-title mb-2">{{$tasks}}</h3>
+                        <span class="fw-semibold d-block mb-1"><?= get_label('total_products', 'Total products') ?></span>
+                        <h3 class="card-title mb-2">{{is_countable($products) && count($products) > 0?count($products):0}}</h3>
 
                         <a href="/{{getUserPreferences('tasks', 'default_view')}}"><small class="text-primary fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
 
                     </div>
                 </div>
             </div>
-            @if (!isClient())
+
             <div class="col-lg-3 col-md-12 col-6 mb-4">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bxs-user-detail bx-md text-warning"></i>
+                                <i class="menu-icon tf-icons bx bx-shopping-bag  bx-md text-warning"></i>
                             </div>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_users', 'Total users') ?></span>
-                        <h3 class="card-title mb-2">{{is_countable($users) && count($users) > 0?count($users):0}}</h3>
+                        <span class="fw-semibold d-block mb-1"><?= get_label('total_orders', 'Total orders') ?></span>
+                        <h3 class="card-title mb-2">{{is_countable($commandes) && count($commandes) > 0?count($commandes):0}}</h3>
 
                         <a href="/users"><small class="text-warning fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
 
@@ -203,160 +205,412 @@ background-repeat: no-repeat;
                     </div>
                 </div>
             </div>
-            @else
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-shape-polygon text-success bx-md text-warning"></i>
-                            </div>
-                        </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_meetings', 'Total meetings') ?></span>
-                        <h3 class="card-title mb-2">{{is_countable($meetings) && count($meetings) > 0?count($meetings):0}}</h3>
 
-                        <a href="/meetings"><small class="text-warning fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-list-check bx-md text-info"></i>
-                            </div>
-                        </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_todos', 'Total todos') ?></span>
-                        <h3 class="card-title mb-2"> {{is_countable($total_todos) && count($total_todos) > 0?count($total_todos):0}}</h3>
-                        <a href="/todos"><small class="text-info fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
-                    </div>
-                </div>
-            </div>
-            @endif
+
+
+
+
+
         </div>
         <div class="row">
+            <!-- Left Column: Two Cards Stack -->
+            <div class="col-md-6 col-lg-4 col-xl-4 mb-4">
+                <div class="row">
+                    <!-- First Card -->
+                    <div class="col-12 col-yl-6 mb-4">
+                        <div class="card overflow-hidden mb-2 statisticsDivSmall">
+                            <div class="card-header pt-3 pb-1">
+                                <!-- First Chart Section -->
+                                <div class="card-title d-flex justify-content-between mb-0">
+                                    <h5 class="m-0 me-2"><?= get_label('ca / products categories', 'CA / Products categories') ?></h5>
+                                    <div>
+                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
+                                                <i class='bx bx-box'></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
 
-            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
-                <div class="card overflow-hidden mb-4 statisticsDiv">
-                    <div class="card-header pt-3 pb-1">
-                        <div class="card-title d-flex justify-content-between mb-0">
-                            <h5 class="m-0 me-2"><?= get_label('status des commandes', 'Status des commandes') ?></h5>
-                          <div>
-                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View COmmandes') ?>"><i class='bx bx-box'></i></a></span>
+                                <div class="d-flex justify-content-center">
+                                    <div id="caparcategorieproduit"></div>
+                                    <div id="no-data-produits" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
+
+                                </div>
+
+
 
                             </div>
+
                         </div>
-                        <div class="my-3 mt-5">
-                            <div id="caparcategorie"></div>
-                        </div>
-                        <div class="card-title d-flex justify-content-between mb-0">
+                    </div>
+
+                    <!-- Second Card -->
+                    <div class="col-12 col-yl-6 mb-4">
+                        <div class="card overflow-hidden mb-2 statisticsDivSmall">
+                            <div class="card-header pt-3 pb-1">
+                                <!-- Second Chart Section -->
+                                <div class="card-title d-flex justify-content-between mb-0">
+                                    <h5 class="m-0 me-2"><?= get_label('commandes status', 'Commandes status') ?></h5>
+                                    <div>
+                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
+                                                <i class='bx bx-box'></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex  justify-content-center">
+                                    <div id="caparcategorie"></div>
+                                    <div id="no-data-categories" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
+                                </div>
+
+
+                                </div>
 
 
                         </div>
                     </div>
+
+
                 </div>
             </div>
 
-
-
-
-            <div class="col-md-6 col-lg-4 col-xl-8 order-0 mb-4">
+            <!-- Right Column: Large Card -->
+            <div class="col-md-6 col-lg-8 col-xl-8 mb-4">
                 <div class="card overflow-hidden mb-4 statisticsDiv">
                     <div class="card-header pt-3 pb-1">
-                        <div class="card-title d-flex justify-content-between mb-0">
-                            <h5 class="m-0 me-2"><?= get_label('sales revenue', 'Sales revenue') ?></h5>
-                          <div>
-                                <span data-bs-toggle="modal" data-bs-target="#create_todo_modal"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>"><i class='bx bx-file'></i></a></span>
-                                <a href="/todos"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>"><i class="bx bx-user"></i></button></a>
-                            </div>
-                        </div>
-                        <div class="my-3">
-                            <div class="form-group">
-                                <label for="grouping">Group by:</label>
-                                <select id="grouping" class="form-control">
-                                    <option value="day">Day</option>
-                                    <option value="month" selected>Month</option>
-                                    <option value="year">Total</option>
-                                </select>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="yearSelect">Year:</label>
-                                <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}">
-                            </div>
 
-                            <div id="chart"></div>
-                        </div>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
 
-                    </div>
-                    <div class="card-body" id="todos-statistics">
-                        <ul class="p-0 m-0">
-                            @if (is_countable($todos) && count($todos) > 0)
+                                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ca" aria-controls="navs-top-ca" aria-selected="true">
+                                    <i class="menu-icon tf-icons  bx bx-pulse text-info"></i>  <?= get_label('general', 'General') ?>
+                                </button>
+                            </li>
+                            <li class="nav-item">
 
-                            @else
-                            <div class=" h-100 d-flex justify-content-center align-items-center">
-                                <div>
-                                    <?= get_label('factures not found', 'Factures not found!') ?>
+                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-client" aria-controls="navs-top-client" aria-selected="false">
+                                    <i class="menu-icon tf-icons bx bx-user text-warning"></i>  <?= get_label('client', 'Client') ?>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="navs-top-ca" role="tabpanel">
+                                <div class="card-title d-flex justify-content-between mb-4">
+                                    <h5 class="m-0 me-2"><?= get_label('sale revenue', 'Sale revenue') ?></h5>
+                                    <div>
+                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
+                                                <i class='bx bx-file'></i>
+                                            </a>
+                                        </span>
+                                        <a href="/todos">
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
+                                                <i class="bx bx-user"></i>
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="my-3">
+                                    <div class="form-group">
+                                        <label for="grouping"><?= get_label('Group by:', 'Group by:') ?></label>
+                                        <select id="grouping" class="form-control">
+                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" >
+                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
+                                        <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}" style="margin-bottom: 15px">
+                                    </div>
+
+                                    <div id="chart"></div>
                                 </div>
                             </div>
-                            @endif
-                        </ul>
+                            <div class="tab-pane fade" id="navs-top-client" role="tabpanel">
+
+
+                                <div class="card-title d-flex justify-content-between mb-4">
+                                    <h5 class="m-0 me-2"><?= get_label('Clients sale revenue', 'Clients Sale revenue') ?></h5>
+                                    <div>
+                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
+                                                <i class='bx bx-file'></i>
+                                            </a>
+                                        </span>
+                                        <a href="/todos">
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
+                                                <i class="bx bx-user"></i>
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+
+
+                                <div class="my-3">
+                                    <div class="form-group">
+                                        <label for="clientSelect"><?= get_label('Select Client:', 'Select Client:') ?></label>
+                                        <select id="clientSelect" class="form-control">
+                                            <!-- Options dynamically generated with Laravel -->
+                                            @foreach ($clients as $client)
+                                            <option value="{{ $client->id }}">
+                                                @if ($client->denomenation)
+                                                    {{ $client->denomenation . " - " }}
+                                                @endif
+                                                @if ($client->first_name)
+                                                    {{ $client->first_name }} {{ $client->last_name }}
+                                                @endif
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="clientGrouping"><?= get_label('Group by:', 'Group by:') ?></label>
+                                        <select id="clientGrouping" class="form-control">
+                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
+                                        <input type="number" id="clientYearSelect" class="form-control" value="{{ date('Y') }}" min="2000" max="{{ date('Y') }}" style="margin-bottom: 15px">
+                                    </div>
+
+
+                                    <div id="clientChart"></div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
+
+
+
                     </div>
+
                 </div>
             </div>
         </div>
+
     </div>
+
+</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let clientChart; // Declare chart variable for client-specific data
+
+            function fetchClientDataAndRenderChart(groupBy, year, clientId) {
+                fetch(`/client-chiffre-affaires?group_by=${groupBy}&year=${year}&client_id=${clientId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const periods = data.map(item => item.period);
+                        const totals = data.map(item => parseFloat(item.total));
+
+                        const options = {
+                            series: [{
+                                name: 'Chiffre d\'Affaires',
+                                type: 'area',
+                                data: totals
+                            }],
+                            chart: {
+                                height: 350,
+                                type: 'area',
+                            },
+                            stroke: {
+                                curve: 'smooth'
+                            },
+                            fill: {
+                                type: 'solid',
+                                opacity: 0.35
+                            },
+                            labels: periods,
+                            markers: {
+                                size: 0
+                            },
+                            yaxis: {
+                                title: {
+                                    text: 'Chiffre d\'Affaires',
+                                },
+                            },
+                            colors: ['#FFA500'],
+                            tooltip: {
+                                shared: true,
+                                intersect: false,
+                                y: {
+                                    formatter: function (y) {
+                                        if (typeof y !== "undefined") {
+                                            return y.toFixed(2) + " DH";
+                                        }
+                                        return y;
+                                    }
+                                }
+                            }
+                        };
+
+                        // Check if chart already exists, if so, destroy it
+                        if (clientChart) {
+                            clientChart.destroy();
+                        }
+
+                        // Create a new chart
+                        clientChart = new ApexCharts(document.querySelector("#clientChart"), options);
+                        clientChart.render();
+                    });
+            }
+
+            // Get current year
+            const currentYear = new Date().getFullYear();
+
+            // Initial load with default grouping by month, current year, and selected client
+            const initialClientId = document.getElementById('clientSelect').value;
+            fetchClientDataAndRenderChart('month', currentYear, initialClientId);
+
+            // Update chart when grouping, year, or client selection changes
+            document.getElementById('clientGrouping').addEventListener('change', function () {
+                const groupBy = this.value;
+                const year = document.getElementById('clientYearSelect').value;
+                const clientId = document.getElementById('clientSelect').value;
+                fetchClientDataAndRenderChart(groupBy, year, clientId);
+            });
+
+            document.getElementById('clientYearSelect').addEventListener('change', function () {
+                const year = this.value;
+                const groupBy = document.getElementById('clientGrouping').value;
+                const clientId = document.getElementById('clientSelect').value;
+                fetchClientDataAndRenderChart(groupBy, year, clientId);
+            });
+
+            document.getElementById('clientSelect').addEventListener('change', function () {
+                const clientId = this.value;
+                const groupBy = document.getElementById('clientGrouping').value;
+                const year = document.getElementById('clientYearSelect').value;
+                fetchClientDataAndRenderChart(groupBy, year, clientId);
+            });
+        });
+        </script>
+
 
 
 
 
     <script>
         $(document).ready(function() {
+            // First Chart for #caparcategorie
             $.ajax({
                 url: '/get-chiffre-affaire',
                 method: 'GET',
                 success: function(response) {
-                    // Extract categories and percentages
-                    var categories = response.map(function(item) {
-                        return item.categorie;
-                    });
+                    if (response.length === 0) {
+                        // Show 'no data' badge for categories
+                        $('#no-data-categories').removeClass('d-none');
+                    } else {
+                        // Extract categories and percentages
+                        var categories = response.map(function(item) {
+                            return item.categorie;
+                        });
 
-                    var percentages = response.map(function(item) {
-                        return item.percentage;
-                    });
+                        var percentages = response.map(function(item) {
+                            return item.percentage;
+                        });
 
-                    // Define the chart options
-                    var options = {
-                        series: percentages,
-                        chart: {
-                            type: 'donut',
-                        },
-                        labels: categories,
-                        responsive: [{
-                            breakpoint: 480,
-                            options: {
-                                chart: {
-                                    width: 200
-                                },
-                                legend: {
-                                    position: 'bottom'
+                        // Define the chart options
+                        var options = {
+                            series: percentages,
+                            labels: categories,
+                            chart: {
+                                type: 'donut',
+                                height: 270,
+                                width: 270,
+                            },
+                            responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                        width: 200
+                                    },
                                 }
+                            }],
+                            legend: {
+                                position: 'bottom'
                             }
-                        }]
-                    };
+                        };
 
-                    // Render the chart
-                    var chart = new ApexCharts(document.querySelector("#caparcategorie"), options);
-                    chart.render();
+                        // Render the chart in #caparcategorie
+                        var chart = new ApexCharts(document.querySelector("#caparcategorie"), options);
+                        chart.render();
+                    }
                 },
                 error: function(error) {
-                    console.log("Error fetching data:", error);
+                    console.log("Error fetching data for #caparcategorie:", error);
+                }
+            });
+
+            // Second Chart for #caparcategorieproduit
+            $.ajax({
+                url: '/get-chiffre-affaire-produits', // Adjust the URL for the second data source
+                method: 'GET',
+                success: function(response) {
+                    if (response.length === 0) {
+                        // Show 'no data' badge for products
+                        $('#no-data-produits').removeClass('d-none');
+                    } else {
+                        // Extract categories and percentages for products
+                        var productCategories = response.map(function(item) {
+                            return item.productCategorie;
+                        });
+
+                        var productPercentages = response.map(function(item) {
+                            return item.productPercentage;
+                        });
+
+                        // Define the chart options for #caparcategorieproduit
+                        var productOptions = {
+                            series: productPercentages,
+                            labels: productCategories,
+                            chart: {
+                                type: 'donut',
+                                height: 270,
+                                width: 270,
+                            },
+                            responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                        width: 200
+                                    },
+                                }
+                            }],
+                            legend: {
+                                position: 'bottom'
+                            }
+                        };
+
+                        // Render the chart in #caparcategorieproduit
+                        var productChart = new ApexCharts(document.querySelector("#caparcategorieproduit"), productOptions);
+                        productChart.render();
+                    }
+                },
+                error: function(error) {
+                    console.log("Error fetching data for #caparcategorieproduit:", error);
                 }
             });
         });
-        </script>
+    </script>
+
 
     <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -445,56 +699,9 @@ background-repeat: no-repeat;
 
 
 
-
-
-    <!-- ------------------------------------------- -->
-    <?php
-    $titles = [];
-    $project_counts = [];
-    $task_counts = [];
-    $bg_colors = [];
-    $total_projects = 0;
-    $total_tasks = 0;
-    $total_todos = count($todos);
-    $done_todos = 0;
-    $pending_todos = 0;
-    $todo_counts = [];
-    $ran = array(
-        '#63ed7a', '#ffa426', '#fc544b', '#6777ef', '#FF00FF', '#53ff1a', '#ff3300', '#0000ff', '#00ffff', '#99ff33', '#003366',
-        '#cc3300', '#ffcc00', '#ff9900', '#3333cc', '#ffff00', '#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#A6A6A6', '#FF99FF',
-        '#6699FF', '#666666', '#FF6600', '#9900CC', '#FF99CC', '#FFCC99', '#99CCFF', '#33CCCC', '#CCFFCC', '#99CC99', '#669999',
-        '#CCCCFF', '#6666FF', '#FF6666', '#99CCCC', '#993366', '#339966', '#99CC00', '#CC6666', '#660033', '#CC99CC', '#CC3300',
-        '#FFCCCC', '#6600CC', '#FFCC33', '#9933FF', '#33FF33', '#FFFF66', '#9933CC', '#3300FF', '#9999CC', '#0066FF', '#339900',
-        '#666633', '#330033', '#FF9999', '#66FF33', '#6600FF', '#FF0033', '#009999', '#CC0000', '#999999', '#CC0000', '#CCCC00',
-        '#00FF33', '#0066CC', '#66FF66', '#FF33FF', '#CC33CC', '#660099', '#663366', '#996666', '#6699CC', '#663399', '#9966CC',
-        '#66CC66', '#0099CC', '#339999', '#00CCCC', '#CCCC99', '#FF9966', '#99FF00', '#66FF99', '#336666', '#00FF66', '#3366CC',
-        '#CC00CC', '#00FF99', '#FF0000', '#00CCFF', '#000000', '#FFFFFF'
-    );
-
-    $titles = implode(",", $titles);
-    $bg_colors = implode(",", $bg_colors);
-
-    foreach ($todos as $todo) {
-        $todo->is_completed ? $done_todos += 1 : $pending_todos += 1;
-    }
-    array_push($todo_counts, $done_todos);
-    array_push($todo_counts, $pending_todos);
-    $todo_counts = implode(",", $todo_counts);
-    ?>
-</div>
-<script>
-    var labels = [<?= $titles ?>];
-    var bg_colors = [<?= $bg_colors ?>];
-    var total_todos = [<?= $total_todos ?>];
-    var todo_data = [<?= $todo_counts ?>];
-    //labels
-    var done = '<?= get_label('done', 'Done') ?>';
-    var pending = '<?= get_label('pending', 'Pending') ?>';
-    var total = '<?= get_label('total', 'Total') ?>';
-</script>
 <script src="{{asset('assets/js/apexcharts.js')}}"></script>
 <script src="{{asset('assets/js/pages/dashboard.js')}}"></script>
 @else
-<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span>You must <a href="/login">Log in</a> or <a href="/register">Register</a> to access {{$general_settings['company_title']}}!</span></div>
+<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span><?= get_label('You must', 'You must') ?> <a href="/login"><?= get_label('Log in', 'Log in') ?></a> <?= get_label('or', 'or') ?> <a href="/register"><?= get_label('Register', 'Register') ?></a> <?= get_label('to access', 'to access') ?> HARMORA !</span></div>
 @endauth
 @endsection

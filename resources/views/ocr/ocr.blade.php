@@ -22,15 +22,29 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <h1 class="text-center ocr-header text-primary">OCR</h1>
-            <p class="text-center ocr-lead text-dark">Upload an image to extract text using OCR.</p>
+            <div class="container py-2">
+                <!-- Title Section -->
+                <div class="text-center">
+                    <div class="text-center mb-1">
+                        <i class="bx bx-scan" style="font-size: 3rem; color: #ff9c23;"></i>
+                    </div>
+                  <h1 class="ocr-header display-4" style="color:#228dd5;">
+                    <?= get_label('OCR Text Extractor', 'OCR Text Extractor') ?>
+                  </h1>
+                  <p class="ocr-lead text-dark lead">
+                    <?= get_label('Upload an image to extract text using OCR technology.', 'Upload an image to extract text using OCR technology.') ?>
+                  </p>
+                </div>
+
+
+              </div>
 
             <!-- Language Selector -->
             <div class="mb-3">
-                <label for="ocrLanguageSelect" class="form-label">Select Language:</label>
+                <label for="ocrLanguageSelect" class="form-label"><?= get_label('Select Language:', 'Select Language:') ?></label>
                 <select id="ocrLanguageSelect" class="form-select">
                     <option value="eng">English</option>
-                    <option value="ara">Arabic</option>
+                    <option value="ara">عربي</option>
                     <option value="fra">French</option>
                 </select>
             </div>
@@ -38,7 +52,7 @@
             <input type="file" id="ocrFileInput" class="form-control mb-3 ocr-file-input" />
             <div id="ocrSpinnerContainer" class="ocr-spinner-container">
                 <div class="ocr-spinner"></div>
-                <div class="ocr-loading-message">Extracting text, please wait...</div>
+                <div class="ocr-loading-message"><?= get_label('Extracting text, please wait...', 'Extracting text, please wait...') ?></div>
             </div>
 
             <!-- Styled container for OCR result -->

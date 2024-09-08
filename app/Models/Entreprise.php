@@ -24,14 +24,31 @@ class Entreprise extends Model
     {
         return $this->hasMany(Fournisseur::class);
     }
+    public function document()
+    {
+        return $this->hasMany(Document::class);
+    }
     public function achat()
     {
         return $this->hasMany(Achat::class);
+    }
+    public function product()
+    {
+        return $this->hasMany(Product::class);
+    }
+    public function commande()
+    {
+        return $this->hasMany(Commande::class);
+    }
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
     }
     public function disponibility()
     {
         return $this->hasMany(Disponibility::class);
     }
+
     public function forme_juridique()
     {
         return $this->belongsTo(Forme_juridique::class);

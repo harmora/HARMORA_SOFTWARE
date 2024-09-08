@@ -50,14 +50,14 @@
                                     <table id="disponibilities" data-toggle="table" data-loading-template="loadingTemplate" data-url="/disponibilities/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                                         <thead>
                                             <tr>
-                                                <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">ID</th>
-                                                <th data-field="activity_name" data-visible="{{ (in_array('activity_name', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Activity Name</th>
-                                                <th data-field="details" data-visible="{{ (in_array('details', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Details</th>
-                                                <th data-field="start_date_time" data-visible="{{ (in_array('start_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Start Date Time</th>
-                                                <th data-field="end_date_time" data-visible="{{ (in_array('end_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">End Date Time</th>
-                                                <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">Created At</th>
-                                                <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true">Updated At</th>
-                                                <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">Actions</th>
+                                                <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('ID', 'ID') ?></th>
+                                                <th data-field="activity_name" data-visible="{{ (in_array('activity_name', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Activity Name', 'Activity Name') ?></th>
+                                                <th data-field="details" data-visible="{{ (in_array('details', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Details', 'Details') ?></th>
+                                                <th data-field="start_date_time" data-visible="{{ (in_array('start_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Start Date Time', 'Start Date Time') ?></th>
+                                                <th data-field="end_date_time" data-visible="{{ (in_array('end_date_time', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('End Date Time', 'End Date Time') ?></th>
+                                                <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('Created At', 'Created At') ?></th>
+                                                <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('Updated At', 'Updated At') ?></th>
+                                                <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Actions', 'Actions') ?></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -70,7 +70,12 @@
                     </div>
                     <div class="tab-pane fade" id="navs-top-upcoming-birthdays-calendar" role="tabpanel">
                         <!-- Content for the "Calendar" tab under "Upcoming birthdays" -->
-                        <div id="upcomingBirthdaysCalendar"></div>
+
+                        <?php
+                        $locale = get_label('langforcalendar', 'fr'); // Get the locale from your PHP function
+                        ?>
+
+                         <div id="upcomingBirthdaysCalendar" data-locale="<?= htmlspecialchars($locale, ENT_QUOTES, 'UTF-8') ?>"></div>
                     </div>
                 </div>
 
@@ -135,9 +140,11 @@
             </div>
         </div>
 
-        
+
 
     <script src="{{asset('assets/js/pages/disponibilities.js')}}"></script>
+
+
 
 
 

@@ -58,6 +58,7 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PackController;
+use App\Models\Entreprise;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -151,8 +152,15 @@ Route::middleware(['CheckInstallation'])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
 
+        Route::get('/client-chiffre-affaires', [HomeController::class, 'getClientChiffreAffaires']);
+
         Route::get('/chiffre-affaires', [HomeController::class, 'getChiffreAffaires']);
         Route::get('/get-chiffre-affaire', [HomeController::class, 'getChiffreAffaireParCategorie']);
+        Route::get('/get-chiffre-affaire-produits', [HomeController::class, 'getChiffreAffaireParCategorieProduit']);
+
+        Route::get('/enterprise-profile', [EntrepriseController::class, 'showmyprofile'])->name('enterprise.profile');
+
+
 
 
 
@@ -258,9 +266,10 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
-        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
-        Route::get('commandes/updatestatus/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
 
+
+        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
+        Route::get('commandes/devis/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
 
 
 
@@ -327,11 +336,14 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::put('fournisseurs/update/{id}', [FournisseurController::class,'update']);
         Route::get('fournisseurs/list', [FournisseurController::class,'list']);
         Route::delete('/fournisseurs/destroy/{id}', [FournisseurController::class, 'destroy']);
+        Route::get('/fournisseurs/getforaffiche/{id}', [FournisseurController::class, 'getfournisseur']);
+
+        //imports-------------------------------------------------------------
         Route::get('/import', [ImportController::class, 'showForm'])->name('import.form')->middleware('cleanup.temp');
         Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1')->middleware('cleanup.temp');
         Route::post('/import/step2', [ImportController::class, 'step2'])->name('import.step2')->middleware('cleanup.temp');
         Route::post('/import/save', [ImportController::class, 'save'])->name('import.save')->middleware('cleanup.temp');
-        
+
         // Route::get('/achats/{id}', [AchatController::class, 'show']);
 
         // //test excrl -------------------------------------------------------------------------------
@@ -383,7 +395,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         //Settings-------------------------------------------------------------
             Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);
 
-            Route::put("settings/languages/set-default", [LanguageController::class, 'set_default'])->middleware(['demo_restriction']);
+            Route::put("/settings/languages/set-default", [LanguageController::class, 'set_default']);
 
             Route::get('/settings/permission/create', [RolesController::class, 'create_permission']);
 

@@ -43,7 +43,7 @@ class ClientController extends Controller
     public function index()
     {
 
-        $clients = Client::all();
+        $clients = Client::where('entreprise_id', $this->user->entreprise_id)->get();
         return view('clients.clients', ['clients' => $clients]);
     }
 
@@ -175,10 +175,7 @@ class ClientController extends Controller
     {
         // $workspace = Workspace::find(session()->get('workspace_id'));
         $client = Client::findOrFail($id);
-
-        $users =User::all();
-        $clients = Client::all();
-        return view('clients.client_profile', ['client' => $client, 'users' => $users, 'clients' => $clients, 'auth_user' => getAuthenticatedUser()]);
+        return view('clients.client_profile', ['client' => $client]);
     }
 
     /**
@@ -370,13 +367,14 @@ class ClientController extends Controller
             $clients = $clients->where('internal_purpose', $internal_purpose);
         }
 
-        $totalclients = $clients->count();
+        $totalclients = $clients->where('.entreprise_id', $this->user->entreprise_id)->count();
 
         // $canEdit = checkPermission('edit_clients');
         // $canDelete = checkPermission('delete_clients');
 
         $clients = $clients->select('clients.*')
-            ->distinct()
+            ->leftJoin('entreprises', 'clients.entreprise_id', '=', 'entreprises.id')
+            ->where('clients.entreprise_id', $this->user->entreprise_id)
             ->orderBy($sort, $order)
             ->paginate(request('limit'))
             ->through(function ($client)  {

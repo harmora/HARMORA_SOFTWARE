@@ -22,6 +22,11 @@ class Meeting extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function entreprise()
+    {
+        return $this->belongsTo(Entreprise::class);
+    }
+
     public function clients()
     {
         return $this->belongsToMany(Client::class);

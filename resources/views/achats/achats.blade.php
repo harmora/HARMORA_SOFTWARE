@@ -320,33 +320,6 @@ $visibleColumns = getUserPreferences('Achats');
     });
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    function updateCounters() {
-        fetch('/commandes/counter')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('pending-count').innerText = data.pending;
-                document.getElementById('completed-count').innerText = data.completed;
-                document.getElementById('canceled-count').innerText = data.canceled;
-            })
-            .catch(error => console.error('Error fetching counter data:', error));
-    }
-
-    // Initial fetch to update counters
-    updateCounters();
-
-    // Add event listener to refresh counters on table refresh
-    const tableElement = document.getElementById('table');
-    tableElement.addEventListener('post-body.bs.table', function () {
-        updateCounters();
-    });
-});
-
-</script>
-
-
-
 
 <script>
     var label_update = '<?= get_label('update', 'Update') ?>';

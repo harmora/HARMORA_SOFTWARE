@@ -25,6 +25,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class EntrepriseController extends Controller
 {
@@ -254,4 +255,14 @@ $formattedHtml = '<div class="d-flex mt-2">' .
          ]);
      }
 
+
+     public function showmyprofile()
+     {
+         $user = Auth::user();
+         $entreprise = $user->entreprise; // Fetch enterprise details related to the authenticated user
+
+         return view('entreprises.enterprise-profile', compact('entreprise'));
+     }
+
  }
+

@@ -33,7 +33,7 @@ class DocsController extends Controller
 
 
         $visibleColumns = getUserPreferences('documents');
-        $documents = Document::all();
+        $documents = Document::where('entreprise_id', $this->user->entreprise_id)->get();
 
         return view('documents.documents',['documents' => $documents]);
     }
@@ -92,11 +92,16 @@ public function downloadZip($id)
 {
     $document = Document::findOrFail($id);       
     if ($document->type=="facture") {
-        return response()->download(storage_path('app/public/' . $document->facture));
+        if($document->origin=='achat')
+            return response()->download(storage_path('app/public/' . $document->facture));
+        else
+            return response()->download(storage_path('app/public/' . $document->facture));
     }
     if ($document->type=="devis") {
-        return response()->download(storage_path('app/public/' . $document->devis));
-
+        if($document->origin=='achat')
+            return response()->download(storage_path('app/public/' . $document->devis));
+        else
+            return response()->download(storage_path('app/public/' . $document->devis));
     }
 }
 
@@ -123,7 +128,6 @@ public function downloadZip($id)
                     ->orWhere('paid_amount', 'like', '%' . $search . '%')
                     ->orWhere('remaining_amount', 'like', '%' . $search . '%')
                     ;
-
             });
         }
         if ($document_type_filter !== '') {
@@ -133,10 +137,12 @@ public function downloadZip($id)
             $query->where('origin', $document_origin_filter);
         }
 
-        $totaldocuments = $query->count();
+        $totaldocuments = $query->where('documents.entreprise_id', $this->user->entreprise_id)->count();
     
         $documents = $query->select('documents.*')
-            ->orderBy($sort, $order)
+        ->leftJoin('entreprises', 'documents.entreprise_id', '=', 'entreprises.id')
+        ->where('.entreprise_id', $this->user->entreprise_id)
+        ->orderBy($sort, $order)
             ->paginate(request('limit'));
 
 

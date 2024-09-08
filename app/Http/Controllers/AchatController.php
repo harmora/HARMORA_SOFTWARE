@@ -30,22 +30,23 @@ class AchatController extends Controller
     }
     public function index()
     {
-        $fournisseurs = fournisseur::all();
-        $entreprises = Entreprise::all();
-        $formesjuridique= Forme_juridique::all();
-        $products = Product::all();
-        $achats = Achat::all();
+        // $fournisseurs = fournisseur::all();
+        // $entreprises = Entreprise::all();
+        // $formesjuridique= Forme_juridique::all();
+        // $products = Product::all();
+        // $achats = Achat::all();
+        $achats = Achat::where('entreprise_id', $this->user->entreprise_id)->get();
+        // dd($achats)
         // $visibleColumns = getUserPreferences('entreprises'); // Adjust this based on how you get user preferences
-        return view('achats.achats',['fournisseurs'=> $fournisseurs,'entreprises'=> $entreprises,'fomesJuridique'=> $formesjuridique,'products'=>$products,'achats'=>$achats]);
+        return view('achats.achats',['achats'=>$achats]);
     }
     public function create(Request $request)
     {
-        $entreprises = Entreprise::all();
-        $products = Product::all();
-        $fournisseurs = fournisseur::all();
+        // $entreprises = Entreprise::all();
+        $products = Product::where('entreprise_id', $this->user->entreprise_id)->get();
+        $fournisseurs = fournisseur::where('entreprise_id', $this->user->entreprise_id)->get();
         $categories = ProdCategory::all();
-
-        return view('achats.create_achats', ['entreprises' => $entreprises,'products'=>$products,'fournisseurs'=> $fournisseurs,'categories'=>$categories]);
+        return view('achats.create_achats', ['products'=>$products,'fournisseurs'=> $fournisseurs,'categories'=>$categories]);
     }
     public function store(Request $request)
     {
@@ -162,26 +163,26 @@ class AchatController extends Controller
                 $documentField['total_amount'] = $formFields['montant'];
                 $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
                 $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
-                $documentField['origin'] ='achat';         
+                $documentField['origin'] ='achat';   
+                $documentField['entreprise_id'] = $this->user->entreprise_id;      
                 Document::create($documentField);
             }
         }
         DB::commit();
-        Session::flash('message', 'Fournisseur created successfully.'.$formFields['type_achat']);
+        Session::flash('message', 'Fournisseur created successfully.');
     
         return response()->json(['error' => false, 'id' => $achat->id]);
     }
     public function edit($id)
 {
     $achat = Achat::with('products')->findOrFail($id);
-    $entreprises = Entreprise::all();
-    $products = Product::all();
-    $fournisseurs = Fournisseur::all();
+    // $entreprises = Entreprise::where('entreprise_id', $this->user->entreprise_id)->get();
+    $products = Product::where('entreprise_id', $this->user->entreprise_id)->get();
+    $fournisseurs = Fournisseur::where('entreprise_id', $this->user->entreprise_id)->get();
     $categories = ProdCategory::all();
 
     return view('achats.update_achats', [
         'achat' => $achat,
-        'entreprises' => $entreprises,
         'products' => $products,
         'fournisseurs' => $fournisseurs,
         'categories' => $categories
@@ -393,13 +394,14 @@ public function list()
     }
 
 
-    $totalachats = $query->count();
+    $totalachats = $query->where('achats.entreprise_id', $this->user->entreprise_id)->count();
 
     // $fournisseurs = $query->orderBy($sort, $order)
     //     ->paginate(request("limit"));
     $achats = $query->select('achats.*')
     ->leftJoin('entreprises', 'achats.entreprise_id', '=', 'entreprises.id')
     ->leftJoin('fournisseurs', 'achats.fournisseur_id', '=', 'fournisseurs.id')
+    ->where('achats.entreprise_id', $this->user->entreprise_id)
     ->orderBy($sort, $order)
     ->paginate(request('limit'));
 

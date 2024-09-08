@@ -28,8 +28,8 @@ class MeetingsController extends Controller
     {
         // $meetings = isAdminOrHasAllDataAccess() ? $this->workspace->meetings : $this->user->meetings;
         $meetings =  $this->user->meetings;
-        $users = User::all();
-        $clients = Client::all();
+        $users = $this->user->entreprise->user;
+        $clients = $this->user->entreprise->client;
 
         return view('meetings.meetings', compact('meetings', 'users', 'clients'));
     }
@@ -43,7 +43,7 @@ class MeetingsController extends Controller
             'start_time' => ['required'],
             'end_time' => ['required'],
         ]);
-        
+
         $start_date = $request->input('start_date');
         $start_time = $request->input('start_time');
         $end_date = $request->input('end_date');
@@ -53,6 +53,7 @@ class MeetingsController extends Controller
         $formFields['end_date_time'] = format_date($end_date, false, app('php_date_format'), 'Y-m-d', false) . ' ' . $end_time;
 
         $formFields['user_id'] =  $this->user->id;
+        $formFields['entreprise_id'] =  $this->user->entreprise->id;
 
         $formFields['created_by'] =  $this->user->id;
 
@@ -113,7 +114,7 @@ class MeetingsController extends Controller
         $end_date_from = (request('end_date_from')) ? request('end_date_from') : "";
         $end_date_to = (request('end_date_to')) ? request('end_date_to') : "";
 
-        $meetings =  $this->user->meetings();
+        $meetings =  $this->user->entreprise->meetings();
 
         if ($search) {
             $meetings = $meetings->where(function ($query) use ($search) {

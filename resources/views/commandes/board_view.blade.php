@@ -123,9 +123,12 @@
             </nav>
         </div>
 
-        
         <div>
-            <a href="{{url('/commandes/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_commande', 'Add Commande') ?>"><i class='bx bx-plus'></i></button></a>
+            <a href="{{url('/commandes/create')}}">
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_commande', 'Add Commande') ?>">
+                    <i class='bx bx-plus'></i>
+                </button>
+            </a>
 
             <a href="{{url('/commandes')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="<?= get_label('list', 'list') ?>">
@@ -137,33 +140,30 @@
 
     @if ($total_commandes > 0)
     <div class="alert alert-primary alert-dismissible" role="alert">
-        Once the Commande is validated, you can get its facture.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <?= get_label('commande_validation_notice', 'Once the Commande is validated, you can get its facture.') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="<?= get_label('close', 'Close') ?>"></button>
     </div>
 
     <div class="d-flex card flex-row" style="overflow-x: scroll; overflow-y: hidden;">
         @foreach(['pending', 'completed', 'cancelled'] as $status)
             <div class="my-4 mx-2" style="min-width: 390px; max-width: 390px;">
-
                 <h4 class="fw-bold mx-4 my-2">
                 @if ($status === 'pending')
-                <i class="menu-icon tf-icons bx bx-hourglass bx-md text-warning"></i>
+                    <i class="menu-icon tf-icons bx bx-hourglass bx-md text-warning"></i>
                 @elseif ($status === 'cancelled')
-               <i class="menu-icon tf-icons bx bx-x-circle bx-md text-danger"></i>
-               @elseif ($status === 'completed')
-                <i class="menu-icon tf-icons bx bx-check-circle bx-md text-success"></i>
+                    <i class="menu-icon tf-icons bx bx-x-circle bx-md text-danger"></i>
+                @elseif ($status === 'completed')
+                    <i class="menu-icon tf-icons bx bx-check-circle bx-md text-success"></i>
                 @endif
-               {{ ucfirst($status) }}</h4>
-
+                <?= get_label("status_{$status}", ucfirst($status)) ?>
+                </h4>
 
                 <div class="row m-2 d-flex flex-column" id="{{ $status }}" style="height: 100%" data-status="{{ $status }}">
                     @forelse ($commandesByStatus[$status] ?? [] as $commande)
                         <x-kanban :commande="$commande" />
                     @empty
-
-
                         <div class="alert alert-secondary" role="alert">
-                            <p>No commandes in this status.</p>
+                            <?= get_label('no_commandes_status', 'No commandes in this status.') ?>
                         </div>
                     @endforelse
                 </div>
@@ -172,11 +172,9 @@
     </div>
 
     @else
-        <x-empty-state-card type="Commandes" />
+        <x-empty-state-card type="commandes" />
     @endif
 </div>
-
-
 
 <!-- Commande Details Modal -->
 <div class="modal fade" id="commandeModal" tabindex="-1" role="dialog" aria-labelledby="commandeModalLabel" aria-hidden="true">
@@ -184,123 +182,106 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h5 class="modal-title text-info">{{ get_label('view_commande', 'View Commande') }}</h5>
-
+                    <h5 class="modal-title text-info"><?= get_label('view_commande', 'View Commande') ?></h5>
                 </div>
 
-
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= get_label('close', 'Close') ?>"></button>
             </div>
             <div class="modal-body">
                 <div id="loading-spinner" class="text-center" style="display: none;">
                     <div class="text-center">
-
                         <div class="spinner-grow text-warning" role="status">
-                            <span class="sr-only">Loading...</span>
-                          </div>
-                          <div class="spinner-grow text-success" role="status">
-                            <span class="sr-only">Loading...</span>
-                          </div>
-                          <div class="spinner-grow text-danger" role="status">
-                            <span class="sr-only">Loading...</span>
-                          </div>
-
+                            <span class="sr-only"><?= get_label('loading', 'Loading') ?>...</span>
+                        </div>
+                        <div class="spinner-grow text-success" role="status">
+                            <span class="sr-only"><?= get_label('loading', 'Loading') ?>...</span>
+                        </div>
+                        <div class="spinner-grow text-danger" role="status">
+                            <span class="sr-only"><?= get_label('loading', 'Loading') ?>...</span>
+                        </div>
                     </div>
-
-                    <small class="badge bg-label-dark">loading ...</small>
-
+                    <small class="badge bg-label-dark"><?= get_label('loading', 'loading') ?>...</small>
                 </div>
 
                 <form>
-
-
-
                     <div class="row">
-
-
                         <div class="progress-container">
                             <ul class="progressbar">
-                                <li class="pending active">Pending</li>
-                                <li class="completed">Completed</li>
-                                <li class="cancelled">Cancelled</li>
+                                <li class="pending active"><?= get_label('pending', 'Pending') ?></li>
+                                <li class="completed"><?= get_label('completed', 'Completed') ?></li>
+                                <li class="cancelled"><?= get_label('cancelled', 'Cancelled') ?></li>
                             </ul>
                         </div>
-
-
-
-
                     </div>
-
 
                     <div class="row mb-3">
                         <div id="commande-status" style="display: flex; justify-content: center;">
-                            <!-- Your content here -->
+                            <!-- Status content -->
                         </div>
                     </div>
 
-
                     <div class="row">
                         <div class="mb-3 col-md-6">
-                            <label for="id" class="form-label">{{ get_label('id', 'ID') }}</label>
+                            <label for="id" class="form-label"><?= get_label('id', 'ID') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="id" class="form-control" readonly>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="title" class="form-label">{{ get_label('title', 'Title') }}</label>
+                            <label for="title" class="form-label"><?= get_label('title', 'Title') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="title" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-3">
-                            <label for="description" class="form-label">{{ get_label('description', 'Description') }}</label>
+                            <label for="description" class="form-label"><?= get_label('description', 'Description') ?></label>
                             <textarea style="background-color: #ffffff !important;" id="description" class="form-control" rows="3" readonly></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-6">
-                            <label for="start_date" class="form-label">{{ get_label('start_date', 'Start Date') }}</label>
+                            <label for="start_date" class="form-label"><?= get_label('start_date', 'Start Date') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="starting_date" class="form-control" readonly>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="due_date" class="form-label">{{ get_label('due_date', 'Due Date') }}</label>
+                            <label for="due_date" class="form-label"><?= get_label('due_date', 'Due Date') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="dueing_date" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-6">
-                            <label for="total_amount" class="form-label text-danger">{{ get_label('total_amount', 'Total Amount') }}</label>
+                            <label for="total_amount" class="form-label text-danger"><?= get_label('total_amount', 'Total Amount') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="total_amount" class="form-control" readonly>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="status" class="form-label">{{ get_label('commande status', 'Commande Status') }}</label>
+                            <label for="status" class="form-label"><?= get_label('commande_status', 'Commande Status') ?></label>
                             <input style="background-color: #ffffff !important;" type="text" id="status" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-6">
-                            <label for="client" class="form-label">{{ get_label('client', 'Client') }}</label>
+                            <label for="client" class="form-label"><?= get_label('client', 'Client') ?></label>
                             <div id="client" class="form-control" style="background-color: #ffffff !important; padding: 10px;" readonly>
-                                <!-- Client info will be populated here -->
+                                <!-- Client info -->
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="added_by" class="form-label">{{ get_label('added_by', 'Added By') }}</label>
+                            <label for="added_by" class="form-label"><?= get_label('added_by', 'Added By') ?></label>
                             <div id="added_by" class="form-control" style="background-color: #ffffff !important; padding: 10px;" readonly>
-                                <!-- Added by info will be populated here -->
+                                <!-- Added by info -->
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-12">
-                            <label for="products" class="form-label">{{ get_label('products', 'Products') }}</label>
+                            <label for="products" class="form-label"><?= get_label('products', 'Products') ?></label>
                             <div id="products" class="row">
-                                <!-- Product entries will be populated here -->
+                                <!-- Product entries -->
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= get_label('close', 'Close') ?></button>
             </div>
         </div>
     </div>
@@ -368,14 +349,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (data.status === 'pending') {
                             statusContainer.innerHTML =
     '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')">Validate Commande</button></a>' +
-    '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')">Cancel Commande</button></a>';
+    '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')"><?= get_label('Cancel Commande', 'Cancel Commande') ?></button></a>';
 
             } else if (data.status === 'cancelled') {
                             statusContainer.innerHTML =
-                                '<div class="badge bg-label-danger">This commande was canceled</div>';
+                                '<div class="badge bg-label-danger"><?= get_label('This commande was canceled', 'This commande was canceled') ?></div>';
                         } else if (data.status === 'completed') {
                             statusContainer.innerHTML =
-                                '<div class="badge bg-label-success">This commande was completed</div>';
+                                '<div class="badge bg-label-success"><?= get_label('This commande was completed', 'This commande was completed') ?></div>';
                         }
 
                         const steps = document.querySelectorAll('.progressbar li');

@@ -20,7 +20,7 @@ return new class extends Migration
             // Define foreign key constraints
             $table->foreign('commande_id')->references('id')->on('commandes')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->unique(['commande_id', 'product_id']); // Ensure that each product in a commande is unique
+            $table->unique(['commande_id', 'product_id']);
         });
     }
 

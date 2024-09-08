@@ -508,8 +508,12 @@
 }
 
 .statisticsDiv {
-    height: 600px;
+    height: 700px;
 }
+.statisticsDivSmall {
+    height: 333px;
+}
+
 
 #confirmSaveColumnVisibility,
 #edit_project_modal,

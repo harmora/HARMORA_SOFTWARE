@@ -30,6 +30,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         <div class="card-body">
             <form action="{{ route('commandes.update', $commande->id) }}" method="POST" class="form-submit-event">
                 @csrf
+                <input type="hidden" name="redirect_url" value="/commandes">
                 @method('PUT')
                 <div class="row">
                     <!-- Title -->
@@ -49,23 +50,8 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             @endforeach
                         </select>
                     </div>
-                    <!-- User Selection -->
-                    <div class="mb-3 col-md-6">
-                        <label for="user_id" class="form-label">{{ get_label('select_user', 'Select User') }} <span class="asterisk">*</span></label>
-                        <select class="form-select" name="user_id">
-                            <option value="">{{ get_label('select_user', 'Select User') }}</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ old('user_id', $commande->user_id) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->first_name }} {{ $user->last_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <!-- Status -->
-                    <div class="mb-3 col-md-6">
-                        <label for="status" class="form-label">{{ get_label('status', 'Status') }} <span class="asterisk">*</span></label>
-                        <input type="text" name="status" class="form-control" value="{{ old('status', $commande->status) }}" required>
-                    </div>
+
+
                     <!-- Start Date -->
                     <div class="mb-3 col-md-6">
                         <label for="start_date" class="form-label">{{ get_label('start_date', 'Start Date') }} <span class="asterisk">*</span></label>
@@ -91,7 +77,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                                         @endforeach
                                     </select>
                                     <input type="number" name="products[{{ $loop->index }}][quantity]" class="form-control" value="{{ $product->pivot->quantity }}" required>
-                                    <input type="number" name="products[{{ $loop->index }}][price]" class="form-control" value="{{ $product->pivot->price }}" required>
+
                                 </div>
                             @endforeach
                         </div>
@@ -105,7 +91,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 </div>
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">{{ get_label('update_commande', 'Update Commande') }}</button>
-                </div> 
+                </div>
             </form>
         </div>
     </div>
@@ -115,7 +101,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         // Reference to the container that holds product fields
         const productFieldsContainer = document.getElementById('product-fields');
         const addProductButton = document.getElementById('add-product');
-    
+
         // Function to create a new product field
         function createProductField(index) {
             const productFieldHTML = `
@@ -135,10 +121,6 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                             <label for="products[${index}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
                             <input type="number" name="products[${index}][quantity]" class="form-control" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>" required>
                         </div>
-                        <div class="col-md-4">
-                            <label for="products[${index}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
-                            <input type="number" name="products[${index}][price]" class="form-control" placeholder="<?= get_label('enter_price', 'Enter Price') ?>" step="0.01" required>
-                        </div>
                     </div>
                     <button type="button" class="btn btn-danger mt-2 remove-product"><?= get_label('remove', 'Remove') ?></button>
                 </div>
@@ -146,20 +128,20 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
             const wrapper = document.createElement('div');
             wrapper.innerHTML = productFieldHTML;
             productFieldsContainer.appendChild(wrapper);
-    
+
             // Add event listener to the remove button
             const removeButton = wrapper.querySelector('.remove-product');
             removeButton.addEventListener('click', function () {
                 wrapper.remove();
             });
         }
-    
+
         // Attach click event to "Add Another Product" button
         addProductButton.addEventListener('click', function () {
             const index = productFieldsContainer.querySelectorAll('.product-entry').length;
             createProductField(index);
         });
-    
+
         // Attach remove functionality to existing product fields
         productFieldsContainer.querySelectorAll('.remove-product').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -168,5 +150,5 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         });
     });
     </script>
-        
+
 @endsection

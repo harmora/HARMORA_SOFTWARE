@@ -26,7 +26,7 @@ $user = getAuthenticatedUser();
                     </a>
                     <ul class="dropdown-menu">
 
-                        <a href="{{ route('commandes.edit', $commande->id) }}" class="edit-commande">
+                        <a href="{{ route('commandes.edit', $commande->id) }}">
                             <li class="dropdown-item">
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
                             </li>
@@ -47,7 +47,7 @@ $user = getAuthenticatedUser();
         <div class="card-subtitle text-muted mb-3">{{ $commande->description }}</div>
         <div class="row mt-2">
             <div class="col-md-12">
-                <div class="card-subtitle  mb-3"><span class="text-danger">Total Amount : </span>  {{ $commande->total_amount }}</div>
+                <div class="card-subtitle  mb-3"><span class="text-danger"> <?= get_label('Total Amount :', 'Total Amount :') ?> </span>  {{ $commande->total_amount }}</div>
             </div>
             <div class="col-md-12">
 
@@ -70,17 +70,16 @@ $user = getAuthenticatedUser();
                     </button>
                 </a>
                 @endif
-
             </div>
             <div>
-                <small class="badge bg-label-primary mb-1">Created At: {{ format_date($commande->start_date) }}</small>
+                <small class="badge bg-label-primary mb-1"> <?= get_label('Created At:', 'Created At:') ?> {{ format_date($commande->start_date) }}</small>
 
                 @if ($commande->status == "completed")
-              <small class="badge bg-label-dark">validated At: {{ format_date($commande->due_date) }}</small>
+              <small class="badge bg-label-dark"> <?= get_label('validated At:', 'validated At:') ?>{{ format_date($commande->due_date) }}</small>
                 @endif
 
                 @if ($commande->status == "cancelled")
-                <small class="badge bg-label-danger">Canceled At: {{ format_date($commande->due_date) }}</small>
+                <small class="badge bg-label-danger"> <?= get_label('Canceled At:', 'Canceled At:') ?> {{ format_date($commande->due_date) }}</small>
                   @endif
 
 
@@ -93,7 +92,7 @@ $user = getAuthenticatedUser();
                         data-id="{{ $commande->id }}"
                         data-bs-toggle="tooltip"
                         data-bs-placement="left"
-                        title="{{ __('View Details') }}">
+                        title=" <?= get_label('View Details', 'View Details') ?>">
                         <i class="bx bx-expand"></i>
                     </button>
                 </a>
@@ -110,7 +109,7 @@ $user = getAuthenticatedUser();
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h1 class="modal-title text-primary" id="devisModalLabel-{{ $commande->id }}">Devis</h1>
+                    <h1 class="modal-title text-primary" id="devisModalLabel-{{ $commande->id }}"> <?= get_label('Devis', 'Devis') ?>Devis</h1>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -124,14 +123,14 @@ $user = getAuthenticatedUser();
 
                 <div class="row">
                     <div class="col-md-12" >
-                        <labe ><strong>Title:</strong></label>
+                        <labe ><strong> <?= get_label('Title:', 'Title:') ?></strong></label>
                         <span >{{ $commande->title }}</span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label ><strong>Description:</strong></label>
+                        <label ><strong><?= get_label('Description:', 'Description:') ?></strong></label>
                         <span >{{ $commande->description }}</span>
                     </div>
                 </div>
@@ -139,7 +138,7 @@ $user = getAuthenticatedUser();
                 @if ($commande->client->first_name)
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label ><strong>Client:</strong></label>
+                        <label ><strong><?= get_label('Client:', 'Client:') ?></strong></label>
                         <span >{{ $commande->client->first_name .' '.$commande->client->last_name }}</span>
                     </div>
                 </div>
@@ -148,7 +147,7 @@ $user = getAuthenticatedUser();
 
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <h6>Products:</h6>
+                        <h6><?= get_label('Products:', 'Products:') ?></h6>
                         <ul class="list-group">
                             @foreach ($commande->products as $product)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -159,20 +158,20 @@ $user = getAuthenticatedUser();
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span >---</span>
                                 {{-- TVA --}}
-                                <span> <span class="text-danger mr-2">Total HT : </span>    {{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }}  MAD</span>
+                                <span> <span class="text-danger mr-2"><?= get_label('Total HT :', 'Total HT :') ?> </span>    {{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }}  MAD</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span >--- <b> TVA :</b>{{ $commande->tva }}%</span>
+                                <span >--- <b> <?= get_label('TVA :', 'TVA :') ?></b>{{ $commande->tva }}%</span>
                                 {{-- TVA --}}
-                                <span> <span class="text-danger mr-2">total TTC : </span>{{ $commande->total_amount }} MAD</span>
+                                <span> <span class="text-danger mr-2"><?= get_label('total TTC :', 'total TTC :') ?> </span>{{ $commande->total_amount }} MAD</span>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-danger" id="generatePdfButton-{{ $commande->id }}"> Creer Devis [PDF]</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="generatePdfButton-{{ $commande->id }}"> <?= get_label('Creer Devis [PDF]', 'Creer Devis [PDF]') ?></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= get_label('Close', 'Close') ?></button>
             </div>
         </div>
     </div>
@@ -187,7 +186,7 @@ $user = getAuthenticatedUser();
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h1 class="modal-title text-primary" id="factureModalLabel-{{ $commande->id }}">Facture</h1>
+                    <h1 class="modal-title text-primary" id="factureModalLabel-{{ $commande->id }}"><?= get_label('Facture', 'Facture') ?></h1>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -201,14 +200,14 @@ $user = getAuthenticatedUser();
 
                 <div class="row">
                     <div class="col-md-12">
-                        <label><strong>Title:</strong></label>
+                        <label><strong><?= get_label('Title:', 'Title:') ?></strong></label>
                         <span>{{ $commande->title }}</span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label><strong>Description:</strong></label>
+                        <label><strong><?= get_label('Description:', 'Description:') ?></strong></label>
                         <span>{{ $commande->description }}</span>
                     </div>
                 </div>
@@ -217,17 +216,17 @@ $user = getAuthenticatedUser();
                 <div class="row mb-3">
                     <div class="col-md-12">
                         @if ($commande->client->first_name)
-                        <label><strong>Client:</strong></label>
+                        <label><strong><?= get_label('Client:', 'Client:') ?></strong></label>
                         <span>{{ $commande->client->first_name . ' ' . $commande->client->last_name }}</span><br>
                         @endif
 
                         @if ($commande->client->denomenation)
-                        <label><strong>Denomination:</strong></label>
+                        <label><strong><?= get_label('Denomination:', 'Denomination:') ?></strong></label>
                         <span>{{ $commande->client->denomenation }}</span><br>
                         @endif
-                        <label><strong>Email:</strong></label>
+                        <label><strong><?= get_label('Email:', 'Email:') ?></strong></label>
                         <span>{{ $commande->client->email }}</span><br>
-                        <label><strong>Phone:</strong></label>
+                        <label><strong><?= get_label('Phone:', 'Phone:') ?></strong></label>
                         <span>{{ $commande->client->phone }}</span><br>
 
                     </div>
@@ -237,7 +236,7 @@ $user = getAuthenticatedUser();
 
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <h6>Products:</h6>
+                        <h6><?= get_label('Products:', 'Products:') ?></h6>
                         <ul class="list-group">
                             @foreach ($commande->products as $product)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -247,19 +246,19 @@ $user = getAuthenticatedUser();
                             @endforeach
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span >---</span>
-                                <span><span class="text-danger mr-2">Total HT:</span>{{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }} MAD</span>
+                                <span><span class="text-danger mr-2"><?= get_label('Total HT:', 'Total HT:') ?></span>{{ number_format($commande->total_amount / (1 + $commande->tva / 100), 2) }} MAD</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>--- <b>TVA:</b> {{ $commande->tva }}%</span>
-                                <span><span class="text-danger mr-2">Total TTC:</span>{{ $commande->total_amount }} MAD</span>
+                                <span>--- <b><?= get_label('TVA', 'TVA') ?>:</b> {{ $commande->tva }}%</span>
+                                <span><span class="text-danger mr-2"><?= get_label('Total TTC:', 'Total TTC:') ?></span>{{ $commande->total_amount }} MAD</span>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-danger" id="generatefactureButton-{{ $commande->id }}">Creer Facture [PDF]</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="generatefactureButton-{{ $commande->id }}"><?= get_label('Creer Facture [PDF]', 'Creer Facture [PDF]') ?></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= get_label('Close', 'Close') ?></button>
             </div>
         </div>
     </div>
