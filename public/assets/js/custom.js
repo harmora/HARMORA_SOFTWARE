@@ -1,4 +1,7 @@
 'use strict';
+
+
+
 $(document).on('click', '.delete', function (e) {
     e.preventDefault();
     var id = $(this).data('id');
@@ -15,6 +18,7 @@ $(document).on('click', '.delete', function (e) {
     $('#deleteModal').modal('show'); // show the confirmation modal
     $('#deleteModal').off('click', '#confirmDelete');
     $('#deleteModal').on('click', '#confirmDelete', function (e) {
+
         $('#confirmDelete').html(label_please_wait).attr('disabled', true);
         $.ajax({
             url: '/' + type + '/' + destroy + '/' + id,
@@ -451,6 +455,8 @@ $(document).on('click', '#set-as-default', function (e) {
     var lang = $(this).data('lang');
     $('#default_language_modal').modal('show'); // show the confirmation modal
     $('#default_language_modal').on('click', '#confirm', function () {
+
+
         $('#default_language_modal').find('#confirm').html(label_please_wait).attr('disabled', true);
         $.ajax({
             url: '/settings/languages/set-default',
@@ -2406,45 +2412,64 @@ $(document).ready(function () {
 });
 
 
+function getLocalizedText(locale) {
+    // Define your localization strings here
+    const translations = {
+        en: {
+            today: 'Today',
+            month: 'Month',
+            day: 'Day',
+            week: 'Week',
+            list: 'List'
+        },
+        fr: {
+            today: 'Aujourd\'hui',
+            month: 'Mois',
+            day: 'Jour',
+            week: 'Semaine',
+            list: 'Liste'
+        },
+        ar: {
+            today: 'اليوم',
+            month: 'شهر',
+            day: 'يوم',
+            week: 'أسبوع',
+            list: 'قائمة'
+        }
+        // Add more languages here
+    };
+
+    // Default to English if locale is not found
+    return translations[locale] || translations.en;
+}
+
 
 function initializeUpcomingBDCalendar() {
     var upcomingBDCalendar = document.getElementById('upcomingBirthdaysCalendar');
 
     if (upcomingBDCalendar) {
+
+        var locale = upcomingBDCalendar.getAttribute('data-locale');
+        var localizedText = getLocalizedText(locale);
+
         var BDcalendar = new FullCalendar.Calendar(upcomingBDCalendar, {
 
             plugins: [
                 'dayGrid', 'timeGrid', 'list', 'interaction',
             ],
 
+            locale: locale,
             header: {
                 left: 'dayGridMonth,dayGridWeek,timeGridDay',
                 center: 'title',
                 right: 'prev,next today'
             },
-            editable: true,
+
+          buttonText: localizedText,
+
             nowIndicator: true,
 
-            // // Uncommented the buttonText for localization
-            // buttonText: {
-            //     today: 'Aujourd\'hui',
-            //     month: 'Mois',
-            //     day: 'Jour',
-            //     week: 'Semaine',
-            //     list: 'Liste',
-            // },
 
-            // views: {
-            //     dayGridMonth: {
-            //         buttonText: 'Month'
-            //     },
-            //     dayGridWeek: {
-            //         buttonText: 'Week'
-            //     },
-            //     timeGridDay: {
-            //         buttonText: 'Day'
-            //     }
-            // },
 
 
             events: function (fetchInfo, successCallback, failureCallback) {
@@ -2533,7 +2558,7 @@ function initializeUpcomingBDCalendar() {
 
                 }
                 else{
-                    alert("sss");
+                    alert("failed");
                 }
             }
         });
@@ -3028,7 +3053,7 @@ $(document).ready(function () {
         var stockNameField    = $('#stock_name_field');
         var addProductBtn     = $('#add_product_btn');
         var addSupplierBtn    = $('#add_supplier_btn');
-        
+
         if (selectedType === 'Matériel/Produits') {
             productsNameField.show();
             productNameField.show();
@@ -3059,13 +3084,13 @@ $(document).ready(function () {
         else{
             montant_paye.hide();
             montant_restant.hide();
-        }  
+        }
     }
 
     // Attach the change event handler
     $('#type_achat').change(toggleProductNameField);
     $('#status_payement').change(toggleStatusNameField);
-    
+
     $('#add_product_btn').click(function() {
         $('#createProductModal').modal('show');
     });

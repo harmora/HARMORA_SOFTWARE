@@ -54,7 +54,9 @@
     <!-- Layout wrapper -->
     @if (Request::is('forgot-password') || Request::is('/') || Request::segment(1)=='reset-password' || Request::is('install') || Request::is('signup'))
     @yield('content')
+
     @include('labels')
+
     @else
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -66,8 +68,11 @@
                 @include('partials._navbar')
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
+                    
                     @include('labels')
+
                     @yield('content')
+
                     @if(!isset($unauthorized))
                     @include('modals')
                     @endif

@@ -395,7 +395,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         //Settings-------------------------------------------------------------
             Route::get("settings/languages/switch/{code}", [LanguageController::class, 'switch']);
 
-            Route::put("settings/languages/set-default", [LanguageController::class, 'set_default'])->middleware(['demo_restriction']);
+            Route::put("/settings/languages/set-default", [LanguageController::class, 'set_default']);
 
             Route::get('/settings/permission/create', [RolesController::class, 'create_permission']);
 

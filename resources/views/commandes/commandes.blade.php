@@ -256,18 +256,18 @@ $visibleColumns = getUserPreferences('commandes');
                     <div class="text-center">
 
                         <div class="spinner-grow text-warning" role="status">
-                            <span class="sr-only">Loading...</span>
+                            <span class="sr-only"><?= get_label('loading ...', 'loading ...') ?></span>
                           </div>
                           <div class="spinner-grow text-success" role="status">
-                            <span class="sr-only">Loading...</span>
+                            <span class="sr-only"><?= get_label('loading ...', 'loading ...') ?></span>
                           </div>
                           <div class="spinner-grow text-danger" role="status">
-                            <span class="sr-only">Loading...</span>
+                            <span class="sr-only"><?= get_label('loading ...', 'loading ...') ?></span>
                           </div>
 
                     </div>
 
-                    <small class="badge bg-label-dark">loading ...</small>
+                    <small class="badge bg-label-dark"><?= get_label('loading ...', 'loading ...') ?></small>
 
                 </div>
 
@@ -280,9 +280,9 @@ $visibleColumns = getUserPreferences('commandes');
 
                         <div class="progress-container">
                             <ul class="progressbar">
-                                <li class="pending active">Pending</li>
-                                <li class="completed">Completed</li>
-                                <li class="cancelled">Cancelled</li>
+                                <li class="pending active"><?= get_label('Pending', 'Pending') ?></li>
+                                <li class="completed"><?= get_label('Completed', 'Completed') ?>Completed</li>
+                                <li class="cancelled"><?= get_label('Cancelled', 'Cancelled') ?>Cancelled</li>
                             </ul>
                         </div>
 
@@ -434,15 +434,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (data.status === 'pending') {
                             statusContainer.innerHTML =
-    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')">Validate Commande</button></a>' +
-    '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')">Cancel Commande</button></a>';
+    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')"><?= get_label('Validate Commande', 'Validate Commande') ?></button></a>' +
+    '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')"><?= get_label('Cancel Commande', 'Cancel Commande') ?></button></a>';
 
             } else if (data.status === 'cancelled') {
                             statusContainer.innerHTML =
-                                '<div class="badge bg-label-danger">This commande was canceled</div>';
+                                '<div class="badge bg-label-danger"><?= get_label('This commande was canceled', 'This commande was canceled') ?></div>';
                         } else if (data.status === 'completed') {
                             statusContainer.innerHTML =
-                                '<div class="badge bg-label-success">This commande was completed</div>';
+                                '<div class="badge bg-label-success"><?= get_label('This commande was completed', 'This commande was completed') ?></div>';
                         }
 
                         const steps = document.querySelectorAll('.progressbar li');

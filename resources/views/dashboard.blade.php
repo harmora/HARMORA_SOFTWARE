@@ -123,8 +123,8 @@ background-repeat: no-repeat;
 
 
                             <img src="{{asset("assets/img/logos/Logo.png")}}" alt="Profile Picture" class="profile-pic">
-                            <h2 class="admin-dashboard-title">Welcome to Your Admin Dashboard</h2>
-                            <p class="admin-dashboard-description">Here you can manage your site, view statistics, and perform administrative tasks.</p>
+                            <h2 class="admin-dashboard-title"><?= get_label('Welcome to Your Admin Dashboard', 'Welcome to Your Admin Dashboard') ?></h2>
+                            <p class="admin-dashboard-description"><?= get_label('Here you can manage your site, view statistics, and perform administrative tasks.', 'Here you can manage your site, view statistics, and perform administrative tasks.') ?></p>
                         </div>
 
                     @endif
@@ -235,7 +235,7 @@ background-repeat: no-repeat;
 
                                 <div class="d-flex justify-content-center">
                                     <div id="caparcategorieproduit"></div>
-                                    <div id="no-data-produits" class="text-center badge bg-primary d-none">There are no commandes yet</div>
+                                    <div id="no-data-produits" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
 
                                 </div>
 
@@ -264,7 +264,7 @@ background-repeat: no-repeat;
 
                                 <div class="d-flex  justify-content-center">
                                     <div id="caparcategorie"></div>
-                                    <div id="no-data-categories" class="text-center badge bg-primary d-none">There are no commandes yet</div>
+                                    <div id="no-data-categories" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
                                 </div>
 
 
@@ -318,16 +318,16 @@ background-repeat: no-repeat;
                                 </div>
                                 <div class="my-3">
                                     <div class="form-group">
-                                        <label for="grouping">Group by:</label>
+                                        <label for="grouping"><?= get_label('Group by:', 'Group by:') ?></label>
                                         <select id="grouping" class="form-control">
-                                            <option value="day">Day</option>
-                                            <option value="month" selected>Month</option>
-                                            <option value="year">Total</option>
+                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
                                         </select>
                                     </div>
 
                                     <div class="form-group" >
-                                        <label for="yearSelect">Year:</label>
+                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
                                         <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}" style="margin-bottom: 15px">
                                     </div>
 
@@ -356,7 +356,7 @@ background-repeat: no-repeat;
 
                                 <div class="my-3">
                                     <div class="form-group">
-                                        <label for="clientSelect">Select Client:</label>
+                                        <label for="clientSelect"><?= get_label('Select Client:', 'Select Client:') ?></label>
                                         <select id="clientSelect" class="form-control">
                                             <!-- Options dynamically generated with Laravel -->
                                             @foreach ($clients as $client)
@@ -373,16 +373,16 @@ background-repeat: no-repeat;
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="clientGrouping">Group by:</label>
+                                        <label for="clientGrouping"><?= get_label('Group by:', 'Group by:') ?></label>
                                         <select id="clientGrouping" class="form-control">
-                                            <option value="day">Day</option>
-                                            <option value="month" selected>Month</option>
-                                            <option value="year">Year</option>
+                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="clientYearSelect">Year:</label>
+                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
                                         <input type="number" id="clientYearSelect" class="form-control" value="{{ date('Y') }}" min="2000" max="{{ date('Y') }}" style="margin-bottom: 15px">
                                     </div>
 
@@ -702,6 +702,6 @@ background-repeat: no-repeat;
 <script src="{{asset('assets/js/apexcharts.js')}}"></script>
 <script src="{{asset('assets/js/pages/dashboard.js')}}"></script>
 @else
-<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span>You must <a href="/login">Log in</a> or <a href="/register">Register</a> to access {{$general_settings['company_title']}}!</span></div>
+<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span><?= get_label('You must', 'You must') ?> <a href="/login"><?= get_label('Log in', 'Log in') ?></a> <?= get_label('or', 'or') ?> <a href="/register"><?= get_label('Register', 'Register') ?></a> <?= get_label('to access', 'to access') ?> HARMORA !</span></div>
 @endauth
 @endsection

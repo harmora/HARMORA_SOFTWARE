@@ -899,7 +899,7 @@
 'date_paiement' => 'Payment Date',
 'date_limit' => 'Payment Due Date',
 'reference' => 'Reference',
-'please_enter_reference' => 'Please enter reference', 
+'please_enter_reference' => 'Please enter reference',
 'please_enter_montant_ht'=> 'Please enter the amount excluding tax',
 'upload_file' => 'Upload File',
 'map_columns' => 'Map Columns',
