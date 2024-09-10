@@ -48,9 +48,135 @@ class AchatController extends Controller
         $categories = ProdCategory::all();
         return view('achats.create_achats', ['products'=>$products,'fournisseurs'=> $fournisseurs,'categories'=>$categories]);
     }
+    // public function store(Request $request)
+    // {
+    //     // Validate initial form fields
+    //     $formFields = $request->validate([
+    //         'fournisseur_id' => 'nullable|exists:fournisseurs,id',
+    //         'type_achat' => 'required|string|max:255',
+    //         'montant' => 'required|numeric|min:0',
+    //         'status_payement' => 'required|in:paid,unpaid,partial',
+    //         'tva' => 'nullable|numeric|min:0',
+    //         'date_paiement' => 'nullable|date',
+    //         'date_limit' => 'nullable|date',
+    //         'reference' => 'required|string|max:255',
+    //         'montant_ht' => 'nullable|numeric|min:0',
+    //         'facture' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+    //         'devis' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+    //     ]);
+    //     if(!$formFields['montant_ht'])
+    //     {
+    //         $formFields['montant_ht'] = $formFields['montant']/($formFields['tva']/100 +1);
+    //     }
+    //     // Additional validation based on type_achat
+    //     if ($formFields['type_achat'] == 'Matériel/Produits') {
+    //         $request->validate([
+    //             'fournisseur_id' => 'required|exists:fournisseurs,id',
+    //             'devis' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+    //             'products' => 'required|array|min:1',
+    //             'products.*.product_id' => 'required|exists:products,id',
+    //             'products.*.quantity' => 'required|integer|min:1',
+    //             'products.*.price' => 'required|numeric|min:0',
+    //         ], [
+    //             'products.*.product_id.required' => 'The product field is required.',
+    //             'products.*.quantity.required' => 'The quantity field is required.',
+    //             'products.*.price.required' => 'The price field is required.',
+    //         ]);
+    //         // $formFields['product_id'] = $additionalFields['product_id'];
+    //     }
+    //     if($formFields['status_payement'] == 'partial')
+    //     {
+    //         $additionalFields = $request->validate([
+    //             'montant_restant' => 'nullable|numeric|min:0',
+    //             'montant_payée' => 'required|numeric|min:0|max:' . ($formFields['montant'] - 0.01),
+    //         ], [
+    //             'montant_payée.max' => 'The amount paid must be less than '. $formFields['montant'] ,
+    //         ]);
+    //         $formFields['montant_payée'] = $additionalFields['montant_payée'];
+
+    //         if(!$additionalFields['montant_restant']){
+    //             $formFields['montant_restant'] = $formFields['montant'] - $additionalFields['montant_payée'];
+    //         }
+    //         else{
+    //             $formFields['montant_restant'] = $additionalFields['montant_restant'];
+    //         }
+            
+    //     }
+
+            
+    //     $formFields['entreprise_id'] = $this->user->entreprise_id;
+    
+    //     // Handle file upload
+    //     if ($request->hasFile('facture')) {
+    //         $formFields['facture'] = $request->file('facture')->store('factures', 'public');
+    //     }        
+    //     if ($request->hasFile('devis')) {
+    //         $formFields['devis'] = $request->file('devis')->store('devis', 'public');
+    //     }
+
+    //     // Create Achat instance
+    //     $achat = Achat::create($formFields); 
+    //     DB::beginTransaction();
+    //     if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
+    //         $productData1=[];
+    //         foreach ($request->products as $productd) {
+    //             if (!empty($productd['product_id'])) {
+    //                 $productData1[$productd['product_id']] = [
+    //                     'quantity' => $productd['quantity'],
+    //                     'price' => $productd['price'],
+    //                 ];
+    //             }
+    //             $product = Product::find($productd['product_id']);
+    //             mouvements_stock::create([
+    //                 'product_id'=>$product->id,
+    //                 'achat_id'=>$achat->id,
+    //                 'quantitéajoutée'=>$productd['quantity'],
+    //                 'quantitéprecedente'=>$product->stock,
+    //                 'date_mouvement'=>now(),
+    //                 'type_mouvement'=>'entrée',
+    //                 'reference'=>$achat->reference,
+    //             ]);
+    //             $product->stock += $productd['quantity'];
+    //             $product->save();
+    //         }
+    //         $achat->products()->attach($productData1);
+    //         $documentsFields = [];
+
+    //         if ($request->hasFile('devis')) {
+    //             $documentsFields[] = [
+    //                 'type' => 'devis',
+    //                 'devis' => $formFields['devis'],
+    //                 'facture' => null,
+    //             ];
+    //         }
+            
+    //         if ($request->hasFile('facture')) {
+    //             $documentsFields[] = [
+    //                 'type' => 'facture',
+    //                 'facture' => $formFields['facture'],
+    //                 'devis' => null,
+    //             ];
+    //         }
+    //         foreach ($documentsFields as $documentField) {
+    //             $documentField['reference'] = $formFields['reference'];
+    //             $documentField['from_to'] = $achat->fournisseur->name;
+    //             $documentField['total_amount'] = $formFields['montant'];
+    //             $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
+    //             $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
+    //             $documentField['origin'] ='achat';   
+    //             $documentField['entreprise_id'] = $this->user->entreprise_id;      
+    //             Document::create($documentField);
+    //         }
+    //     }
+    //     DB::commit();
+    //     Session::flash('message', 'Fournisseur created successfully.');
+    
+    //     return response()->json(['error' => false, 'id' => $achat->id]);
+    // }
+
     public function store(Request $request)
     {
-        // Validate initial form fields
+        // Validate the form fields
         $formFields = $request->validate([
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
             'type_achat' => 'required|string|max:255',
@@ -64,10 +190,11 @@ class AchatController extends Controller
             'facture' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'devis' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
-        if(!$formFields['montant_ht'])
-        {
-            $formFields['montant_ht'] = $formFields['montant']/($formFields['tva']/100 +1);
+    
+        if (!$formFields['montant_ht']) {
+            $formFields['montant_ht'] = $formFields['montant'] / ($formFields['tva'] / 100 + 1);
         }
+    
         // Additional validation based on type_achat
         if ($formFields['type_achat'] == 'Matériel/Produits') {
             $request->validate([
@@ -82,97 +209,120 @@ class AchatController extends Controller
                 'products.*.quantity.required' => 'The quantity field is required.',
                 'products.*.price.required' => 'The price field is required.',
             ]);
-            // $formFields['product_id'] = $additionalFields['product_id'];
         }
-        if($formFields['status_payement'] == 'partial')
-        {
+    
+        if ($formFields['status_payement'] == 'partial') {
             $additionalFields = $request->validate([
                 'montant_restant' => 'nullable|numeric|min:0',
                 'montant_payée' => 'required|numeric|min:0|max:' . ($formFields['montant'] - 0.01),
-            ], [
-                'montant_payée.max' => 'The amount paid must be less than '. $formFields['montant'] ,
             ]);
             $formFields['montant_payée'] = $additionalFields['montant_payée'];
-
-            if(!$additionalFields['montant_restant']){
+    
+            if (!$additionalFields['montant_restant']) {
                 $formFields['montant_restant'] = $formFields['montant'] - $additionalFields['montant_payée'];
-            }
-            else{
+            } else {
                 $formFields['montant_restant'] = $additionalFields['montant_restant'];
             }
-            
         }
-
-            
+    
         $formFields['entreprise_id'] = $this->user->entreprise_id;
     
-        // Handle file upload
+        // Handle file uploads
         if ($request->hasFile('facture')) {
             $formFields['facture'] = $request->file('facture')->store('factures', 'public');
-        }        
+        }
+    
         if ($request->hasFile('devis')) {
             $formFields['devis'] = $request->file('devis')->store('devis', 'public');
         }
-
+    
         // Create Achat instance
-        $achat = Achat::create($formFields); 
+        $achat = Achat::create($formFields);
+    
+        // Begin transaction for safe DB operations
         DB::beginTransaction();
-        if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
-            $productData1=[];
-            foreach ($request->products as $productd) {
-                if (!empty($productd['product_id'])) {
-                    $productData1[$productd['product_id']] = [
-                        'quantity' => $productd['quantity'],
-                        'price' => $productd['price'],
+        try {
+            if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
+                $productData = [];
+    
+                // Loop through each product in the purchase
+                foreach ($request->products as $productItem) {
+                    $product = Product::find($productItem['product_id']);
+    
+                    // Store the product's price and quantity in the pivot table
+                    $productData[$product->id] = [
+                        'quantity' => $productItem['quantity'],
+                        'price' => $productItem['price'],
+                    ];
+    
+                    // Create stock movement entry
+                    mouvements_stock::create([
+                        'product_id' => $product->id,
+                        'achat_id' => $achat->id,
+                        'quantitéajoutée' => $productItem['quantity'],
+                        'quantitéprecedente' => $product->stock,
+                        'date_mouvement' => now(),
+                        'type_mouvement' => 'entrée',
+                        'reference' => $achat->reference,
+                    ]);
+    
+                    // Update the stock of the product
+                    $product->stock += $productItem['quantity'];
+    
+                    // Optionally, update the product's price in the Product table
+                    $product->price = $productItem['price'];  // Update product price globally if needed
+                    $product->save();
+                }
+    
+                // Attach products to the achat and save price and quantity in the pivot table
+                $achat->products()->attach($productData);
+    
+                // Save associated documents
+                $documentsFields = [];
+                if ($request->hasFile('devis')) {
+                    $documentsFields[] = [
+                        'type' => 'devis',
+                        'devis' => $formFields['devis'],
+                        'facture' => null,
                     ];
                 }
-                $product = Product::find($productd['product_id']);
-                mouvements_stock::create([
-                    'product_id'=>$product->id,
-                    'achat_id'=>$achat->id,
-                    'quantitéajoutée'=>$productd['quantity'],
-                    'quantitéprecedente'=>$product->stock,
-                    'date_mouvement'=>now(),
-                    'type_mouvement'=>'entrée',
-                    'reference'=>$achat->reference,
-                ]);
-                $product->stock += $productd['quantity'];
-                $product->save();
-            }
-            $achat->products()->attach($productData1);
-            $documentsFields = [];
-
-            if ($request->hasFile('devis')) {
-                $documentsFields[] = [
-                    'type' => 'devis',
-                    'devis' => $formFields['devis'],
-                    'facture' => null,
-                ];
-            }
-            
-            if ($request->hasFile('facture')) {
-                $documentsFields[] = [
-                    'type' => 'facture',
-                    'facture' => $formFields['facture'],
-                    'devis' => null,
-                ];
-            }
-            foreach ($documentsFields as $documentField) {
-                $documentField['reference'] = $formFields['reference'];
-                $documentField['from_to'] = $achat->fournisseur->name;
-                $documentField['total_amount'] = $formFields['montant'];
-                $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
-                $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
-                $documentField['origin'] ='achat';   
-                $documentField['entreprise_id'] = $this->user->entreprise_id;      
-                Document::create($documentField);
-            }
-        }
-        DB::commit();
-        Session::flash('message', 'Fournisseur created successfully.');
     
-        return response()->json(['error' => false, 'id' => $achat->id]);
+                if ($request->hasFile('facture')) {
+                    $documentsFields[] = [
+                        'type' => 'facture',
+                        'facture' => $formFields['facture'],
+                        'devis' => null,
+                    ];
+                }
+    
+                foreach ($documentsFields as $documentField) {
+                    $documentField['reference'] = $formFields['reference'];
+                    $documentField['from_to'] = $achat->fournisseur->name;
+                    $documentField['total_amount'] = $formFields['montant'];
+                    $documentField['remaining_amount'] = $formFields['status_payement'] == 'partial' ? $formFields['montant_restant'] : 0;
+                    $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+                    $documentField['origin'] = 'achat';
+                    $documentField['entreprise_id'] = $this->user->entreprise_id;
+                    Document::create($documentField);
+                }
+            }
+    
+            // Commit the transaction if everything is successful
+            DB::commit();
+    
+            // Flash success message
+            Session::flash('message', 'Achat created successfully.');
+            return response()->json(['error' => false, 'id' => $achat->id]);
+    
+        } catch (\Exception $e) {
+            // Rollback in case of error
+            DB::rollback();
+            return response()->json(['error' => true, 'message' => $e->getMessage()]);
+        }
     }
+    
+
+
     public function edit($id)
 {
     $achat = Achat::with('products')->findOrFail($id);

@@ -67,45 +67,290 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function store(Request $request)
-     {
-         ini_set('max_execution_time', 300);
+    //  public function store(Request $request)
+    //  {
+    //      ini_set('max_execution_time', 300);
 
-         $formFields = $request->validate([
-             'name' => ['required'],
-             'description' => 'nullable',
-             'price' => ['required', 'numeric'],
-             'stock' => ['required', 'integer'],
-             'stock_defective' => ['nullable', 'integer'],
-             'category_id' => ['required', 'exists:prod_categories,id'],
-             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-         ]);
+    //      $formFields = $request->validate([
+    //          'name' => ['required'],
+    //          'description' => 'nullable',
+    //          'price' => ['required', 'numeric'],
+    //          'stock' => ['required', 'integer'],
+    //          'stock_defective' => ['nullable', 'integer'],
+    //          'category_id' => ['required', 'exists:prod_categories,id'],
+    //          'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    //      ]);
 
-         if ($request->hasFile('photo')) {
-             $formFields['photo'] = $request->file('photo')->store('photos', 'public');
-         } else {
-             $formFields['photo'] = 'photos/no-image.jpg';
-         }
+    //      if ($request->hasFile('photo')) {
+    //          $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+    //      } else {
+    //          $formFields['photo'] = 'photos/no-image.jpg';
+    //      }
 
-         $formFields['entreprise_id'] = $this->user ->entreprise->id;
+    //      $formFields['entreprise_id'] = $this->user ->entreprise->id;
 
-         $product = Product::create($formFields);
-         $product->product_category_id = $request->input('category_id');
-         $product->save();
+    //      $product = Product::create($formFields);
+    //      $product->product_category_id = $request->input('category_id');
+    //      $product->save();
 
-         try {
-             Session::flash('message', 'Product created successfully.');
-             return response()->json(['error' => false, 'id' => $product->id]);
-         } catch (Throwable $e) {
-             // Catch any throwable, including non-Exception errors
-             $product = Product::findOrFail($product->id);
-             $product->delete();
-             return response()->json(['error' => true, 'message' => 'Product couldn\'t be created, please try again.']);
-         }
-     }
+    //      try {
+    //          Session::flash('message', 'Product created successfully.');
+    //          return response()->json(['error' => false, 'id' => $product->id]);
+    //      } catch (Throwable $e) {
+    //          // Catch any throwable, including non-Exception errors
+    //          $product = Product::findOrFail($product->id);
+    //          $product->delete();
+    //          return response()->json(['error' => true, 'message' => 'Product couldn\'t be created, please try again.']);
+    //      }
+    //  }
 
-
-
+    // public function store(Request $request)
+    // {
+    //     ini_set('max_execution_time', 300);
+    
+    //     // Validate incoming request
+    //     $formFields = $request->validate([
+    //         'name' => ['required'],
+    //         'description' => 'nullable',
+    //         'price' => ['required', 'numeric'], // This will be the purchase price (for CMUP calculation)
+    //         'stock' => ['required', 'integer'], // Quantity being added
+    //         'stock_defective' => ['nullable', 'integer'],
+    //         'category_id' => ['required', 'exists:prod_categories,id'],
+    //         'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    //     ]);
+    
+    //     // Handle file upload
+    //     if ($request->hasFile('photo')) {
+    //         $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+    //     } else {
+    //         $formFields['photo'] = 'photos/no-image.jpg';
+    //     }
+    
+    //     // Add the entreprise ID to the form fields
+    //     $formFields['entreprise_id'] = $this->user->entreprise->id;
+    
+    //     // Create the product
+    //     $product = Product::create($formFields);
+    
+    //     // Assign the product category
+    //     $product->product_category_id = $request->input('category_id');
+        
+    //     // Save the product before CMUP calculation
+    //     $product->save();
+    
+    //     // Now let's handle CMUP and stock updates
+    //     $new_quantity = $formFields['stock']; // New quantity being added
+    //     $new_purchase_price = $formFields['price']; // New purchase price
+    
+    //     // Fetch the previous stock and price (CMUP)
+    //     $previous_quantity = $product->stock;
+    //     $previous_price = $product->price;
+    
+    //     // Calculate previous stock cost and new purchase cost
+    //     $previous_stock_cost = $previous_quantity * $previous_price;
+    //     $new_purchase_cost = $new_quantity * $new_purchase_price;
+    
+    //     // Total quantity after this purchase
+    //     $total_quantity = $previous_quantity + $new_quantity;
+    
+    //     // Calculate new CMUP price
+    //     if ($total_quantity > 0) {
+    //         $new_cmup_price = ($previous_stock_cost + $new_purchase_cost) / $total_quantity;
+    //     } else {
+    //         $new_cmup_price = $new_purchase_price;
+    //     }
+    
+    //     // Update the product with new CMUP price and stock
+    //     $product->update([
+    //         'stock' => $total_quantity, // Update total stock
+    //         'price' => $new_cmup_price, // Update price with new CMUP
+    //     ]);
+    
+    //     // Return response or handle errors
+    //     try {
+    //         Session::flash('message', 'Product created and updated successfully with new CMUP.');
+    //         return response()->json(['error' => false, 'id' => $product->id]);
+    //     } catch (Throwable $e) {
+    //         // Rollback in case of any error
+    //         $product = Product::findOrFail($product->id);
+    //         $product->delete();
+    //         return response()->json(['error' => true, 'message' => 'Product couldn\'t be created, please try again.']);
+    //     }
+    // }
+    
+    // public function store(Request $request)
+    // {
+    //     ini_set('max_execution_time', 300);
+    
+    //     // Validate incoming request
+    //     $formFields = $request->validate([
+    //         'name' => ['required'],
+    //         'description' => 'nullable',
+    //         'price' => ['required', 'numeric'], // This will be the purchase price (for CMUP calculation)
+    //         'stock' => ['required', 'integer'], // Quantity being added
+    //         'stock_defective' => ['nullable', 'integer'],
+    //         'category_id' => ['required', 'exists:prod_categories,id'],
+    //         'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    //     ]);
+    
+    //     // Handle file upload
+    //     if ($request->hasFile('photo')) {
+    //         $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+    //     } else {
+    //         $formFields['photo'] = 'photos/no-image.jpg';
+    //     }
+    
+    //     // Add the entreprise ID to the form fields
+    //     $formFields['entreprise_id'] = $this->user->entreprise->id;
+    
+    //     // First, try to find an existing product with the same name and entreprise ID
+    //     $existingProduct = Product::where('name', $formFields['name'])
+    //                               ->where('entreprise_id', $this->user->entreprise->id)
+    //                               ->first();
+    
+    //     if ($existingProduct) {
+    //         // Existing product found, so we need to calculate CMUP and update stock
+    
+    //         // New purchase details
+    //         $new_quantity = $formFields['stock']; // New quantity being added
+    //         $new_purchase_price = $formFields['price']; // New purchase price
+    
+    //         // Previous stock and price (CMUP)
+    //         $previous_quantity = $existingProduct->stock;
+    //         $previous_price = $existingProduct->price;
+    
+    //         // Calculate total cost for previous stock and new stock
+    //         $previous_stock_cost = $previous_quantity * $previous_price;
+    //         $new_purchase_cost = $new_quantity * $new_purchase_price;
+    
+    //         // Total quantity after this purchase
+    //         $total_quantity = $previous_quantity + $new_quantity;
+    
+    //         // Calculate new CMUP price
+    //         if ($total_quantity > 0) {
+    //             $new_cmup_price = ($previous_stock_cost + $new_purchase_cost) / $total_quantity;
+    //         } else {
+    //             $new_cmup_price = $new_purchase_price;
+    //         }
+    
+    //         // Update the existing product with new CMUP price and stock
+    //         $existingProduct->update([
+    //             'stock' => $total_quantity, // Update total stock
+    //             'price' => $new_cmup_price, // Update price with new CMUP
+    //             'description' => $formFields['description'], // Update other fields if necessary
+    //             'photo' => $formFields['photo'], // Update photo if provided
+    //         ]);
+    
+    //         $product = $existingProduct;
+    //     } else {
+    //         // No existing product found, create a new one
+    //         $product = Product::create($formFields);
+    //     }
+    
+    //     // Return response or handle errors
+    //     try {
+    //         Session::flash('message', 'Product created and updated successfully with new CMUP.');
+    //         return response()->json(['error' => false, 'id' => $product->id]);
+    //     } catch (Throwable $e) {
+    //         // Rollback in case of any error
+    //         $product = Product::findOrFail($product->id);
+    //         $product->delete();
+    //         return response()->json(['error' => true, 'message' => 'Product couldn\'t be created, please try again.']);
+    //     }
+    // }
+    public function store(Request $request)
+    {
+        ini_set('max_execution_time', 300);
+    
+        // Validate incoming request
+        $formFields = $request->validate([
+            'name' => ['required'],
+            'description' => 'nullable',
+            'price' => ['required', 'numeric'], // This will be the purchase price (for CMUP calculation)
+            'stock' => ['required', 'integer'], // Quantity being added
+            'stock_defective' => ['nullable', 'integer'],
+            'category_id' => ['required', 'exists:prod_categories,id'],
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+    
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            $formFields['photo'] = $request->file('photo')->store('photos', 'public');
+        } else {
+            $formFields['photo'] = 'photos/no-image.jpg';
+        }
+    
+        // Add the entreprise ID to the form fields
+        $formFields['entreprise_id'] = $this->user->entreprise->id;
+    
+        // Create or update the product
+        $product = Product::updateOrCreate(
+            ['name' => $formFields['name'], 'entreprise_id' => $formFields['entreprise_id']],
+            $formFields
+        );
+    
+        // Save the product before CMUP calculation
+        $product->product_category_id = $request->input('category_id');
+        $product->save();
+    
+        // Now handle stock and price updates based on achats (purchase data)
+        $new_quantity = $formFields['stock']; // New quantity being added from the achats
+        $new_purchase_price = $formFields['price']; // New purchase price from the achats
+    
+        // Fetch the existing product stock and price
+        $previous_quantity = $product->stock;
+        $previous_price = $product->price;
+    
+        // Calculate total cost for previous stock and new stock (CMUP formula)
+        $previous_stock_cost = $previous_quantity * $previous_price;
+        $new_purchase_cost = $new_quantity * $new_purchase_price;
+    
+        // Calculate total stock and total value
+        $total_quantity = $previous_quantity + $new_quantity;
+    
+        if ($total_quantity > 0) {
+            // Calculate new average price using CMUP
+            $new_cmup_price = ($previous_stock_cost + $new_purchase_cost) / $total_quantity;
+        } else {
+            // If no stock, price is just the new purchase price
+            $new_cmup_price = $new_purchase_price;
+        }
+    
+        // Update product stock and price with the new calculated values
+        $product->update([
+            'stock' => $total_quantity, // Update stock with total quantity
+            'price' => $new_cmup_price  // Update price with new CMUP price
+        ]);
+    
+        // Add the achat entry in the achats table
+        $achat = Achat::create([
+            'fournisseur_id' => $request->input('fournisseur_id'),
+            'entreprise_id' => $formFields['entreprise_id'],
+            'montant' => $new_purchase_price * $new_quantity, // Total amount for the achat
+            'status_payement' => $request->input('status_payement', 'unpaid'), // Default to unpaid if not provided
+            'tva' => $request->input('tva', 0),
+            'facture' => $request->input('facture'),
+            'date_paiement' => $request->input('date_paiement'),
+            'date_limit' => $request->input('date_limit'),
+            'reference' => $request->input('reference'),
+            'montant_ht' => $request->input('montant_ht'),
+            'bon_achat' => $request->input('bon_achat'),
+            'montant_restant' => $request->input('montant_restant'),
+            'montant_payée' => $request->input('montant_payée'),
+            'devis' => $request->input('devis')
+        ]);
+    
+        // Return response or handle errors
+        try {
+            Session::flash('message', 'Product created and updated successfully with new CMUP, and purchase recorded.');
+            return response()->json(['error' => false, 'id' => $product->id, 'achat_id' => $achat->id]);
+        } catch (Throwable $e) {
+            // Rollback in case of any error
+            $product->delete();
+            return response()->json(['error' => true, 'message' => 'Product or Achat couldn\'t be created, please try again.']);
+        }
+    }
+     
 
     public function edit($id)
     {
