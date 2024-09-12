@@ -156,6 +156,7 @@ $commandes = $this->user->entreprise->commande;
          // Update product stock
 
          $product->stock -= $productData['quantity'];
+         $product->total_amount -= $productData['quantity'] * $product->price;
          $product->save();
      }
 

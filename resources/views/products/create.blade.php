@@ -46,7 +46,7 @@
                         </select>
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="price" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                        <label for="price" class="form-label"><?= get_label('priceut', 'Price unitaire') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" id="price" name="price" placeholder="<?= get_label('please_enter_price', 'Please enter price') ?>" value="{{ old('price') }}">
                     </div>
                     <div class="mb-3 col-md-6">
