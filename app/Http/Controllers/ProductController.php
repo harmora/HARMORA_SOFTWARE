@@ -86,8 +86,15 @@ class ProductController extends Controller
          } else {
              $formFields['photo'] = 'photos/no-image.jpg';
          }
+         $formFields['total_amount'] = $formFields['price'] * $formFields['stock'];
+         $formFields['prev_price'] = $formFields['price'];
+         $formFields['prev_stock'] = $formFields['stock'];
 
          $formFields['entreprise_id'] = $this->user ->entreprise->id;
+         if($formFields['stock_defective'] == null){
+             $formFields['stock_defective'] = 0;
+         }
+
 
          $product = Product::create($formFields);
          $product->product_category_id = $request->input('category_id');

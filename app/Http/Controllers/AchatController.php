@@ -61,8 +61,7 @@ class AchatController extends Controller
             'date_limit' => 'nullable|date',
             'reference' => 'required|string|max:255',
             'montant_ht' => 'nullable|numeric|min:0',
-            'facture' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'devis' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+
         ]);
         if(!$formFields['montant_ht'])
         {
@@ -72,7 +71,8 @@ class AchatController extends Controller
         if ($formFields['type_achat'] == 'Matériel/Produits') {
             $request->validate([
                 'fournisseur_id' => 'required|exists:fournisseurs,id',
-                'devis' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'facture' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'devis' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',                
                 'products' => 'required|array|min:1',
                 'products.*.product_id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
@@ -116,6 +116,7 @@ class AchatController extends Controller
 
         // Create Achat instance
         $achat = Achat::create($formFields); 
+
         DB::beginTransaction();
         if ($achat && $formFields['type_achat'] == 'Matériel/Produits') {
             $productData1=[];
@@ -136,7 +137,27 @@ class AchatController extends Controller
                     'type_mouvement'=>'entrée',
                     'reference'=>$achat->reference,
                 ]);
+
+                if (!empty($productd['product_id'])) {
+                    $total_amount_achat = $productd['price'] * $productd['quantity'];
+                }
+
+                // $previous_quantity = $product->stock;
                 $product->stock += $productd['quantity'];
+
+                // Now handle stock and price updates based on achats (if purchase data is provided)
+
+                // $previous_price = $product->price;
+
+                $total_amount = $total_amount_achat + $product->total_amount;
+
+                if ($product->stock > 0) {
+                    $new_cmup_price =  $total_amount/ $product->stock;
+                } else {
+                    $new_cmup_price = $productd['price'];
+                }
+                $product->price = $new_cmup_price;
+                $product->total_amount = $total_amount;
                 $product->save();
             }
             $achat->products()->attach($productData1);

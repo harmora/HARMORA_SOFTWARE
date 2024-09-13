@@ -41,11 +41,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     protected $user;
+     public function __construct()
+     {
+         $this->middleware(function ($request, $next) {
+             // fetch session and use it in entire class with constructor
+             $this->user = getAuthenticatedUser();
+             return $next($request);
+         });
+     }
     public function index(Request $request)
     {
         // $workspace = Workspace::find(session()->get('workspace_id'));
+        if($this->user->role_id == 1)
+            $users = User::all();
+        else
+            $users = User::where('entreprise_id',$this->user->entreprise_id)->get();
 
-        $users = User::where('entreprise_id',17)->get();
         $roles = Role::where('guard_name', 'web')->get();
         // dd($users);
         return view('users.users', ['users' => $users, 'roles' => $roles]);
@@ -58,10 +71,19 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = RoleAuth::all(); // Fetch all roles
-        $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
-        $entreprises= Entreprise::all();
-        $paques= Pack::all();
+        if($this->user->role_id == 1){
+            $roles = RoleAuth::all(); // Fetch all roles
+            $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
+            $entreprises= Entreprise::all();
+            $paques= Pack::all();
+        }
+        else{
+            $roles = RoleAuth::where('id','!=',1)->get(); // Fetch all roles
+            $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
+            $entreprises= Entreprise::where('id',$this->user->entreprise_id)->get();
+            $paques= Pack::all();
+        }
+
         return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises,'paques'=>$paques]);
     }
 
@@ -234,9 +256,19 @@ class UserController extends Controller
         //         'forme_juridique_id' => '', // Update this field
         //     ];
         //  else
-        $entreprise = Entreprise::all();
-        $roles = Role::where('guard_name', 'web')->get();
-        $formesJuridique = Forme_juridique::all();
+        if($this->user->role_id == 1){
+            $entreprise = Entreprise::all();
+            $roles = Role::where('guard_name', 'web')->get();
+            $formesJuridique = Forme_juridique::all();
+        }
+        else{
+            $entreprise = Entreprise::where('id',$this->user->entreprise_id)->get();
+            $roles = Role::where('guard_name', 'web')->get();
+            $formesJuridique = Forme_juridique::all();
+        }
+        // $entreprise = Entreprise::all();
+        // $roles = Role::where('guard_name', 'web')->get();
+        // $formesJuridique = Forme_juridique::all();
 
          return view('users.edit_user', [
              'user' => $user,
@@ -453,9 +485,14 @@ class UserController extends Controller
         // $workspace = Workspace::find(session()->get('workspace_id'));
         // $projects = isAdminOrHasAllDataAccess('user', $id) ? $workspace->projects : $user->projects;
         // $tasks = isAdminOrHasAllDataAccess() ? $workspace->tasks->count() : $user->tasks->count();
-        $users = User::all();
-        $clients = Client::all();
-        $entreprise = Entreprise::findOrFail($user->entreprise_id);
+        if($this->user->role_id == 1){
+            $users = User::all();
+            $clients = Client::all();
+        }else{
+            $users = User::where('entreprise_id',$this->user->entreprise_id)->get();
+            $clients = Client::where('entreprise_id',$this->user->entreprise_id)->get();
+        }
+        $entreprise = Entreprise::findOrFail(id: $user->entreprise_id);
         $formeJuridiqueName = $entreprise->forme_juridique->label; // Assuming 'label' is the column name for the name
         return view('users.user_profile', ['user' => $user, 'users' => $users, 'clients' => $clients,'entreprise' => $entreprise,'formeJuridiqueName'=>$formeJuridiqueName, 'auth_user' => getAuthenticatedUser()]);
     }
@@ -491,17 +528,36 @@ class UserController extends Controller
                 $query->whereIn('roles.id', $role_ids);
             });
         }
-
-        $totalusers = $query->count();
-
-        $users = $query->select('users.*')
-            ->distinct()
-            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->orderByRaw("CASE WHEN roles.name = 'admin' THEN 0 ELSE 1 END")
-            ->orderByRaw("CASE WHEN roles.name = 'admin' THEN users.id END ASC")
-            ->orderBy($sort, $order)
-            ->paginate(request("limit"));
+        if($this->user->role_id == 1){
+            $totalusers = $query->count();
+            $users = $query->select('users.*')
+                ->distinct()
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->orderByRaw("CASE WHEN roles.name = 'admin' THEN 0 ELSE 1 END")
+                ->orderByRaw("CASE WHEN roles.name = 'admin' THEN users.id END ASC")
+                ->orderBy($sort, $order)
+                ->paginate(request("limit"));
+        }else{
+            $totalusers = $query->where('users.entreprise_id',$this->user->entreprise_id)->count();
+            $users = $query->select('users.*')
+                ->distinct()
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->where('users.entreprise_id',$this->user->entreprise_id)
+                ->orderByRaw("CASE WHEN roles.name = 'admin' THEN 0 ELSE 1 END")
+                ->orderByRaw("CASE WHEN roles.name = 'admin' THEN users.id END ASC")
+                ->orderBy($sort, $order)
+                ->paginate(request("limit"));
+        }
+        // $users = $query->select('users.*')
+        //     ->distinct()
+        //     ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+        //     ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+        //     ->orderByRaw("CASE WHEN roles.name = 'admin' THEN 0 ELSE 1 END")
+        //     ->orderByRaw("CASE WHEN roles.name = 'admin' THEN users.id END ASC")
+        //     ->orderBy($sort, $order)
+        //     ->paginate(request("limit"));
 
         $users = $users->through(function ($user) {
 

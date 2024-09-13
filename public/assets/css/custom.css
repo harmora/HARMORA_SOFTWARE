@@ -648,6 +648,110 @@ body.dark-mode .bg-footer-theme {
     color: #ffffff;
 }
 
+body.dark-mode .select2.select2-container.select2-container--default:not(#global-search+.select2-container) {
+    display: block !important;
+    width: 100% !important;
+    min-height: calc(2.25rem + 2px) !important;
+    padding: 0.200rem 0.75rem !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: #e0e0e0 !important; /* Lighter text color for dark mode */
+    background-color: #343a40 !important; /* Dark background color */
+    background-clip: padding-box !important;
+    border: 1px solid #495057 !important; /* Darker border color */
+    border-radius: 0.25rem !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+body.dark-mode .select2-container--default .select2-selection--multiple {
+    background-color: #2c2f33; /* Dark background color */
+    border: 1px solid #4f545c; /* Darker border color */
+    border-radius: 4px;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    position: relative;
+    color: #ffffff; /* Light text color for contrast */
+}
+
+body.dark-mode .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #3a3c3e; /* Dark background color */
+    border: 1px solid #545b62; /* Darker border color */
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-left: 5px;
+    margin-top: 5px;
+    padding: 0;
+    padding-left: 20px;
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+    color: #e4e6e8; /* Light text color for contrast */
+}
+
+body.dark-mode .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #4a7ebB; /* Darker blue for dark mode */
+    color: #ffffff; /* White text for contrast */
+}
+
+
+body.dark-mode .admin-dashboard-card {
+    background-color: #2c2c2c; /* Dark background */
+    color: #ffffff; /* Light text color */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow */
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    margin-top: 0;
+    text-align: center;
+}
+
+/* For smoother transitions between light and dark mode */
+.admin-dashboard-card {
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+body.dark-mode .chat-img {
+    width: 54px !important;
+    border-radius: 50px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 0.7rem;
+    right: 6.625rem;
+    padding: 10px;
+    background-color: #2c2c2c; /* Dark background */
+    color: #ffffff; /* Light text/icon color if applicable */
+    z-index: 999999;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow */
+}
+
+
+body.dark-mode .admin-dashboard-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e0e0e0; /* Light gray for better contrast in dark mode */
+    margin-bottom: 10px;
+}
+
+
+body.dark-mode .alert-secondary {
+    background-color: #2e2e2e; /* Darker background for dark mode */
+    border-color: #444; /* Darker border color for better visibility */
+    color: #c0c0c0; /* Light gray text color for contrast */
+}
+
+
+
+
 /* Add more styles as needed for other components */
 
 body.dark-mode .bg-menu-theme {
