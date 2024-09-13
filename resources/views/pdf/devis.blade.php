@@ -224,6 +224,11 @@
             color: #000000;
             margin: 0;
         }
+        .devis-header p {
+            font-size: 18x;
+
+            margin: 0;
+        }
         .devis-details {
             margin-bottom: 30px;
         }
@@ -293,9 +298,7 @@
     </style>
 </head>
 <body>
-    <div style="display: flex; text-align: center;">
-        <img src="storage/logos/default_full_logo.png" style="width: 170px; margin-top: 10px;" alt="Logo">
-    </div>
+
 
     <div class="devis-container">
         <div style="display: flex; text-align: center; padding-top:8px;">{{ date('d/m/Y') }}</div>
@@ -316,10 +319,12 @@
 
         <div class="devis-header">
             <h3>{{ get_label('devis', 'Devis') }}</h3>
+            <p style="color: black !important"><strong>{{ get_label('reference', 'Reference :') }} :</strong> {{"DEVIS_".$commande->reference_num}}</p>
+
         </div>
 
         <div class="devis-details">
-            <p><strong>{{ get_label('order_name', 'Nom de la commande') }} :</strong> {{ $commande->id  ." - ". $commande->title }}</p>
+            <p><strong>{{ get_label('order_name', 'Nom de la commande') }} :</strong> {{ $commande->title }}</p>
             <p><strong>{{ get_label('description', 'Description') }} :</strong> {{ $commande->description }}</p>
             <p><strong>{{ get_label('client', 'Client') }} :</strong> {{ $commande->client->id ." - ". $commande->client->first_name." ".$commande->client->last_name }}</p>
         </div>

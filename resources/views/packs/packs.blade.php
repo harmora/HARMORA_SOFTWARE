@@ -19,16 +19,11 @@
             </nav>
         </div>
         <div>
-            <!-- Button trigger modal -->
-
-
-
             <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#createPackModal">
-                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('create_pack', 'Create Pack') ?>">
-                    <i class='bx bx-plus'></i>
+                <button type="button" class="btn btn-sm btn-primary">
+                    <i class='bx bx-plus'></i> <?= get_label('create_pack', 'Create Pack') ?>
                 </button>
             </a>
-
         </div>
     </div>
 
@@ -37,11 +32,22 @@
         @foreach ($packs as $pack)
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ asset('storage/' . $pack->photo) }}" class="card-img-top" alt="{{ $pack->name }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ $pack->name }}</h5>
                     <p class="card-text">{{ $pack->description }}</p>
                     <p class="card-text"><strong>{{ get_label('number_of_accounts', 'Number of Accounts') }}:</strong> {{ $pack->number_of_accounts }}</p>
+                    <div class="mt-3">
+                        <h6>{{ get_label('features', 'Features') }}:</h6>
+                        <ul class="list-unstyled">
+                            @foreach ($pack->features as $feature)
+                            <li class="mb-2">
+                                <span class="badge bg-light text-dark p-2" style="border-radius: 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+                                    {{ $feature->name }}
+                                </span>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ url('/packs/edit/' . $pack->id) }}" class="btn btn-warning btn-sm">
@@ -65,7 +71,7 @@
     @endif
 </div>
 
-<!-- Modal -->
+<!-- Modal for Creating a Pack -->
 <div class="modal fade" id="createPackModal" tabindex="-1" aria-labelledby="createPackModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -74,7 +80,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form  class="form-submit-event" action="{{ url('/packs/store') }}" method="POST">
+                <form class="form-submit-event" action="{{ url('/packs/store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label for="name" class="form-label">{{ get_label('name', 'Name') }}</label>
@@ -89,8 +95,8 @@
                         <input type="number" class="form-control" id="number_of_accounts" name="number_of_accounts" required>
                     </div>
                     <div class="mb-3">
-                        <label for="photo" class="form-label">{{ get_label('photo', 'Photo') }}</label>
-                        <input type="file" class="form-control" id="photo" name="photo" required>
+                        <label for="features" class="form-label">{{ get_label('features', 'Features') }}</label>
+                        <input type="text" class="form-control" id="features" name="features" placeholder="Enter features separated by commas" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
@@ -106,5 +112,4 @@
     var label_update = '<?= get_label('update', 'Update') ?>';
     var label_delete = '<?= get_label('delete', 'Delete') ?>';
 </script>
-<script src="{{ asset('assets/js/pages/packs.js') }}"></script>
 @endsection

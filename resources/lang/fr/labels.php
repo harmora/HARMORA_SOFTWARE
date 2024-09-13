@@ -883,6 +883,9 @@
 'paque'=>'Pack',
 'select_roles' => 'Sélectionner les rôles',
 'individual' => 'S\'agit-il d\'un représentant individuel ?',
-'logo_photo' => 'Logo/Photo',   
+'logo_photo' => 'Logo/Photo',
 'amount_ht'=>'Montant HT',
+
+'completed'=>'complétée',
+'cancelled'=>'annulée',
 ];

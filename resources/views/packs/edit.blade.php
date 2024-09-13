@@ -24,7 +24,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('packs/update/'. $pack->id) }}" method="POST" class="form-submit-event" enctype="multipart/form-data">
+            <form action="{{ url('packs/update/'. $pack->id) }}" method="POST" class="form-submit-event">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="redirect_url" value="/packs">
@@ -41,19 +41,26 @@
                         <label for="number_of_account" class="form-label"><?= get_label('number_of_account', 'Number of Account') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" id="number_of_accounts" name="number_of_accounts" placeholder="<?= get_label('please_enter_number_of_account', 'Please enter number of account') ?>" value="{{ old('number_of_account', $pack->number_of_accounts) }}" >
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="image" class="form-label"><?= get_label('pack_image', 'Pack Image') ?></label>
-                        <div class="d-flex align-items-start align-items-sm-center gap-4 my-3">
-                            <img src="{{ $pack->photo ? asset('storage/' . $pack->photo) : asset('storage/packs/default-image.jpg') }}" alt="pack-image" class="d-block rounded" height="100" width="100" id="uploadedImage" />
-                            <div class="button-wrapper">
-                                <div class="input-group d-flex">
-                                    <input type="file" class="form-control" id="inputGroupFile02" name="image">
+
+                    <!-- Features Section -->
+                    <div class="mb-3 col-md-12">
+                        <label for="features" class="form-label"><?= get_label('select_features', 'Select Features') ?></label>
+                        <div class="row">
+                            @foreach ($features as $feature)
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="features[]" id="feature_{{ $feature->id }}" value="{{ $feature->id }}"
+                                        @if (in_array($feature->id, $pack->features->pluck('id')->toArray())) checked @endif>
+                                        <label class="form-check-label" for="feature_{{ $feature->id }}">
+                                            {{ $feature->name }}
+                                        </label>
+                                    </div>
                                 </div>
-                                <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
+
                 <div class="mt-4">
                     <button type="submit" id="submit_btn" class="btn btn-primary me-2"><?= get_label('update', 'Update') ?></button>
                     <a href="{{ url('/packs') }}" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></a>

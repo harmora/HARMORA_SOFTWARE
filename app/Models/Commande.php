@@ -15,6 +15,7 @@ class Commande extends Model implements HasMedia
 
     protected $fillable = [
         'entreprise_id',
+        'reference_num',
         'title',
         'description',
         'start_date',

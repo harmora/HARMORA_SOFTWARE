@@ -10,11 +10,10 @@ $user = getAuthenticatedUser();
             <h6 class="card-title">
                 <a href="{{ url('/commandes/information/' . $commande->id) }}" target="_blank">
                     <strong>{{ $commande->title }}</strong>
+                    
                 </a>
             </h6>
             <div class="d-flex align-items-center">
-
-
 
                 {{-- <a href="javascript:void(0);" class="quick-view" data-id="{{ $commande->id }}" data-type="commande">
                     <i class='bx bx-info-circle text-info' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Quick View"></i>
@@ -123,6 +122,14 @@ $user = getAuthenticatedUser();
 
                 <div class="row">
                     <div class="col-md-12" >
+                        <labe ><strong> <?= get_label('reference:', 'Reference:') ?></strong></label>
+                            <span class="badge bg-label-dark">Devis_{{$commande->reference_num}}</span>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12" >
                         <labe ><strong> <?= get_label('Title:', 'Title:') ?></strong></label>
                         <span >{{ $commande->title }}</span>
                     </div>
@@ -197,6 +204,14 @@ $user = getAuthenticatedUser();
                          class="img-fluid rounded-circle"
                          style="max-width: 100px;">
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12" >
+                        <labe ><strong> <?= get_label('reference:', 'Reference:') ?></strong></label>
+                            <span class="badge bg-label-dark">Facture_{{$commande->reference_num}}</span>
+                    </div>
+                </div>
+
 
                 <div class="row">
                     <div class="col-md-12">

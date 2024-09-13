@@ -219,29 +219,14 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
         @if(auth()->user()->role->rolename === 'admin')
 
-        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
-            <a href="" class="menu-link ">
-                <i class="menu-icon tf-icons bx bx-globe text-success"></i>
-                <div><?= get_label('languages', 'Languages') ?></div>
-            </a>
-        </li>
 
-        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
-            <a href="" class="menu-link ">
-                <i class="menu-icon tf-icons bx bx-at text-warning"></i>
-                <div><?= get_label('email', 'Email') ?></div>
-            </a>
-        </li>
-
-        <li class="menu-item {{ Request::is('notes') || Request::is('notes/*') ? 'active' : '' }}">
+        <li class="menu-item {{ Request::is('notifications') || Request::is('notifications/*') ? 'active' : '' }}">
             <a href="" class="menu-link ">
                 <i class="menu-icon tf-icons bx bx-notification text-primary"></i>
                 <div><?= get_label('notifications', 'Notifications') ?></div>
             </a>
         </li>
         @endif
-
-
 
 
 

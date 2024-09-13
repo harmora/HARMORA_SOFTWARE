@@ -15,11 +15,15 @@ class Pack extends Model
         'description',
         'number_of_accounts',
         'photo',
-    ];   
+    ];
 
     public function users()
 {
     return $this->hasMany(User::class);
+}
+public function features()
+{
+    return $this->belongsToMany(Feature::class);
 }
 
 }

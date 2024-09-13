@@ -1035,4 +1035,7 @@
 'logo_photo' => 'Logo Photo',
 'amount_ht'=> 'Amount Excluding VAT',
 // -----------------------------
+
+'completed'=>'Completed',
+'cancelled'=>'Canceled',
 ];

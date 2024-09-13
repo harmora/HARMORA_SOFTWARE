@@ -272,7 +272,7 @@ class UserController extends Controller
             //'role' => 'required'
         ]);
         $user = User::findOrFail($id);
-        
+
         if ($request->hasFile('upload')) {
             if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
                 Storage::disk('public')->delete($user->photo);

@@ -22,6 +22,11 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .facture-header p{
+         
+            font-size: 18x;
+
+        }
         .entrepriselogo {
             max-width: 220px;
             max-height: 120px;
@@ -101,9 +106,6 @@
     </style>
 </head>
 <body>
-    <div style="display: flex; text-align: center;">
-        <img src="storage/logos/default_full_logo.png" style="width: 170px; margin-top: 10px;" alt="Logo">
-    </div>
 
     <div class="facture-container">
         <div style="display: flex; text-align: center; padding-top:8px;">{{ date('d/m/Y') }}</div>
@@ -124,10 +126,11 @@
 
         <div class="facture-header">
             <h3>{{ get_label('facture', 'Facture') }}</h3>
+            <p style="color: black !important"><strong>{{ get_label('reference', 'Reference :') }} :</strong> {{"FACTURE_".$commande->reference_num}}</p>
         </div>
 
         <div class="facture-details">
-            <p><strong>{{ get_label('order_name', 'Nom de la commande') }} :</strong> {{ $commande->id  ." - ". $commande->title }}</p>
+            <p><strong>{{ get_label('order_name', 'Nom de la commande') }} :</strong> {{$commande->title }}</p>
             <p><strong>{{ get_label('description', 'Description') }} :</strong> {{ $commande->description }}</p>
 
             @if ($commande->client->first_name)

@@ -57,16 +57,92 @@ class HomeController extends Controller
 
 
 
+// public function getChiffreAffaires(Request $request)
+// {
+//     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
+//     $year = $request->query('year', date('Y')); // Default to current year
+
+//     $query = DB::table('commandes')->whereYear('due_date', $year)
+//     ->where('entreprise_id',$this->user->entreprise->id)
+//     ->where('status', 'completed')
+
+//     ;
+
+//     if ($grouping === 'year') {
+//         $chiffreAffaires = $query->select(DB::raw('YEAR(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } elseif ($grouping === 'day') {
+//         $chiffreAffaires = $query->select(DB::raw('DATE(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } else {
+//         // Default to grouping by month
+//         $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(due_date, "%Y-%m") as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     }
+
+//     return response()->json($chiffreAffaires);
+// }
+
+
+// public function getChiffreAffaires(Request $request)
+// {
+//     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
+//     $year = $request->query('year', date('Y')); // Default to current year
+
+//     $query = DB::table('commandes')
+//         ->whereYear('due_date', $year)
+//         ->where('entreprise_id', $this->user->entreprise->id)
+//         ->where('status', 'completed');
+
+//     if ($grouping === 'year') {
+//         $chiffreAffaires = $query->select(DB::raw('YEAR(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } elseif ($grouping === 'day') {
+//         $chiffreAffaires = $query->select(DB::raw('DATE(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } else {
+//         // Default to grouping by month
+//         $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(due_date, "%Y-%m") as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     }
+
+//     // Accumulate the values
+//     $accumulated = [];
+//     $runningTotal = 0;
+
+//     foreach ($chiffreAffaires as $ca) {
+//         $runningTotal += $ca->total; // Add the current period's total to the running total
+//         $accumulated[] = [
+//             'period' => $ca->period,
+//             'total' => $runningTotal
+//         ];
+//     }
+
+//     return response()->json($accumulated);
+// }
+
+
 public function getChiffreAffaires(Request $request)
 {
     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
     $year = $request->query('year', date('Y')); // Default to current year
 
-    $query = DB::table('commandes')->whereYear('due_date', $year)
-    ->where('entreprise_id',$this->user->entreprise->id)
-    ->where('status', 'completed')
-
-    ;
+    $query = DB::table('commandes')
+        ->whereYear('due_date', $year)
+        ->where('entreprise_id', $this->user->entreprise->id)
+        ->where('status', 'completed');
 
     if ($grouping === 'year') {
         $chiffreAffaires = $query->select(DB::raw('YEAR(due_date) as period'), DB::raw('SUM(total_amount) as total'))
@@ -86,8 +162,23 @@ public function getChiffreAffaires(Request $request)
             ->get();
     }
 
-    return response()->json($chiffreAffaires);
+    // Accumulate the values
+    $accumulated = [];
+    $runningTotal = 0;
+
+    foreach ($chiffreAffaires as $ca) {
+        $runningTotal += $ca->total; // Add the current period's total to the running total
+        $accumulated[] = [
+            'period' => $ca->period,
+            'total' => number_format($runningTotal, 2, '.', '') // Limit to 2 decimal places with correct formatting
+        ];
+    }
+
+    return response()->json($accumulated);
 }
+
+
+
 
 public function getChiffreAffaireParCategorie()
 {
@@ -160,6 +251,45 @@ public function getChiffreAffaireParCategorieProduit()
 }
 
 
+// public function getClientChiffreAffaires(Request $request)
+// {
+//     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
+//     $year = $request->query('year', date('Y')); // Default to current year
+//     $clientId = $request->query('client_id'); // Client ID
+
+//     // Ensure client ID is provided
+//     if (!$clientId) {
+//         return response()->json(['error' => 'Client ID is required'], 400);
+//     }
+
+//     $query = DB::table('commandes')
+//     ->where('entreprise_id',$this->user->entreprise->id)
+//         ->whereYear('due_date', $year)
+//         ->where('status', 'completed')
+//         ->where('client_id', $clientId);
+
+//     if ($grouping === 'year') {
+//         $chiffreAffaires = $query->select(DB::raw('YEAR(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } elseif ($grouping === 'day') {
+//         $chiffreAffaires = $query->select(DB::raw('DATE(due_date) as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     } else {
+//         // Default to grouping by month
+//         $chiffreAffaires = $query->select(DB::raw('DATE_FORMAT(due_date, "%Y-%m") as period'), DB::raw('SUM(total_amount) as total'))
+//             ->groupBy('period')
+//             ->orderBy('period', 'asc')
+//             ->get();
+//     }
+
+//     return response()->json($chiffreAffaires);
+// }
+
+
 public function getClientChiffreAffaires(Request $request)
 {
     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
@@ -172,7 +302,7 @@ public function getClientChiffreAffaires(Request $request)
     }
 
     $query = DB::table('commandes')
-    ->where('entreprise_id',$this->user->entreprise->id)
+        ->where('entreprise_id', $this->user->entreprise->id)
         ->whereYear('due_date', $year)
         ->where('status', 'completed')
         ->where('client_id', $clientId);
@@ -195,8 +325,21 @@ public function getClientChiffreAffaires(Request $request)
             ->get();
     }
 
-    return response()->json($chiffreAffaires);
+    // Accumulate the values
+    $accumulated = [];
+    $runningTotal = 0;
+
+    foreach ($chiffreAffaires as $ca) {
+        $runningTotal += $ca->total; // Add the current period's total to the running total
+        $accumulated[] = [
+            'period' => $ca->period,
+            'total' => number_format($runningTotal, 2, '.', '') // Limit to 2 decimal places
+        ];
+    }
+
+    return response()->json($accumulated);
 }
+
 
 
 }

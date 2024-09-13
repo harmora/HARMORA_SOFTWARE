@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Throwable;
 use App\Models\Pack;
+use App\Models\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 
 class PackController extends Controller
 {
@@ -17,7 +17,8 @@ class PackController extends Controller
      */
     public function index()
     {
-        $packs = Pack::all();
+        // Load packs with their associated features
+        $packs = Pack::with('features')->get();
         return view('packs.packs', ['packs' => $packs]);
     }
 
@@ -39,25 +40,38 @@ class PackController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate the input fields including features
         $formFields = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'number_of_accounts' => 'required|integer',
-            'photo' => 'nullable|image|max:2048',
+            'features' => 'required|string', // This will be a comma-separated string of feature names
         ]);
 
-        if ($request->hasFile('photo')) {
-            $formFields['photo'] = $request->file('photo')->store('packs', 'public');
-        } else {
-            $formFields['photo'] = 'packs/default-image.jpg'; // Default image if none is uploaded
-        }
-
+        // Create the pack
         try {
-            $pack = Pack::create($formFields);
+            $pack = Pack::create([
+                'name' => $formFields['name'],
+                'description' => $formFields['description'],
+                'number_of_accounts' => $formFields['number_of_accounts'],
+            ]);
+
+            // Process features and attach to the pack
+            $featureNames = explode(',', $formFields['features']);
+            $features = [];
+            foreach ($featureNames as $featureName) {
+                $featureName = trim($featureName); // Remove any extra spaces
+                $feature = Feature::firstOrCreate(['name' => $featureName]);
+                $features[] = $feature->id; // Add the feature's ID to the list
+            }
+
+            // Attach features to the pack (many-to-many relationship)
+            $pack->features()->sync($features);
+
             Session::flash('message', 'Pack created successfully.');
             return response()->json(['error' => false, 'id' => $pack->id]);
         } catch (Throwable $e) {
-            return response()->json(['error' => true, 'message' => 'Pack could not be created.'.$e]);
+            return response()->json(['error' => true, 'message' => 'Pack could not be created.' . $e]);
         }
     }
 
@@ -69,7 +83,8 @@ class PackController extends Controller
      */
     public function edit($id)
     {
-        $pack = Pack::findOrFail($id);
+        // Load pack with features
+        $pack = Pack::with('features')->findOrFail($id);
         return view('packs.edit', ['pack' => $pack]);
     }
 
@@ -82,26 +97,36 @@ class PackController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Validate the input fields including features
         $formFields = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'number_of_accounts' => 'required|integer',
-            'photo' => 'nullable|image|max:2048',
+            'features' => 'required|string', // This will be a comma-separated string of feature names
         ]);
 
         $pack = Pack::findOrFail($id);
 
-        if ($request->hasFile('photo')) {
-            if ($pack->photo != 'packs/default-image.jpg' && $pack->photo !== null) {
-                Storage::disk('public')->delete($pack->photo);
-            }
-            $formFields['photo'] = $request->file('photo')->store('packs', 'public');
-        } else {
-            $formFields['photo'] = $pack->photo; // Keep the old photo if none is uploaded
-        }
-
         try {
-            $pack->update($formFields);
+            // Update the pack fields
+            $pack->update([
+                'name' => $formFields['name'],
+                'description' => $formFields['description'],
+                'number_of_accounts' => $formFields['number_of_accounts'],
+            ]);
+
+            // Process features and attach to the pack
+            $featureNames = explode(',', $formFields['features']);
+            $features = [];
+            foreach ($featureNames as $featureName) {
+                $featureName = trim($featureName);
+                $feature = Feature::firstOrCreate(['name' => $featureName]);
+                $features[] = $feature->id;
+            }
+
+            // Sync the features to update the relationship
+            $pack->features()->sync($features);
+
             Session::flash('message', 'Pack updated successfully.');
             return response()->json(['error' => false, 'id' => $pack->id]);
         } catch (Throwable $e) {
@@ -118,10 +143,9 @@ class PackController extends Controller
     public function destroy($id)
     {
         $pack = Pack::findOrFail($id);
-        if ($pack->photo != 'packs/default-image.jpg' && $pack->photo !== null) {
-            Storage::disk('public')->delete($pack->photo);
-        }
         try {
+            // Detach all features before deleting
+            $pack->features()->detach();
             $pack->delete();
             return response()->json(['error' => false, 'message' => 'Pack deleted successfully.']);
         } catch (Throwable $e) {
@@ -148,9 +172,8 @@ class PackController extends Controller
         foreach ($ids as $id) {
             $pack = Pack::findOrFail($id);
             if ($pack) {
-                if ($pack->photo != 'packs/default-image.jpg' && $pack->photo !== null) {
-                    Storage::disk('public')->delete($pack->photo);
-                }
+                // Detach features before deleting
+                $pack->features()->detach();
                 $pack->delete();
                 $deletedPacks[] = $id;
             }

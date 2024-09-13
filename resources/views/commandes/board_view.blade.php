@@ -155,7 +155,7 @@
                 @elseif ($status === 'completed')
                     <i class="menu-icon tf-icons bx bx-check-circle bx-md text-success"></i>
                 @endif
-                <?= get_label("status_{$status}", ucfirst($status)) ?>
+                <?= get_label($status,$status) ?>
                 </h4>
 
                 <div class="row m-2 d-flex flex-column" id="{{ $status }}" style="height: 100%" data-status="{{ $status }}">
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (data.status === 'pending') {
                             statusContainer.innerHTML =
-    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')">Validate Commande</button></a>' +
+    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')"><?= get_label('Validate Commande', 'Validate Commande') ?></button></a>' +
     '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')"><?= get_label('Cancel Commande', 'Cancel Commande') ?></button></a>';
 
             } else if (data.status === 'cancelled') {

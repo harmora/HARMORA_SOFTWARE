@@ -130,10 +130,11 @@ $commandes = $this->user->entreprise->commande;
 
      // Create a new commande
      $commande = Commande::create([
+         'reference_num' => $this->generateNextReference(),
          'client_id' => $request->client_id,
          'entreprise_id'=>$this->user->entreprise->id,
          'title' => $request->title,
-         'description' => $request->description,
+         'description' => strip_tags($request->description),
          'start_date' => $request->start,
          'due_date' => $request->due_date,
          'total_amount' => $totalAmountWithTva,
@@ -171,10 +172,12 @@ $commandes = $this->user->entreprise->commande;
      $documentField['facture'] = Null;
      $documentField['devis'] = $devisfile;
      $documentField['origin'] = 'commande';
+     $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-     $documentField['reference'] = $commande->id."-".$commande->title;
+     $documentField['reference'] = $commande->reference_num;
+
 
      $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
@@ -246,7 +249,7 @@ $commandes = $this->user->entreprise->commande;
         $commande->update([
             'client_id' => $request->client_id,
             'title' => $request->title,
-            'description' => $request->description,
+            'description' => strip_tags($request->description),
             'start_date' => $request->start_date,
             'tva' => $request->tva, // Save the TVA value
         ]);
@@ -309,11 +312,11 @@ $commandes = $this->user->entreprise->commande;
         $documentField['facture'] = Null;
         $documentField['devis'] = $devisfile;
         $documentField['origin'] = 'commande';
+        $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
-
+        $documentField['reference'] = $commande->reference_num." (Update)";
         $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
         $documentField['total_amount'] = $commande->total_amount;
@@ -325,30 +328,33 @@ $commandes = $this->user->entreprise->commande;
 
 
 
+         if ($commande->status == "completed") {
+            $entreprise = Entreprise::find($this->user->entreprise->id);
+            $pdfContent = Pdf::loadView('pdf.facture', compact('commande', 'entreprise'))->output();
 
-        $entreprise = Entreprise::find($this->user->entreprise->id);
-        $pdfContent = Pdf::loadView('pdf.facture', compact('commande', 'entreprise'))->output();
+            $filePath = 'factures/updated_factur_'.$commande->id.'_' . time() . '.pdf';
 
-        $filePath = 'factures/updated_factur_'.$commande->id.'_' . time() . '.pdf';
+            $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
 
-        $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
-
-        $documentField['type'] ='devis';
-        $documentField['facture'] = $facturefile;
-        $documentField['devis'] = Null;
-        $documentField['origin'] = 'commande';
+            $documentField['type'] ='devis';
+            $documentField['facture'] = $facturefile;
+            $documentField['devis'] = Null;
+            $documentField['origin'] = 'commande';
+            $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
+            $documentField['reference'] = $commande->reference_num." (Update)";
 
-        $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+            $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
-        $documentField['total_amount'] = $commande->total_amount;
+            $documentField['total_amount'] = $commande->total_amount;
 
-        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+            $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
 
-        Document::create($documentField);
+            Document::create($documentField);
+
+         }
 
 
         return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
@@ -383,10 +389,11 @@ public function updateStatus(Request $request, $id)
             $documentField['facture'] = $facturefile;
             $documentField['devis'] = null;
             $documentField['origin'] = 'commande';
+            $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-            $documentField['reference'] = $commande->id."-".$commande->title;
+            $documentField['reference'] = $commande->reference_num;
 
             $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
@@ -521,6 +528,7 @@ public function updateStatus(Request $request, $id)
             $query->where(function ($query) use ($search) {
                 $query->where('title', 'like', '%' . $search . '%')
                     ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('reference_num', 'like', '%' . $search . '%')
                     ->orWhereHas('user', function ($query) use ($search) {
                         $query->where('first_name', 'like', '%' . $search . '%')
                               ->orWhere('last_name', 'like', '%' . $search . '%');
@@ -592,7 +600,7 @@ public function updateStatus(Request $request, $id)
                 ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
                 '">' . $commande->status . '</span>';
 
-            $id_holder = 
+            $id_holder =
                 '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
                     '<button type="button" class="btn btn-info btn-sm" ' .
                         'data-id="' . htmlspecialchars($commande->id) . '" ' .
@@ -622,8 +630,6 @@ $documentsHtml .= '<a class="me-2">
 }
 
 $documentsHtml .= '</div>';
-
-
 
 
             return [
@@ -769,6 +775,34 @@ public function generateFacture($id)
 }
 
 
+function generateNextReference()
+{
+
+    // Fetch the latest reference for the entreprise
+    $latestRecord =  Commande::with('user')
+                     ->where('entreprise_id', $this->user->entreprise->id)
+                   ->orderBy('id', 'desc')
+                   ->first();
+
+    // If no previous reference exists, start from '00000001'
+    if (!$latestRecord) {
+        return "00000001";
+    }
+
+
+    $currentReference = $latestRecord->reference_num;
+
+    // Convert the reference to a base 16 integer, increment it, and convert it back
+    $nextReferenceInt = hexdec($currentReference) + 1;
+
+    // Format the new reference, padded to 8 characters
+    $nextReference = str_pad(dechex($nextReferenceInt), 8, '0', STR_PAD_LEFT);
+
+
+    return $nextReference;
+}
+
+
 
 
 
@@ -898,3 +932,5 @@ public function generateFacture($id)
 }
 
 ?>
+
+

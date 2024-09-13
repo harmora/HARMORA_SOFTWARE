@@ -893,4 +893,7 @@
 'supplier_information' => 'معلومات المورد',
 'logo_photo' => 'شعار/صورة',
 'amount_ht'=>'المبلغ بدون ضريبة القيمة المضافة',
+
+'completed'=>'مكتمل',
+'cancelled'=>'ملغي',
 ];
