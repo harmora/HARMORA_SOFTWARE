@@ -174,5 +174,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Commande::class);
     }
+    public function devise()
+    {
+        return $this->hasMany(devise::class);
+    }
+    public function invoice()
+    {
+        return $this->hasMany(invoice::class);
+    }
+    public function bon_livraision()
+    {
+        return $this->hasMany(bon_livraision::class);
+    }
 
 }

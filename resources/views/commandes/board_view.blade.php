@@ -129,6 +129,7 @@
                     <i class='bx bx-plus'></i>
                 </button>
             </a>
+            <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus text-black'></i></button></a>
 
             <a href="{{url('/commandes')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="<?= get_label('list', 'list') ?>">
@@ -138,42 +139,47 @@
         </div>
     </div>
 
-    @if ($total_commandes > 0)
-    <div class="alert alert-primary alert-dismissible" role="alert">
+    @if ($total_items > 0)
+    {{-- <div class="alert alert-primary alert-dismissible" role="alert">
         <?= get_label('commande_validation_notice', 'Once the Commande is validated, you can get its facture.') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="<?= get_label('close', 'Close') ?>"></button>
+    </div> --}}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+        <?= get_label('board_view_notice', 'This board displays Devis, Factures, and Bons de Livraison.') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="<?= get_label('close', 'Close') ?>"></button>
     </div>
 
     <div class="d-flex card flex-row" style="overflow-x: scroll; overflow-y: hidden;">
-        @foreach(['pending', 'completed', 'cancelled'] as $status)
-            <div class="my-4 mx-2" style="min-width: 390px; max-width: 390px;">
-                <h4 class="fw-bold mx-4 my-2">
-                @if ($status === 'pending')
-                    <i class="menu-icon tf-icons bx bx-hourglass bx-md text-warning"></i>
-                @elseif ($status === 'cancelled')
-                    <i class="menu-icon tf-icons bx bx-x-circle bx-md text-danger"></i>
-                @elseif ($status === 'completed')
-                    <i class="menu-icon tf-icons bx bx-check-circle bx-md text-success"></i>
-                @endif
-                <?= get_label($status,$status) ?>
-                </h4>
-
-                <div class="row m-2 d-flex flex-column" id="{{ $status }}" style="height: 100%" data-status="{{ $status }}">
-                    @forelse ($commandesByStatus[$status] ?? [] as $commande)
-                        <x-kanban :commande="$commande" />
-                    @empty
-                        <div class="alert alert-secondary" role="alert">
-                            <?= get_label('no_commandes_status', 'No commandes in this status.') ?>
-                        </div>
-                    @endforelse
-                </div>
+        @foreach(['devis' => $devises, 'facture' => $invoices, 'bon_livraison' => $bon_livraisions] as $type => $items)
+        <div class="my-4 mx-2 w-100">
+            <h4 class="fw-bold mx-4 my-2">
+            @if ($type === 'devis')
+                <i class="menu-icon tf-icons bx bx-file bx-md text-primary"></i>
+                <?= get_label("Devis", "Devis") ?>
+            @elseif ($type === 'facture')
+                <i class="menu-icon tf-icons bx bx-dollar bx-md text-success"></i>
+                <?= get_label("Facture", "Facture") ?>
+            @elseif ($type === 'bon_livraison')
+                <i class="menu-icon tf-icons bx bx-package bx-md text-warning"></i>
+                <?= get_label("Bon de Livraison", "Bon de Livraison") ?>
+            @endif
+            </h4>
+    
+            <div class="row m-2 d-flex flex-column" id="{{ $type }}" style="height: 100%" data-type="{{ $type }}">
+                @forelse ($items as $item)
+                    <x-kanban :item="$item" :type="$type" />
+                @empty
+                    <div class="alert alert-secondary" role="alert">
+                        <?= get_label('no_items', 'No items in this category.') ?>
+                    </div>
+                @endforelse
             </div>
+        </div>
         @endforeach
     </div>
-
     @else
-        <x-empty-state-card type="commandes" />
-    @endif
+        <x-empty-state-card type="board_items" />
+    @endif    
 </div>
 
 <!-- Commande Details Modal -->
@@ -293,7 +299,7 @@
 
 
 <script>
-    var statusArray = @json(['pending', 'completed', 'cancelled']);
+    var typeArray = @json(['devis', 'facture', 'bon_livraison']);
 </script>
 
 
@@ -348,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (data.status === 'pending') {
                             statusContainer.innerHTML =
-    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')"><?= get_label('Validate Commande', 'Validate Commande') ?></button></a>' +
+    '<a class="me-2"><button type="button" id="validate-commande" class="btn btn-success" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'completed\')">Validate Commande</button></a>' +
     '<a><button type="button" id="cancel-commande" class="btn btn-danger" data-id="' + data.id + '" onclick="updateCommandeStatus(' + data.id + ', \'cancelled\')"><?= get_label('Cancel Commande', 'Cancel Commande') ?></button></a>';
 
             } else if (data.status === 'cancelled') {

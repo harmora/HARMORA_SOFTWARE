@@ -1,3 +1,8 @@
+<!-- boardbiew is up ---------------------------------------------------------------------------------------------------- -->
+<!-- commande controller is up------------------------------------------------------------------------------------------------------------------------- -->
+
+<!-- kanban -->
+
 @extends('layout')
 @section('title')
 <?= get_label('commandes', 'Commandes') ?>
@@ -527,3 +532,4 @@ $(document).on('click', '[id^=generatefactureButton-]', function() {
 @endsection
 
 
+<!-- commande -->

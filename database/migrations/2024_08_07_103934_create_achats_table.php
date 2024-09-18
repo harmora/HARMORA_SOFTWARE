@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('reference')->nullable();
             $table->timestamps();
             $table->foreign('entreprise_id')->references('id')->on('entreprises')->onDelete('set null');
-            $table->foreign('fournisseur_id')->references('id')->on('fournisseurs')->onDelete('set null');
+            $table->foreign(columns: 'fournisseur_id')->references('id')->on('fournisseurs')->onDelete('set null');
 
         });
     }

@@ -1669,7 +1669,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
 
-@if (Request::is('achats/create'))
+@if (Request::is('achats/create') || Request::is('commandes/createDevise') )
 <!-- Add New Product Modal -->
 <div class="modal fade" id="createProductModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">

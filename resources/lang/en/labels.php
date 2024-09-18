@@ -841,7 +841,7 @@
 'internal_purpose' => 'Internal Purpose',
 'create_commande' => 'Create Commande',
 'commande_list' => 'Commande List',
-'commande' => 'Commande',
+'commande' => 'vente',
 'update_commande' => 'update Commande',
 'commandes_not_found' => 'Commandes Not Found!',
 

@@ -747,7 +747,7 @@
 'update_achat_type' => 'Mettre à jour le type d\'achat',
 'achat_date' => 'Date d\'achat',
 'factures' => 'Factures',
-'commandes' => 'Commandes',
+'commandes' => 'Ventes',
 'please_enter_stock' => 'Veuillez entrer le stock',
 'partial' => 'Partiel',
 'documents' => 'Documents',

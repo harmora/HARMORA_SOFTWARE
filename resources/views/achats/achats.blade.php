@@ -72,6 +72,7 @@ $visibleColumns = getUserPreferences('Achats');
                 </table>
             </div>
         </div>
+        
     </div>
     @else
     <?php
