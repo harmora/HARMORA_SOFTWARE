@@ -140,270 +140,364 @@ background-repeat: no-repeat;
 
 
         <div class="row">
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-pulse bx-md text-success"></i>
+            @if (auth()->user()->role->rolename === 'user')
+                <div class="col-lg-3 col-md-12 col-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <i class="menu-icon tf-icons bx bx-pulse bx-md text-success"></i>
+                                </div>
                             </div>
+                            <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
+                            <h3 class="card-title mb-2">{{$ca}}</h3>
+                            <a href="/{{getUserPreferences('projects', 'default_view')}}">
+                                <small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+                            </a>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
-                        <h3 class="card-title mb-2">{{$ca}}</h3>
-
-                        <a href="/{{getUserPreferences('projects', 'default_view')}}"><small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
-
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-package bx-md text-primary"></i>
+                <div class="col-lg-3 col-md-12 col-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <i class="menu-icon tf-icons bx bx-package bx-md text-primary"></i>
+                                </div>
                             </div>
+                            <span class="fw-semibold d-block mb-1"><?= get_label('total_products', 'Total products') ?></span>
+                            <h3 class="card-title mb-2">{{ is_countable($products) && count($products) > 0 ? count($products) : 0 }}</h3>
+                            <a href="/{{getUserPreferences('tasks', 'default_view')}}">
+                                <small class="text-primary fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+                            </a>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_products', 'Total products') ?></span>
-                        <h3 class="card-title mb-2">{{is_countable($products) && count($products) > 0?count($products):0}}</h3>
-
-                        <a href="/{{getUserPreferences('tasks', 'default_view')}}"><small class="text-primary fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
-
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bx-shopping-bag  bx-md text-warning"></i>
+                <div class="col-lg-3 col-md-12 col-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <i class="menu-icon tf-icons bx bx-shopping-bag bx-md text-warning"></i>
+                                </div>
                             </div>
+                            <span class="fw-semibold d-block mb-1"><?= get_label('total_orders', 'Total orders') ?></span>
+                            <h3 class="card-title mb-2">{{ is_countable($commandes) && count($commandes) > 0 ? count($commandes) : 0 }}</h3>
+                            <a href="/users">
+                                <small class="text-warning fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+                            </a>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_orders', 'Total orders') ?></span>
-                        <h3 class="card-title mb-2">{{is_countable($commandes) && count($commandes) > 0?count($commandes):0}}</h3>
-
-                        <a href="/users"><small class="text-warning fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
-
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <i class="menu-icon tf-icons bx bxs-user-detail bx-md text-info"></i>
+                <div class="col-lg-3 col-md-12 col-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <i class="menu-icon tf-icons bx bxs-user-detail bx-md text-info"></i>
+                                </div>
                             </div>
+                            <span class="fw-semibold d-block mb-1"><?= get_label('total_clients', 'Total clients') ?></span>
+                            <h3 class="card-title mb-2">{{ is_countable($clients) && count($clients) > 0 ? count($clients) : 0 }}</h3>
+                            <a href="/clients">
+                                <small class="text-info fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+                            </a>
                         </div>
-                        <span class="fw-semibold d-block mb-1"><?= get_label('total_clients', 'Total clients') ?></span>
-                        <h3 class="card-title mb-2"> {{is_countable($clients) && count($clients) > 0?count($clients):0}}</h3>
-
-                        <a href="/clients"><small class="text-info fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small></a>
-
                     </div>
                 </div>
+            @elseif (auth()->user()->role->rolename === 'admin')
+
+<div class="row justify-content-center">
+  <!-- Total Enterprises Counter -->
+  <div class="col-lg-3 col-md-12 col-6 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+                <div class="avatar flex-shrink-0">
+                    <i class="menu-icon tf-icons bx bx-buildings bx-md text-success"></i>
+                </div>
             </div>
-
-
-
-
-
-
-
+            <span class="fw-semibold d-block mb-1"><?= get_label('total_enterprises', 'Total Enterprises') ?></span>
+            <h3 class="card-title mb-2">{{ $entrepriseforadmin ?? 0 }}</h3>
+            <a href="/enterprises">
+                <small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+            </a>
         </div>
-        <div class="row">
-            <!-- Left Column: Two Cards Stack -->
-            <div class="col-md-6 col-lg-4 col-xl-4 mb-4">
-                <div class="row">
-                    <!-- First Card -->
-                    <div class="col-12 col-yl-6 mb-4">
-                        <div class="card overflow-hidden mb-2 statisticsDivSmall">
-                            <div class="card-header pt-3 pb-1">
-                                <!-- First Chart Section -->
-                                <div class="card-title d-flex justify-content-between mb-0">
-                                    <h5 class="m-0 me-2"><?= get_label('ca / products categories', 'CA / Products categories') ?></h5>
-                                    <div>
-                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
-                                                <i class='bx bx-box'></i>
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
+    </div>
+</div>
 
-                                <div class="d-flex justify-content-center">
-                                    <div id="caparcategorieproduit"></div>
-                                    <div id="no-data-produits" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
-
-                                </div>
-
-
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Second Card -->
-                    <div class="col-12 col-yl-6 mb-4">
-                        <div class="card overflow-hidden mb-2 statisticsDivSmall">
-                            <div class="card-header pt-3 pb-1">
-                                <!-- Second Chart Section -->
-                                <div class="card-title d-flex justify-content-between mb-0">
-                                    <h5 class="m-0 me-2"><?= get_label('commandes status', 'Commandes status') ?></h5>
-                                    <div>
-                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
-                                                <i class='bx bx-box'></i>
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex  justify-content-center">
-                                    <div id="caparcategorie"></div>
-                                    <div id="no-data-categories" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
-                                </div>
-
-
-                                </div>
-
-
-                        </div>
-                    </div>
-
-
+<!-- Total Users Counter -->
+<div class="col-lg-3 col-md-12 col-6 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+                <div class="avatar flex-shrink-0">
+                    <i class="menu-icon tf-icons bx bx-user bx-md text-primary"></i>
                 </div>
             </div>
+            <span class="fw-semibold d-block mb-1"><?= get_label('total_users', 'Total Users') ?></span>
+            <h3 class="card-title mb-2">{{ $usersforadmin ?? 0 }}</h3>
+            <a href="/users">
+                <small class="text-primary fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+            </a>
+        </div>
+    </div>
+</div>
 
-            <!-- Right Column: Large Card -->
-            <div class="col-md-6 col-lg-8 col-xl-8 mb-4">
-                <div class="card overflow-hidden mb-4 statisticsDiv">
-                    <div class="card-header pt-3 pb-1">
-
-
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-
-                                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ca" aria-controls="navs-top-ca" aria-selected="true">
-                                    <i class="menu-icon tf-icons  bx bx-pulse text-info"></i>  <?= get_label('general', 'General') ?>
-                                </button>
-                            </li>
-                            <li class="nav-item">
-
-                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-client" aria-controls="navs-top-client" aria-selected="false">
-                                    <i class="menu-icon tf-icons bx bx-user text-warning"></i>  <?= get_label('client', 'Client') ?>
-                                </button>
-                            </li>
-                        </ul>
-
-                        <div class="tab-content">
-                            <div class="tab-pane fade active show" id="navs-top-ca" role="tabpanel">
-                                <div class="card-title d-flex justify-content-between mb-4">
-                                    <h5 class="m-0 me-2"><?= get_label('sale revenue', 'Sale revenue') ?></h5>
-                                    <div>
-                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
-                                                <i class='bx bx-file'></i>
-                                            </a>
-                                        </span>
-                                        <a href="/todos">
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
-                                                <i class="bx bx-user"></i>
-                                            </button>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="my-3">
-                                    <div class="form-group">
-                                        <label for="grouping"><?= get_label('Group by:', 'Group by:') ?></label>
-                                        <select id="grouping" class="form-control">
-                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
-                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
-                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group" >
-                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
-                                        <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}" style="margin-bottom: 15px">
-                                    </div>
-
-                                    <div id="chart"></div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="navs-top-client" role="tabpanel">
-
-
-                                <div class="card-title d-flex justify-content-between mb-4">
-                                    <h5 class="m-0 me-2"><?= get_label('Clients sale revenue', 'Clients Sale revenue') ?></h5>
-                                    <div>
-                                        <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
-                                                <i class='bx bx-file'></i>
-                                            </a>
-                                        </span>
-                                        <a href="/todos">
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
-                                                <i class="bx bx-user"></i>
-                                            </button>
-                                        </a>
-                                    </div>
-                                </div>
-
-
-                                <div class="my-3">
-                                    <div class="form-group">
-                                        <label for="clientSelect"><?= get_label('Select Client:', 'Select Client:') ?></label>
-                                        <select id="clientSelect" class="form-control">
-                                            <!-- Options dynamically generated with Laravel -->
-                                            @foreach ($clients as $client)
-                                            <option value="{{ $client->id }}">
-                                                @if ($client->denomenation)
-                                                    {{ $client->denomenation . " - " }}
-                                                @endif
-                                                @if ($client->first_name)
-                                                    {{ $client->first_name }} {{ $client->last_name }}
-                                                @endif
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="clientGrouping"><?= get_label('Group by:', 'Group by:') ?></label>
-                                        <select id="clientGrouping" class="form-control">
-                                            <option value="day"><?= get_label('Day', 'Day') ?></option>
-                                            <option value="month" selected><?= get_label('Month', 'Month') ?></option>
-                                            <option value="year"><?= get_label('Total', 'Total') ?></option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
-                                        <input type="number" id="clientYearSelect" class="form-control" value="{{ date('Y') }}" min="2000" max="{{ date('Y') }}" style="margin-bottom: 15px">
-                                    </div>
-
-
-                                    <div id="clientChart"></div>
-                                </div>
-
-
-                            </div>
-                        </div>
-
-
-
-
-
-
-                    </div>
-
+<!-- Total Admins Counter -->
+<div class="col-lg-3 col-md-12 col-6 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+                <div class="avatar flex-shrink-0">
+                    <i class="menu-icon tf-icons bx bxs-shield bx-md text-warning"></i>
                 </div>
+            </div>
+            <span class="fw-semibold d-block mb-1"><?= get_label('total_admins', 'Total Admins') ?></span>
+            <h3 class="card-title mb-2">{{ $adminsforadmin ?? 0 }}</h3>
+            <a href="/admins">
+                <small class="text-warning fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+            @endif
+        </div>
+
+
+
+       @if (auth()->user()->role->rolename === 'admin')
+
+        <!-- Row with Two Large Empty Cards -->
+<div class="row">
+    <!-- First Large Empty Card -->
+    <div class="col-md-6 col-lg-6 col-xl-6 mb-4">
+        <div class="card overflow-hidden mb-4 statisticsDivSmall2">
+            <!-- Empty Card Content -->
+        </div>
+    </div>
+
+    <!-- Second Large Empty Card -->
+    <div class="col-md-6 col-lg-6 col-xl-6 mb-4">
+        <div class="card overflow-hidden mb-4 statisticsDivSmall2">
+            <div class="card-header pt-3 pb-1">
+                <div class="card-title d-flex justify-content-between mb-2">
+                    <h5 class="m-0">Pack Statistics</h5>
+                    <div>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="View more details">
+                            <i class='bx bx-file'></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-2">
+                <div id="statisticsadmin" style="padding: 20px;"></div>
             </div>
         </div>
+    </div>
+
+</div>
+
+
+
+@endif
+
+
+       @if (auth()->user()->role->rolename === 'user')
+       <div class="row">
+        <!-- Left Column: Two Cards Stack -->
+        <div class="col-md-6 col-lg-4 col-xl-4 mb-4">
+            <div class="row">
+                <!-- First Card -->
+                <div class="col-12 col-yl-6 mb-4">
+                    <div class="card overflow-hidden mb-2 statisticsDivSmall">
+                        <div class="card-header pt-3 pb-1">
+                            <!-- First Chart Section -->
+                            <div class="card-title d-flex justify-content-between mb-0">
+                                <h5 class="m-0 me-2"><?= get_label('ca / products categories', 'CA / Products categories') ?></h5>
+                                <div>
+                                    <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
+                                            <i class='bx bx-box'></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-center">
+                                <div id="caparcategorieproduit"></div>
+                                <div id="no-data-produits" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Second Card -->
+                <div class="col-12 col-yl-6 mb-4">
+                    <div class="card overflow-hidden mb-2 statisticsDivSmall">
+                        <div class="card-header pt-3 pb-1">
+                            <!-- Second Chart Section -->
+                            <div class="card-title d-flex justify-content-between mb-0">
+                                <h5 class="m-0 me-2"><?= get_label('commandes status', 'Commandes status') ?></h5>
+                                <div>
+                                    <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view commandes', 'View Commandes') ?>">
+                                            <i class='bx bx-box'></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex  justify-content-center">
+                                <div id="caparcategorie"></div>
+                                <div id="no-data-categories" class="text-center badge bg-primary d-none"><?= get_label('There are no commandes yet', 'There are no commandes yet') ?></div>
+                            </div>
+
+
+                            </div>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Right Column: Large Card -->
+        <div class="col-md-6 col-lg-8 col-xl-8 mb-4">
+            <div class="card overflow-hidden mb-4 statisticsDiv">
+                <div class="card-header pt-3 pb-1">
+
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+
+                            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ca" aria-controls="navs-top-ca" aria-selected="true">
+                                <i class="menu-icon tf-icons  bx bx-pulse text-info"></i>  <?= get_label('general', 'General') ?>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-client" aria-controls="navs-top-client" aria-selected="false">
+                                <i class="menu-icon tf-icons bx bx-user text-warning"></i>  <?= get_label('client', 'Client') ?>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="navs-top-ca" role="tabpanel">
+                            <div class="card-title d-flex justify-content-between mb-4">
+                                <h5 class="m-0 me-2"><?= get_label('sale revenue', 'Sale revenue') ?></h5>
+                                <div>
+                                    <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
+                                            <i class='bx bx-file'></i>
+                                        </a>
+                                    </span>
+                                    <a href="/todos">
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
+                                            <i class="bx bx-user"></i>
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <div class="form-group">
+                                    <label for="grouping"><?= get_label('Group by:', 'Group by:') ?></label>
+                                    <select id="grouping" class="form-control">
+                                        <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                        <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                        <option value="year"><?= get_label('Total', 'Total') ?></option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
+                                    <input type="number" id="yearSelect" class="form-control" value="{{ now()->year }}" min="2000" max="{{ now()->year }}" style="margin-bottom: 15px">
+                                </div>
+
+                                <div id="chart"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="navs-top-client" role="tabpanel">
+
+
+                            <div class="card-title d-flex justify-content-between mb-4">
+                                <h5 class="m-0 me-2"><?= get_label('Clients sale revenue', 'Clients Sale revenue') ?></h5>
+                                <div>
+                                    <span data-bs-toggle="modal" data-bs-target="#create_todo_modal">
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('view_factures', 'View factures') ?>">
+                                            <i class='bx bx-file'></i>
+                                        </a>
+                                    </span>
+                                    <a href="/todos">
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="<?= get_label('view_clients', 'View Clients') ?>">
+                                            <i class="bx bx-user"></i>
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+
+
+                            <div class="my-3">
+                                <div class="form-group">
+                                    <label for="clientSelect"><?= get_label('Select Client:', 'Select Client:') ?></label>
+                                    <select id="clientSelect" class="form-control">
+                                        <!-- Options dynamically generated with Laravel -->
+                                        @foreach ($clients as $client)
+                                        <option value="{{ $client->id }}">
+                                            @if ($client->denomenation)
+                                                {{ $client->denomenation . " - " }}
+                                            @endif
+                                            @if ($client->first_name)
+                                                {{ $client->first_name }} {{ $client->last_name }}
+                                            @endif
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="clientGrouping"><?= get_label('Group by:', 'Group by:') ?></label>
+                                    <select id="clientGrouping" class="form-control">
+                                        <option value="day"><?= get_label('Day', 'Day') ?></option>
+                                        <option value="month" selected><?= get_label('Month', 'Month') ?></option>
+                                        <option value="year"><?= get_label('Total', 'Total') ?></option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="yearSelect"><?= get_label('Year:', 'Year:') ?></label>
+                                    <input type="number" id="clientYearSelect" class="form-control" value="{{ date('Y') }}" min="2000" max="{{ date('Y') }}" style="margin-bottom: 15px">
+                                </div>
+
+
+                                <div id="clientChart"></div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+       @endif
 
     </div>
 
@@ -695,6 +789,78 @@ background-repeat: no-repeat;
 });
 
     </script>
+
+
+<script>
+    $(document).ready(function() {
+        // AJAX call to get pack statistics data
+        $.ajax({
+            url: '/pack-statistics',
+            method: 'GET',
+            success: function(response) {
+                // Prepare the data for the chart
+                var seriesData = response.map(pack => pack.entreprises_count);
+                var categoriesData = response.map(pack => pack.name);
+
+                // Chart options
+                var options = {
+                    series: [{
+                        data: seriesData
+                    }],
+                    chart: {
+                        height: 330,
+                        type: 'bar',
+                        events: {
+                            click: function(chart, w, e) {
+                                // Handle click event
+                            }
+                        }
+                    },
+                    colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#546E7A', '#26A69A', '#D10CE8'], // Example colors
+                    plotOptions: {
+                        bar: {
+                            columnWidth: '28%',
+                            distributed: true,
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    legend: {
+                        show: false
+                    },
+                    xaxis: {
+                        categories: categoriesData,
+                        labels: {
+                            style: {
+                                colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#546E7A', '#26A69A', '#D10CE8'], // Example colors
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+
+                    yaxis: {
+                        title: {
+                            text: 'Entreprises', // Y-axis label
+                            style: {
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                color: '#333'
+                            }
+                        }
+                    }
+                };
+
+                // Render the chart
+                var chart = new ApexCharts(document.querySelector("#statisticsadmin"), options);
+                chart.render();
+            },
+            error: function(error) {
+                console.error('Error fetching pack statistics:', error);
+            }
+        });
+    });
+</script>
 
 
 

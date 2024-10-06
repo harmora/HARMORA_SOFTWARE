@@ -3,6 +3,8 @@
 <?= get_label('packs', 'Packs') ?>
 @endsection
 
+{{--tva par entreprise et par commande ?? 0 7 10 14 16 20 / rib 24 chiffre / vente au lieu de commande /  --}}
+
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between mb-2 mt-4">
@@ -18,30 +20,49 @@
                 </ol>
             </nav>
         </div>
-        <div>
+        {{-- <div>
             <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#createPackModal">
                 <button type="button" class="btn btn-sm btn-primary">
                     <i class='bx bx-plus'></i> <?= get_label('create_pack', 'Create Pack') ?>
                 </button>
             </a>
-        </div>
+        </div> --}}
     </div>
+
 
     @if (is_countable($packs) && count($packs) > 0)
     <div class="row">
         @foreach ($packs as $pack)
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card shadow-lg border-0" style="border-radius: 12px; overflow: hidden;">
+                <!-- Pack Image -->
+
+                <?php
+                // Array of background images
+                $bg_images = ['lg1.png', 'lg2.png', 'lg3.png'];
+                // Get the background image based on the loop index
+                $bg_image = 'storage/logos/' . $bg_images[$loop->index % count($bg_images)];
+            ?>
+            <div class="pack-image" style="height: 180px; background: url('{{ asset($bg_image) }}') no-repeat center center / cover; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;  border-radius: 12px;">
+                    <!-- Optional overlay for better text contrast -->
+                </div>
+            </div>
+
+
                 <div class="card-body">
                     <h5 class="card-title">{{ $pack->name }}</h5>
                     <p class="card-text">{{ $pack->description }}</p>
-                    <p class="card-text"><strong>{{ get_label('number_of_accounts', 'Number of Accounts') }}:</strong> {{ $pack->number_of_accounts }}</p>
+                    <p class="card-text">
+                        <strong>{{ get_label('number_of_accounts', 'Number of Accounts') }}:</strong> {{ $pack->number_of_accounts }}
+                    </p>
+
                     <div class="mt-3">
-                        <h6>{{ get_label('features', 'Features') }}:</h6>
+                        <h6>{{ get_label('features', 'Features') }} :</h6>
                         <ul class="list-unstyled">
                             @foreach ($pack->features as $feature)
                             <li class="mb-2">
-                                <span class="badge bg-light text-dark p-2" style="border-radius: 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+                                <span class="badge bg-primary p-2" style="border-radius: 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
                                     {{ $feature->name }}
                                 </span>
                             </li>
@@ -49,26 +70,20 @@
                         </ul>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
+                <div class="card-footer d-flex justify-content-center">
                     <a href="{{ url('/packs/edit/' . $pack->id) }}" class="btn btn-warning btn-sm">
                         <i class='bx bx-edit'></i> <?= get_label('update', 'Update') ?>
                     </a>
-                    <form action="{{ url('/packs/destroy/' . $pack->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this pack?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class='bx bx-trash'></i> <?= get_label('delete', 'Delete') ?>
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
         @endforeach
     </div>
-    @else
+@else
     <?php $type = 'Packs'; ?>
     <x-empty-state-card :type="$type" />
-    @endif
+@endif
+
 </div>
 
 <!-- Modal for Creating a Pack -->

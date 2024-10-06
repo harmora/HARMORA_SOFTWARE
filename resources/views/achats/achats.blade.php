@@ -28,6 +28,15 @@ $visibleColumns = getUserPreferences('Achats');
     <div class="card">
         <div class="card-body">
             <div class="row">
+
+                <div class="col-md-4 mb-3 text-white">
+                    <a
+                    {{-- href="{{ route('achats.bonne') }}" --}}
+                     class="btn btn-primary">
+                        <i class="bx bx-box"></i> <?= get_label('Purchase order', ' Purchase order') ?>
+                    </a>
+                </div>
+
                 <div class="col-md-4 mb-3">
                     <select class="form-select" id="type_achat_filter" aria-label="Default select example">
                         <option value=""><?= get_label('select_status', 'Select status') ?></option>
@@ -43,7 +52,7 @@ $visibleColumns = getUserPreferences('Achats');
                         <option value=""><?= get_label('all', 'All') ?></option>
                         <option value="paid">{{get_label('paid','Paid')}}</option>
                         <option value="unpaid">{{get_label('unpaid','Unpaid')}}</option>
-                        <option value="partial">{{get_label('partial','Partial')}}</option>                        
+                        <option value="partial">{{get_label('partial','Partial')}}</option>
                     </select>
                 </div>
             </div>
@@ -262,7 +271,7 @@ $visibleColumns = getUserPreferences('Achats');
                             }
 
 
-                            
+
                             if(data.devis){
                                 modalBody.querySelector('#devis').value = data.devis;
                                 var devisHtml = '';
@@ -291,7 +300,7 @@ $visibleColumns = getUserPreferences('Achats');
 
                             // Populate products info
                             if (data.products && data.products.length > 0) {
-        
+
                             var productsHtml = '';
                             data.products.forEach(product => {
                                 productsHtml += `<div class="col-md-3 mb-3">
@@ -305,8 +314,8 @@ $visibleColumns = getUserPreferences('Achats');
                                     </div>
                                 </div>`;
                             });
-                            modalBody.querySelector('#products').innerHTML = productsHtml;  
-                            $('#prodaffiche').show();            
+                            modalBody.querySelector('#products').innerHTML = productsHtml;
+                            $('#prodaffiche').show();
                             }
                             else {
                                 $('#prodaffiche').hide();

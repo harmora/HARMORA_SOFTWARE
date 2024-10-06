@@ -86,17 +86,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="paque_id"><?= get_label('paque', 'pack') ?></label>
-                        <select class="form-select" id="paque_id" name="paque_id">
-                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
-                            @foreach ($paques as $paque)
-                                <option value="{{ $paque->id }}" {{ old('paque_id') == $paque->id ? "selected" : "" }}>
-                                    {{ ucfirst($paque->name) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                
                     <div class="mb-3 col-md-6">
                         <label for="addressuser" class="form-label"><?= get_label('address', 'Address') ?></label>
                         <input class="form-control" type="text" id="addressuser" name="addressuser" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address') }}">
@@ -121,7 +111,7 @@
                         <label for="doj" class="form-label"><?= get_label('date_of_join', 'Date of joining') ?></label>
                         <input class="form-control" type="text" id="doj" name="doj" placeholder="<?= get_label('please_select', 'Please select') ?>" autocomplete="off">
                     </div>
-                    
+
                     <div class="mb-3 col-md-6">
                         <label for="photo" class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
                         <input class="form-control" type="file" id="photo" name="profile">
@@ -143,8 +133,8 @@
                             @endforeach
                         </select>
                     </div>
-                </div> 
-                
+                </div>
+
                 {{-- <div class="row">
                     <div class="mb-3 col-md-6">
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
@@ -188,7 +178,7 @@
                     <div class="mb-3 col-md-6">
                         <label for="country" class="form-label"><?= get_label('country', 'Country') ?></label>
                         <input class="form-control" type="text" id="country" name="country" placeholder="<?= get_label('please_enter_country', 'Please enter country') ?>" value="{{ old('country') }}">
-                    </div> 
+                    </div>
                 </div> --}}
                 @if(isAdminOrHasAllDataAccess())
                 <div class="mb-3 col-md-6">
@@ -216,7 +206,7 @@
                         </div>
                     </div>
                 </div>
-                @endif                   
+                @endif
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary me-2" id="submit_btn"><?= get_label('create', 'Create') ?></button>
                     <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>

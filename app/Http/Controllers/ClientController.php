@@ -71,6 +71,7 @@ class ClientController extends Controller
             'first_name' =>  $internal_purpose ? 'required' : 'nullable',
             'last_name' => $internal_purpose ? 'required' : 'nullable',
             'denomenation'=> $internal_purpose ? 'nullable' : 'required',
+            'tva' => 'required|in:0,7,10,14,16,20',
             'RC' => 'nullable|numeric|digits_between:10,14',
             'ICE' => 'nullable|numeric|digits_between:3,8',
             'IF' => 'nullable|numeric|digits_between:4,6',
@@ -123,8 +124,10 @@ class ClientController extends Controller
         //     $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
         // }
         $formFields['status'] = $status;
+        $formFields['tva'] = $request->input('tva');
         $formFields['entreprise_id'] = $this->user->entreprise_id;
         $client = Client::create($formFields);
+
 
         try {
             // if (!$internal_purpose && $require_ev == 1) {
@@ -212,6 +215,7 @@ class ClientController extends Controller
             'RC' => 'nullable|numeric|digits_between:10,14',
             'ICE' => 'nullable|numeric|digits_between:3,8',
             'IF' => 'nullable|numeric|digits_between:4,6',
+            'tva' => 'required|in:0,7,10,14,16,20',
             'email' => [
                 'required',
                 Rule::unique('clients')->ignore($id),
@@ -251,6 +255,8 @@ class ClientController extends Controller
         // }
 
         $formFields['internal_purpose'] = $internal_purpose;
+
+        $formFields['tva'] = $request->input('tva');
 
         $client->update($formFields);
 

@@ -99,6 +99,18 @@
                         <label for="IF" class="form-label"><?= get_label('if', "IDENTIFIANT FISCALE") ?></label>
                         <input class="form-control" type="text" id="IF" name="IF" placeholder="<?= get_label('if', "IDENTIFIANT FISCALE") ?>" value="{{ old('IF') }}">
                     </div>
+                      <!-- TVA Select Input -->
+                      <div class="mb-3 col-md-6">
+                        <label for="tva" class="form-label"><?= get_label('tva', 'TVA') ?></label>
+                        <select class="form-select" id="tva" name="tva">
+                            <option value="0" >0%</option>
+                            <option value="7" >7%</option>
+                            <option value="10" >10%</option>
+                            <option value="14" >14%</option>
+                            <option value="16" >16%</option>
+                            <option value="20">20%</option>
+                        </select>
+                    </div>
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?></label>
                         <input class="form-control" type="text" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address') }}">

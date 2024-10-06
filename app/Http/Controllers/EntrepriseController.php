@@ -8,6 +8,7 @@ use App\Models\Task;
 // use App\Models\entreprise;
 use App\Models\Client;
 use App\Models\Entreprise;
+use App\Models\Pack;
 use App\Models\Project;
 use App\Models\Template;
 use App\Models\Workspace;
@@ -39,6 +40,7 @@ class EntrepriseController extends Controller
 
         $entreprises = Entreprise::all();
         $formesjuridique= Forme_juridique::all();
+
         $visibleColumns = getUserPreferences('entreprises'); // Adjust this based on how you get user preferences
         return view('entreprises.entreprises', ['entreprises' => $entreprises,'fomesJuridique'=> $formesjuridique],compact('visibleColumns'));
     }
@@ -54,8 +56,10 @@ class EntrepriseController extends Controller
      public function create()
      {
          $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
-         return view('entreprises.create_entreprise', ['formesJuridique' => $formesJuridique]);
+         $paques= Pack::all();
+         return view('entreprises.create_entreprise', ['formesJuridique' => $formesJuridique,'paques'=>$paques]);
      }
+
      public function store(Request $request)
      {
          $formFields = $request->validate([
@@ -64,10 +68,12 @@ class EntrepriseController extends Controller
             'RC' => 'nullable|numeric|digits_between:2,6',
             'ICE' => 'nullable|numeric|digits_between:2,6',
             'IF' => 'nullable|numeric|digits_between:2,6',
+            'rib' => 'nullable|numeric|digits:24',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
             'country' => 'required|string|max:255',
+            'paque_id' => 'required',
          ]);
 
          if ($request->hasFile('photo')) {
@@ -81,12 +87,14 @@ class EntrepriseController extends Controller
              'ICE' => $formFields['ICE'],
              'RC' => $formFields['RC'],
              'IF' => $formFields['IF'],
+             'rib' => $formFields['rib'], // Add rib field here
              'address' => $formFields['address'],
              'city' => $formFields['city'],
              'state' => $formFields['state'],
              'country' => $formFields['country'],
              'forme_juridique_id' => $formFields['forme_juridique_id'],
              'photo' => $formFields['photo'],
+             'pack_id' => $formFields['paque_id'],
 
          ]);
 
@@ -98,13 +106,15 @@ class EntrepriseController extends Controller
      {
          $entreprise =Entreprise::findOrFail($id);
          $formesJuridique = Forme_juridique::all(); // Assuming you have a FormeJuridique model
+         $paques= Pack::all();
 
          // Debugging lines
          // dd($user, $entreprise, $formesJuridique);
 
          return view('entreprises.update_entreprise', [
              'entreprise' => $entreprise,
-             'formesJuridique' => $formesJuridique
+             'formesJuridique' => $formesJuridique,
+             'paques'=>$paques
          ]);
      }
 
@@ -116,10 +126,12 @@ class EntrepriseController extends Controller
             'RC' => 'nullable|numeric|digits_between:2,6',
             'ICE' => 'nullable|numeric|digits_between:2,6',
             'IF' => 'nullable|numeric|digits_between:2,6',
+            'rib' => 'nullable|numeric|digits:24',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
             'country' => 'required|string|max:255',
+            'paque_id' => 'required',
         ]);
         $entreprise = Entreprise::findOrFail($id);
 
@@ -144,12 +156,14 @@ class EntrepriseController extends Controller
             'ICE' => $formFields['ICE'],
             'RC' => $formFields['RC'],
             'IF' => $formFields['IF'],
+            'rib' => $formFields['rib'],
             'address' => $formFields['address'],
             'city' => $formFields['city'],
             'state' => $formFields['state'],
             'country' => $formFields['country'],
             'photo' => $formFields['photo'],
             'forme_juridique_id' => $formFields['forme_juridique_id'], // Update this field
+            'pack_id' => $formFields['paque_id'],
         ]);
 
         Session::flash('message', 'Profile details updated successfully.');

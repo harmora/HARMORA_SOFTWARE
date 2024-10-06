@@ -68,13 +68,33 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         </li>
 
 
-        <li class="menu-item {{ Request::is('achats') || Request::is('achats/*') ? 'active' : '' }}">
+        {{-- <li class="menu-item {{ Request::is('achats') || Request::is('achats/*') ? 'active' : '' }}">
             <a href="/achats" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-cart text-dark'></i>
                 <div><?= get_label('achats', 'Achats') ?>
                 </div>
             </a>
+        </li> --}}
+
+        <li class="menu-item {{ Request::is('achats') || Request::is('achats/*') || Request::is('bondecommande') || Request::is('bondecommande/*') ? 'active open' : '' }}">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class='menu-icon tf-icons bx bx-cart text-dark'></i>
+                <div><?= get_label('achats', 'Achats') ?></div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::is('achats') ? 'active' : '' }}">
+                    <a href="/achats" class="menu-link">
+                        <div><?= get_label('achats_list', 'Validated Achats') ?></div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is('bonnecommande') ? 'active' : '' }}">
+                    <a href="/bonnecommande" class="menu-link">
+                        <div><?= get_label('bon_de_commande', 'Bon de commande') ?></div>
+                    </a>
+                </li>
+            </ul>
         </li>
+
         @endif
 
 <!--it ends here-->
@@ -217,16 +237,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 {{-- dddddddddddddddddddddddd --}}
 
 
-        @if(auth()->user()->role->rolename === 'admin')
 
-
-        <li class="menu-item {{ Request::is('notifications') || Request::is('notifications/*') ? 'active' : '' }}">
-            <a href="" class="menu-link ">
-                <i class="menu-icon tf-icons bx bx-notification text-primary"></i>
-                <div><?= get_label('notifications', 'Notifications') ?></div>
-            </a>
-        </li>
-        @endif
 
 
 

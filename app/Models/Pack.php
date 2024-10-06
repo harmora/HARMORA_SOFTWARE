@@ -17,9 +17,9 @@ class Pack extends Model
         'photo',
     ];
 
-    public function users()
+    public function entreprises()
 {
-    return $this->hasMany(User::class);
+    return $this->hasMany(Entreprise::class);
 }
 public function features()
 {

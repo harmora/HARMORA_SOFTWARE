@@ -22,4 +22,11 @@ class fournisseur extends Model
     {
         return $this->hasMany(Achat::class);
     }
+
+    public function bonDeCommandes()
+{
+    return $this->hasMany(BonDeCommande::class);
+}
+
+
 }

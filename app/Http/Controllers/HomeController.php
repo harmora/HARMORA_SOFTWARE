@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
+use App\Models\Entreprise;
+use App\Models\Pack;
 use App\Models\ProdCategory;
 
 class HomeController extends Controller
@@ -40,7 +42,25 @@ class HomeController extends Controller
         $products = auth()->user()->entreprise->product;
         $commandes = auth()->user()->entreprise->commande;
 
+           // Initialize variables for counting entreprises, users, and admins
+    $entrepriseforadmin = null;
+    $usersforadmin = null;
+    $adminsforadmin = null;
 
+    // If the logged-in user is an admin, get the counts for entreprises, users, and admins
+    if (auth()->user()->role->rolename === 'admin') {
+        // Count all entreprises
+        $entrepriseforadmin = Entreprise::count();
+
+        // Count all users (excluding admins)
+        $usersforadmin = User::whereHas('role', function ($query) {
+            $query->where('rolename', 'user');
+        })->count();
+
+        $adminsforadmin = User::whereHas('role', function ($query) {
+            $query->where('rolename', 'admin');
+        })->count();
+    }
 
             $currentYear = date('Y');
 
@@ -52,8 +72,22 @@ class HomeController extends Controller
                 ->where('status', 'completed')
                 ->sum('total_amount');
 
-        return view('dashboard', ['commandes'=> $commandes,'users' => $users, 'clients' => $clients, 'ca' => $totalRevenue, 'products' => $products, 'auth_user' => $this->user]);
+        return view('dashboard', ['commandes'=> $commandes,'users' => $users, 'clients' => $clients, 'ca' => $totalRevenue, 'products' => $products,
+        'auth_user' => $this->user,
+        'entrepriseforadmin' => $entrepriseforadmin,
+        'usersforadmin' => $usersforadmin,
+        'adminsforadmin' => $adminsforadmin]);
     }
+
+    public function getPackStatistics()
+{
+    // Fetch packs with the count of entreprises
+    $packs = Pack::withCount('entreprises')->get(['name', 'entreprises_count']);
+
+    // Return the data as JSON
+    return response()->json($packs);
+}
+
 
 
 

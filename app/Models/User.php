@@ -72,10 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $meetings;
     }
 
-    public function pack()
-{
-    return $this->belongsTo(Pack::class);
-}
+
 
 
     public function role()

@@ -53,4 +53,17 @@ class Entreprise extends Model
     {
         return $this->belongsTo(Forme_juridique::class);
     }
+
+    public function pack()
+    {
+        return $this->belongsTo(Pack::class);
+    }
+
+    // Entreprise.php
+public function bonDeCommandes()
+{
+    return $this->hasMany(BonDeCommande::class);
 }
+
+}
+

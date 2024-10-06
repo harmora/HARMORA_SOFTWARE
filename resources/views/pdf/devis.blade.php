@@ -306,6 +306,8 @@
         <table style="width: 100%; border-collapse: collapse; font-size:12px !important;">
             <tr>
                 <td style="width: 50%; vertical-align: middle;">
+
+                    
                     <img src="{{ $entreprise->photo ? 'storage/' . $entreprise->photo : 'storage/photos/no-image.jpg' }}" class="entrepriselogo" alt="Logo">
                 </td>
                 <td style="text-align: right; vertical-align: middle;">

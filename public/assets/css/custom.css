@@ -513,6 +513,9 @@
 .statisticsDivSmall {
     height: 333px;
 }
+.statisticsDivSmall2 {
+    height: 450px;
+}
 
 
 #confirmSaveColumnVisibility,

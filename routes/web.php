@@ -51,6 +51,7 @@ use Spatie\Permission\Middlewares\RoleMiddleware;
 use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\EstimatesInvoicesController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\BonneCommandeController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommandesController;
@@ -159,9 +160,8 @@ Route::middleware(['CheckInstallation'])->group(function () {
         Route::get('/get-chiffre-affaire-produits', [HomeController::class, 'getChiffreAffaireParCategorieProduit']);
 
         Route::get('/enterprise-profile', [EntrepriseController::class, 'showmyprofile'])->name('enterprise.profile');
-
-
-
+        Route::get('/pack-statistics', [HomeController::class, 'getPackStatistics']);
+        Route::get('/listforhome', [HomeController::class, 'listForHome']);
 
 
         Route::get('/ocr', function () {
@@ -361,6 +361,19 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('achats/list', [AchatController::class,'list']);
         Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
         Route::get('/achats/getforaffiche/{id}', [AchatController::class, 'getachat']);
+
+
+        Route::get('/bonnecommande', [BonneCommandeController::class, 'index'])->name('bonnecommande.index');
+        Route::get('/bondecommande/create', [BonneCommandeController::class, 'create']);
+        Route::post('/boncommande/store', [BonneCommandeController::class, 'store'])->name('boncommande.store');
+
+
+
+
+
+
+
+
 
 
         //Factures-------------------------------------------------------------

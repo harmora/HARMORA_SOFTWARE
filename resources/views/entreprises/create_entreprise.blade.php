@@ -39,6 +39,19 @@
                         <label for="denomenation_u" class="form-label">Denomination <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="denomenation_u" id="denomenation_u" placeholder="Denomenation" value="{{ old('denomenation') }}">
                     </div>
+
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="paque_id"><?= get_label('paque', 'pack') ?></label>
+                        <select class="form-select" id="paque_id" name="paque_id">
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                            @foreach ($paques as $paque)
+                                <option value="{{ $paque->id }}" {{ old('paque_id') == $paque->id ? "selected" : "" }}>
+                                    {{ ucfirst($paque->name) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="mb-3 col-md-6">
                         <label class="form-label" for="forme_juridique_id"><?= get_label('forme_juridique', 'Forme Juridique') ?></label>
                         <select class="form-select" id="forme_juridique_id" name="forme_juridique_id">
@@ -62,6 +75,11 @@
                         <label for="IF" class="form-label"><?= get_label('IDENTIFIANT_FISCALE', "IDENTIFIANT FISCALE") ?></label>
                         <input class="form-control" type="text" id="IF" name="IF" placeholder="<?= get_label('dfg', "IDENTIFIANT FISCALE") ?>" value="{{ old('IF') }}">
                     </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="rib" class="form-label"><?= get_label('RIB', "RIB") ?></label>
+                        <input class="form-control" type="text" id="rib" name="rib" placeholder="<?= get_label('Entrer le RIB', "Entrer le RIB") ?>" maxlength="24" value="{{ old('rib') }}">
+                    </div>
+
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label"><?= get_label('address', 'Address') ?></label>
                         <input class="form-control" type="text" id="address" name="address" placeholder="<?= get_label('please_enter_address', 'Please enter address') ?>" value="{{ old('address') }}">

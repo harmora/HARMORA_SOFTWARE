@@ -35,6 +35,7 @@ class Client extends Authenticatable implements MustVerifyEmail
         'ICE',
         'RC',
         'IF',
+        'tva',
         'status',
         'email_verified_at',
         'acct_create_mail_sent',

@@ -75,16 +75,16 @@ class UserController extends Controller
             $roles = RoleAuth::all(); // Fetch all roles
             $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
             $entreprises= Entreprise::all();
-            $paques= Pack::all();
+
         }
         else{
             $roles = RoleAuth::where('id','!=',1)->get(); // Fetch all roles
             $formesJuridique = Forme_juridique::all(); // Fetch all formes juridiques
             $entreprises= Entreprise::where('id',$this->user->entreprise_id)->get();
-            $paques= Pack::all();
+
         }
 
-        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises,'paques'=>$paques]);
+        return view('users.create_user', ['roles' => $roles,'formesJuridique' => $formesJuridique,'entreprises'=>$entreprises]);
     }
 
     /**
@@ -109,7 +109,7 @@ class UserController extends Controller
             'stateuser' => 'nullable',
             'countryuser' => 'nullable',
             'entreprise_id' => 'nullable',
-            'paque_id' => 'nullable',
+
             //'dob' => 'nullable',
             //'doj' => 'nullable',
             'role' => 'required'
@@ -155,7 +155,6 @@ class UserController extends Controller
                 'photo' => $formFields['photo'],
                 'status' => $formFields['status'],
                 'entreprise_id' => $formFields['entreprise_id'],
-                'pack_id' => $formFields['paque_id'],
                 'role_id' => $formFields['role'],
             ]);
             $selectedRole = RoleAuth::findOrFail($formFields['role']);
