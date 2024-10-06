@@ -196,4 +196,8 @@ class Client extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Commande::class);
     }
+    public function devise()
+    {
+        return $this->hasMany(devise::class);
+    }
 }

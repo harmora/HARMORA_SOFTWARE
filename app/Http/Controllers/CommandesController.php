@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\bon_livraision;
 use App\Models\Commande;
+use App\Models\devise;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Entreprise;
+use App\Models\invoice;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -43,22 +46,10 @@ class CommandesController extends Controller
      */
     public function index($id = '')
     {
-
-
-$users = $this->user->entreprise->user;
-
-
-$clients = $this->user->entreprise->client;
-
-
-$products = $this->user->entreprise->product;
-
-
-$commandes = $this->user->entreprise->commande;
-
-
-
-
+        $users = $this->user->entreprise->user;
+        $clients = $this->user->entreprise->client;
+        $products = $this->user->entreprise->product;
+        $commandes = $this->user->entreprise->commande;
         return view('commandes.commandes', compact('clients', 'users', 'products'), compact('commandes'));
     }
 
@@ -130,11 +121,10 @@ $commandes = $this->user->entreprise->commande;
 
      // Create a new commande
      $commande = Commande::create([
-         'reference_num' => $this->generateNextReference(),
          'client_id' => $request->client_id,
          'entreprise_id'=>$this->user->entreprise->id,
          'title' => $request->title,
-         'description' => strip_tags($request->description),
+         'description' => $request->description,
          'start_date' => $request->start,
          'due_date' => $request->due_date,
          'total_amount' => $totalAmountWithTva,
@@ -173,12 +163,10 @@ $commandes = $this->user->entreprise->commande;
      $documentField['facture'] = Null;
      $documentField['devis'] = $devisfile;
      $documentField['origin'] = 'commande';
-     $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-     $documentField['reference'] = $commande->reference_num;
-
+     $documentField['reference'] = $commande->id."-".$commande->title;
 
      $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
@@ -198,7 +186,6 @@ $commandes = $this->user->entreprise->commande;
 
 
 
-
     /**
      * Update the specified commande in storage.
      *
@@ -207,24 +194,6 @@ $commandes = $this->user->entreprise->commande;
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-
-
-    public function edit($id)
-    {
-
-$commandes = $this->user->entreprise->commande;
-
-
-        $commande = Commande::findOrFail($id);
-        $clients = $this->user->entreprise->client;
-        $users = $this->user->entreprise->user;
-        $allProducts = $this->user->entreprise->product;
-
-        $products = $this->user->entreprise->product;
-
-
-        return view('commandes.edit', compact('commande', 'clients', 'users', 'allProducts', 'products'));
-    }
 
 
     public function update(Request $request, $id)
@@ -250,7 +219,7 @@ $commandes = $this->user->entreprise->commande;
         $commande->update([
             'client_id' => $request->client_id,
             'title' => $request->title,
-            'description' => strip_tags($request->description),
+            'description' => $request->description,
             'start_date' => $request->start_date,
             'tva' => $request->tva, // Save the TVA value
         ]);
@@ -313,11 +282,11 @@ $commandes = $this->user->entreprise->commande;
         $documentField['facture'] = Null;
         $documentField['devis'] = $devisfile;
         $documentField['origin'] = 'commande';
-        $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-        $documentField['reference'] = $commande->reference_num." (Update)";
+        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
+
         $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
         $documentField['total_amount'] = $commande->total_amount;
@@ -329,38 +298,34 @@ $commandes = $this->user->entreprise->commande;
 
 
 
-         if ($commande->status == "completed") {
-            $entreprise = Entreprise::find($this->user->entreprise->id);
-            $pdfContent = Pdf::loadView('pdf.facture', compact('commande', 'entreprise'))->output();
 
-            $filePath = 'factures/updated_factur_'.$commande->id.'_' . time() . '.pdf';
+        $entreprise = Entreprise::find($this->user->entreprise->id);
+        $pdfContent = Pdf::loadView('pdf.facture', compact('commande', 'entreprise'))->output();
 
-            $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
+        $filePath = 'factures/updated_factur_'.$commande->id.'_' . time() . '.pdf';
 
-            $documentField['type'] ='devis';
-            $documentField['facture'] = $facturefile;
-            $documentField['devis'] = Null;
-            $documentField['origin'] = 'commande';
-            $documentField['entreprise_id'] = $this->user->entreprise->id;
+        $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
 
+        $documentField['type'] ='devis';
+        $documentField['facture'] = $facturefile;
+        $documentField['devis'] = Null;
+        $documentField['origin'] = 'commande';
 
 
-            $documentField['reference'] = $commande->reference_num." (Update)";
 
-            $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+        $documentField['reference'] = "Update-".$commande->id."-".$commande->title;
 
-            $documentField['total_amount'] = $commande->total_amount;
+        $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
-            $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
+        $documentField['total_amount'] = $commande->total_amount;
 
-            Document::create($documentField);
+        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
 
-         }
+        Document::create($documentField);
 
 
         return response()->json(['error' => false, 'message' => 'Commande updated successfully.']);
     }
-
 
 
 public function updateStatus(Request $request, $id)
@@ -390,11 +355,10 @@ public function updateStatus(Request $request, $id)
             $documentField['facture'] = $facturefile;
             $documentField['devis'] = null;
             $documentField['origin'] = 'commande';
-            $documentField['entreprise_id'] = $this->user->entreprise->id;
 
 
 
-            $documentField['reference'] = $commande->reference_num;
+            $documentField['reference'] = $commande->id."-".$commande->title;
 
             $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
 
@@ -529,7 +493,6 @@ public function updateStatus(Request $request, $id)
             $query->where(function ($query) use ($search) {
                 $query->where('title', 'like', '%' . $search . '%')
                     ->orWhere('description', 'like', '%' . $search . '%')
-                    ->orWhere('reference_num', 'like', '%' . $search . '%')
                     ->orWhereHas('user', function ($query) use ($search) {
                         $query->where('first_name', 'like', '%' . $search . '%')
                               ->orWhere('last_name', 'like', '%' . $search . '%');
@@ -601,7 +564,7 @@ public function updateStatus(Request $request, $id)
                 ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
                 '">' . $commande->status . '</span>';
 
-            $id_holder =
+            $id_holder = 
                 '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
                     '<button type="button" class="btn btn-info btn-sm" ' .
                         'data-id="' . htmlspecialchars($commande->id) . '" ' .
@@ -633,6 +596,8 @@ $documentsHtml .= '<a class="me-2">
 $documentsHtml .= '</div>';
 
 
+
+
             return [
                 'id' => $id_holder,
                 'title' => $commande->title,
@@ -657,6 +622,7 @@ $documentsHtml .= '</div>';
             "total" => $totalCommandes,
         ]);
     }
+
 
 
 public function getCommande($id)
@@ -727,37 +693,72 @@ public function listForCounter()
 }
 
 
+// public function dragula($id = '')
+// {
+//     $user = auth()->user(); // Get the authenticated user
+//     $clients =  $this->user->entreprise->client;  // Fetch all clients
+//     $products =  $this->user->entreprise->product;
+
+
+
+//     // Fetch commandes associated with the authenticated user
+//     // $commandes = Commande::where('entreprise_id', $this->user->entreprise->id)
+//     // ->orderBy('start_date', 'desc') // Assuming 'date' is the column name
+//     // ->get();
+//     $commandes = devise::whereHas('user', function ($query) {
+//         $query->where('entreprise_id', $this->user->entreprise->id);
+//     })->orderBy('start_date', direction: 'desc') // Assuming 'date' is the column name
+//     ->get();
+
+//     $commandesByStatus = $commandes->groupBy('status');
+
+//     $statuses = ['pending', 'completed', 'cancelled'];
+//     $total_commandes = $commandes->count();
+
+//     return view('commandes.board_view', compact('commandes', 'products', 'clients', 'user'), [
+//         'commandesByStatus' => $commandesByStatus,
+//         'clients' => $clients,
+//         'users' => $user, // Pass the authenticated user
+//         'total_commandes' => $total_commandes,
+//     ]);
+// }
+
 public function dragula($id = '')
 {
-    $user = auth()->user(); // Get the authenticated user
-    $clients =  $this->user->entreprise->client;  // Fetch all clients
-    $products =  $this->user->entreprise->product;
+    $user = auth()->user();
+    $clients = $this->user->entreprise->client;
+    $products = $this->user->entreprise->product;
 
+    // Fetch devises
+    $devises = Devise::whereHas('user', function ($query) {
+        $query->where('entreprise_id', $this->user->entreprise->id);
+    })->orderBy('start_date', 'desc')->get();
 
+    // Fetch invoices
+    $invoices = Invoice::whereHas('user', function ($query) {
+        $query->where('entreprise_id', $this->user->entreprise->id);
+    })->orderBy('created_at', 'desc')->get();
 
-    // Fetch commandes associated with the authenticated user
-    $commandes = Commande::where('entreprise_id', $this->user->entreprise->id)
-    ->orderBy('start_date', 'desc') // Assuming 'date' is the column name
-    ->get();
+    // Fetch bon_livraisions
+    $bon_livraisions = bon_livraision::whereHas('user', function ($query) {
+        $query->where('entreprise_id', $this->user->entreprise->id);
+    })->orderBy('created_at', 'desc')->get();
 
-    $commandesByStatus = $commandes->groupBy('status');
+    $total_items = $devises->count() + $invoices->count() + $bon_livraisions->count();
 
-
-    $statuses = ['pending', 'completed', 'cancelled'];
-    $total_commandes = $commandes->count();
-
-    return view('commandes.board_view', compact('commandes', 'products', 'clients', 'user'), [
-        'commandesByStatus' => $commandesByStatus,
+    return view('commandes.board_view', compact('products', 'clients', 'user'), [
+        'devises' => $devises,
+        'invoices' => $invoices,
+        'bon_livraisions' => $bon_livraisions,
         'clients' => $clients,
-        'users' => $user, // Pass the authenticated user
-        'total_commandes' => $total_commandes,
+        'users' => $user,
+        'total_items' => $total_items,
     ]);
 }
 
-
 public function generateDevis($id)
 {
-    $commande = Commande::with('products')->findOrFail($id);
+    $commande = devise::with('products')->findOrFail($id);
     $entreprise = $this->user->entreprise;
     $pdf = Pdf::loadView('pdf.devis', compact('commande'),compact('entreprise'));
 
@@ -765,42 +766,23 @@ public function generateDevis($id)
     return $pdf->stream($pdfname);
 }
 
+// public function generateDevis($id)
+// {
+//     $commande = Commande::with('products')->findOrFail($id);
+//     $entreprise = $this->user->entreprise;
+//     $pdf = Pdf::loadView('pdf.devis', compact('commande'),compact('entreprise'));
+
+//     $pdfname = 'devis-'.$commande->id.'.pdf';
+//     return $pdf->stream($pdfname);
+// }
 public function generateFacture($id)
 {
-    $commande = Commande::with('products')->findOrFail($id);
+    $commande = invoice::with('products')->findOrFail($id);
     $entreprise = $this->user->entreprise;
     $pdf = Pdf::loadView('pdf.facture', compact('commande'),compact('entreprise'));
 
     $pdfname = 'facture-'.$commande->id.'.pdf';
     return $pdf->stream($pdfname);
-}
-
-
-function generateNextReference()
-{
-
-    // Fetch the latest reference for the entreprise
-    $latestRecord =  Commande::with('user')
-                     ->where('entreprise_id', $this->user->entreprise->id)
-                   ->orderBy('id', 'desc')
-                   ->first();
-
-    // If no previous reference exists, start from '00000001'
-    if (!$latestRecord) {
-        return "00000001";
-    }
-
-
-    $currentReference = $latestRecord->reference_num;
-
-    // Convert the reference to a base 16 integer, increment it, and convert it back
-    $nextReferenceInt = hexdec($currentReference) + 1;
-
-    // Format the new reference, padded to 8 characters
-    $nextReference = str_pad(dechex($nextReferenceInt), 8, '0', STR_PAD_LEFT);
-
-
-    return $nextReference;
 }
 
 
@@ -933,5 +915,3 @@ function generateNextReference()
 }
 
 ?>
-
-

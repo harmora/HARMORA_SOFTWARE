@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AchatController;
+use App\Http\Controllers\deviseController;
 use App\Http\Controllers\ImportController;
 use App\Models\ActivityLog;
 use App\Http\Middleware\Authorize;
@@ -241,6 +242,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
 
         // commandes
+
         Route::get('/commandes', [CommandesController::class, 'index']);
         Route::get('/commandes/information/{id}', [CommandesController::class, 'show']);
         Route::get('commandes/create', [CommandesController::class, 'create'])->name('commandes.create');
@@ -254,27 +256,30 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         // Route::post('/commandes/delete-multiple-media', [CommandesController::class, 'delete_multiple_media']);
         Route::delete('/commandes/destroy/{id}', [CommandesController::class, 'destroy']);
         Route::post('/commandes/destroy_multiple', [CommandesController::class, 'destroy_multiple']);
-        Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
+        // Route::get('/commandes/list/{id?}', [CommandesController::class, 'list']);
 
-        Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
 
         // Route::get('/commandes/{id}/edit', [CommandeController::class, 'edit']);
         Route::get('/commandes/{id}/edit', [CommandesController::class, 'edit'])->name('commandes.edit');
         Route::delete('/commandes/{id}', [CommandesController::class, 'destroy'])->name('commandes.destroy');
-        Route::put('/commandes/{id}', [CommandesController::class, 'update'])->name('commandes.update');
-
+        // Route::put('/commandes/{id}', [CommandesController::class, 'update'])->name('commandes.update');
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
-
-
         Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
-        Route::get('commandes/devis/{id}', [CommandesController::class, 'generateDevis'])->name('devis.pdf');
-
-
-
-
         Route::get('/commandes/getforaffiche/{id}', [CommandesController::class, 'getCommande']);
+
+            //----devis
+            Route::get('commandes/createDevise', [deviseController::class, 'createdevise'])->name('commandes.createdevise');
+            Route::post('/commandes/storeDevise', [deviseController::class, 'store_devise'])->name('commandes.store_devise');
+            Route::get('/commandes/{id}/editdevise', [deviseController::class, 'editdevis'])->name('commandes.editeditdevis');
+            Route::put('/commandes/{id}', [deviseController::class, 'accepter'])->name('commandes.accepter');
+            Route::get('/commandes/list/{id?}', [deviseController::class, 'listdevis']);
+            Route::get('commandes/devis/{id}', [deviseController::class, 'generateDevis'])->name('devis.pdf');
+            Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
+            Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createboncommande'])->name('boncommande.create_bon_commande');
+
+            
 
 
 

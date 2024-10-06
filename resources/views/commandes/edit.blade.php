@@ -77,6 +77,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                                         @endforeach
                                     </select>
                                     <input type="number" name="products[{{ $loop->index }}][quantity]" class="form-control" value="{{ $product->pivot->quantity }}" required>
+                                    <input type="number" name="products[{{ $loop->index }}][price]" class="form-control" value="{{ $product->pivot->price }}" required>
 
                                 </div>
                             @endforeach

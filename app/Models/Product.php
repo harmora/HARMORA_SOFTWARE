@@ -25,6 +25,24 @@ class Product extends Model
         return $this->belongsToMany(Commande::class, 'commande_products')
                     ->withPivot('quantity', 'price');
     }
+    public function devises()
+    {
+        return $this->morphedByMany(devise::class, 'related', 'vente_products')
+                    ->withPivot('quantity', 'price');
+    }
+    public function invoice()
+    {
+        return $this->morphedByMany(invoice::class, 'related', 'vente_products')
+                    ->withPivot('quantity', 'price');
+    }
+    public function bon_livraisions()
+    {
+        return $this->morphedByMany(bon_livraision::class, 'related', 'vente_products')
+                    ->withPivot('quantity', 'price');
+    }
+    
+    
+    
     public function achats()
     {
         return $this->belongsToMany(Achat::class, 'achat_product')

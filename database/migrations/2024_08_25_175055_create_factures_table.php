@@ -20,16 +20,22 @@ class CreateFacturesTable extends Migration
             $table->string('commande_name', 255);
             $table->enum('payement_state', ['payed', 'unpaid']);
             $table->date('date_facture');
+            $table->unsignedBigInteger('entreprise_id')->nullable(); // Foreign key for users table
+
             $table->timestamps();
 
             // Defining the indexes
             $table->index('commande_id');
+
 
             // Adding the foreign key constraint
             $table->foreign('commande_id')
                   ->references('id')
                   ->on('commandes')
                   ->onDelete('cascade');
+            $table->foreign('entreprise_id')->references('id')->on('entreprises')->onDelete('set null');
+
+            
         });
     }
 

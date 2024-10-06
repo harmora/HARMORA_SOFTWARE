@@ -3053,6 +3053,7 @@ $(document).ready(function () {
         var stockNameField    = $('#stock_name_field');
         var addProductBtn     = $('#add_product_btn');
         var addSupplierBtn    = $('#add_supplier_btn');
+        var addProductBtncommande     = $('#add_product_btn_commande');
 
         if (selectedType === 'Matériel/Produits') {
             productsNameField.show();
@@ -3092,6 +3093,10 @@ $(document).ready(function () {
     $('#status_payement').change(toggleStatusNameField);
 
     $('#add_product_btn').click(function() {
+        $('#createProductModal').modal('show');
+    });
+    
+    $('#add_product_btn_commande').click(function() {
         $('#createProductModal').modal('show');
     });
     $('#add_supplier_btn').click(function() {
