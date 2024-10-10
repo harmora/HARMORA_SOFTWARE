@@ -279,7 +279,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
             Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
             Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createboncommande'])->name('boncommande.create_bon_commande');
 
-            
+
 
 
 
@@ -371,6 +371,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/bonnecommande', [BonneCommandeController::class, 'index'])->name('bonnecommande.index');
         Route::get('/bondecommande/create', [BonneCommandeController::class, 'create']);
         Route::post('/boncommande/store', [BonneCommandeController::class, 'store'])->name('boncommande.store');
+        Route::get('/boncommande/list', [BonneCommandeController::class, 'list'])->name('boncommande.list');
 
 
 

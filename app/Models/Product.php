@@ -40,9 +40,9 @@ class Product extends Model
         return $this->morphedByMany(bon_livraision::class, 'related', 'vente_products')
                     ->withPivot('quantity', 'price');
     }
-    
-    
-    
+
+
+
     public function achats()
     {
         return $this->belongsToMany(Achat::class, 'achat_product')
@@ -54,5 +54,11 @@ class Product extends Model
         return $this->hasMany(mouvements_stock::class, 'produit_id');
     }
 
+    public function bonCommandes()
+    {
+        return $this->belongsToMany(BonDeCommande::class, 'bon_commande_product')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
+    }
 
 }

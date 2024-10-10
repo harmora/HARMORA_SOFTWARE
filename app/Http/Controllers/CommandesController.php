@@ -564,7 +564,7 @@ public function updateStatus(Request $request, $id)
                 ($commande->status == 'cancelled' ? 'bg-danger' : 'bg-info'))) .
                 '">' . $commande->status . '</span>';
 
-            $id_holder = 
+            $id_holder =
                 '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#commandeModal">' .
                     '<button type="button" class="btn btn-info btn-sm" ' .
                         'data-id="' . htmlspecialchars($commande->id) . '" ' .

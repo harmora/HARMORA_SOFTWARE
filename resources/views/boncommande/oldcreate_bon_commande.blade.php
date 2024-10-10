@@ -103,8 +103,8 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Reference to the container that holds product fields
-        
-            
+
+
         statusPayement.addEventListener('change', function() {
             if (this.value === 'partial') {
                 montantPayéeField.style.display = 'block';

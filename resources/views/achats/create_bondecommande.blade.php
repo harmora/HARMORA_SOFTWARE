@@ -26,16 +26,21 @@ $products = Product::all();
                 </li>
             </ol>
         </nav>
-        <div>
-            <button type="button" id="add_supplier_btn" class="btn btn-outline-secondary me-2"><?= get_label('add_new_supplier', 'Add New Supplier') ?></button>
-            <button type="button" id="add_product_btn" class="btn btn-outline-secondary"><?= get_label('add_new_product', 'Add New Product') ?></button>
-        </div>
+
     </div>
 
     <div class="card">
         <div class="card-body">
-            <form action="{{url('/boncommandes/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
-                <input type="hidden" name="redirect_url" value="/boncommandes">
+
+            {{-- <div class="mb-4 d-flex justify-content-end">
+                <button type="button" id="" class="btn btn-outline-info me-2"><?= get_label('add_new_supplier', 'Add New Supplier') ?></button>
+                <button type="button" id="" class="btn btn-outline-info"><?= get_label('add_new_product', 'Add New Product') ?></button>
+            </div> --}}
+
+
+
+            <form action="{{url('/boncommande/store')}}" method="POST" class="form-submit-event" enctype="multipart/form-data">
+                <input type="hidden" name="redirect_url" value="/bonnecommande">
                 @csrf
                 <div class="row">
                     <!-- Supplier -->
@@ -49,82 +54,88 @@ $products = Product::all();
                         ])
                     </div>
 
-                    <!-- Reference -->
                     <div class="mb-3 col-md-6">
-                        <label for="reference" class="form-label"><?= get_label('reference', 'Reference') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="text" id="reference" name="reference" placeholder="<?= get_label('enter_reference', 'Enter Reference') ?>" value="{{ old('reference') }}" required>
+                        <label for="type_achat" class="form-label"><?= get_label('type', 'Type') ?> <span class="asterisk">*</span></label>
+                        <select class="form-select" id="type_achat" name="type_achat">
+                            <option value="Matériel/Produits"><?= get_label('Matériel/Produits', 'Materielle/Products') ?></option>
+                            <option value="recherche/developpement"><?= get_label('recherche/developpement', 'Research/Development') ?></option>
+                            <option value="investissements"><?= get_label('investissements', 'Investments') ?></option>
+                            <option value="salaires/avantages sociaux"><?= get_label('salaires/avantages sociaux', 'Salaries/Social Benefits') ?></option>
+                            <option value="mainetenances/amélioration"><?= get_label('mainetenances/amélioration', 'Maintenance/Improvement') ?></option>
+                        </select>
                     </div>
+
+
 
                     <!-- Date of Command -->
                     <div class="mb-3 col-md-6">
                         <label for="date_commande" class="form-label"><?= get_label('date_commande', 'Date of Command') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="date" id="date_commande" name="date_commande" value="{{ old('date_commande') }}" required>
+                        <input class="form-control" type="date" id="date_commande" name="date_commande" value="<?= old('date_commande', date('Y-m-d')) ?>" required>
                     </div>
 
-                    <!-- Status -->
-                    <div class="mb-3 col-md-6">
-                        <label for="status" class="form-label"><?= get_label('status', 'Status') ?> <span class="asterisk">*</span></label>
-                        <select class="form-select" id="status" name="status" required>
-                            <option value=""><?= get_label('select_status', 'Select Status') ?></option>
-                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }} ><?= get_label('pending', 'Pending') ?></option>
-                            <option value="confirmed" {{ old('status') == 'confirmed' ? 'selected' : '' }} ><?= get_label('confirmed', 'Confirmed') ?></option>
-                            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }} ><?= get_label('cancelled', 'Cancelled') ?></option>
-                        </select>
-                    </div>
 
-                    <!-- Product List -->
-                    <div id="products-container">
-                        <div class="product-entry mb-3">
-                            <h5><?= get_label('product', 'Product') ?> 1</h5>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for="products[0][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
-                                    <select class="form-select" name="products[0][product_id]" required>
-                                        <option value=""><?= get_label('select_product', 'Select product') ?></option>
-                                        @foreach($products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                        @endforeach
-                                    </select>
+                    <div class="container">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header">
+                                <h4><?= get_label('existing_products', 'Existing Products') ?></h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="products-container">
+                                    <div class="product-entry mb-3">
+                                        <h5><?= get_label('product', 'Product') ?> 1</h5>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="products[0][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
+                                                <select class="form-select" name="products[0][product_id]" required>
+                                                    <option value=""><?= get_label('select_product', 'Select product') ?></option>
+                                                    @foreach($products as $product)
+                                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="products[0][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> </label>
+                                                <input class="form-control" type="number" name="products[0][quantity]" required min="1" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="products[0][price]" class="form-label"><?= get_label('price', 'Price') ?> </label>
+                                                <input class="form-control" type="number" name="products[0][price]" required step="0.01" placeholder="<?= get_label('enter_price', 'Enter Price') ?>">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="products[0][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
-                                    <input class="form-control" type="number" name="products[0][quantity]" required min="1" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>">
+
+                                <!-- Buttons for existing products -->
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" id="add-product" class="btn btn-secondary"><?= get_label('add_another_product', 'Add Another Product') ?></button>
+                                    <button type="button" id="remove-product" class="btn btn-danger" style="display: none;"><?= get_label('remove_last_product', 'Remove Last Product') ?></button>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="products[0][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
-                                    <input class="form-control" type="number" name="products[0][price]" required step="0.01" placeholder="<?= get_label('enter_price', 'Enter Price') ?>">
+                            </div>
+                        </div>
+
+                        <!-- Separator -->
+                        <div class="text-center mb-4">
+                            <hr class="my-4">
+                            <span class="badge bg-warning"><?= get_label('or_add_new', 'OR Add a New Non-Existent Product') ?></span>
+                        </div>
+
+                        <!-- New Non-Existent Product Section -->
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header">
+                                <h4><?= get_label('new_non_existent_products', 'New Non-Existent Products') ?></h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="new-products-container"></div>
+
+                                <!-- Buttons for new non-existent products -->
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" id="add-new-product" class="btn btn-info"><?= get_label('add_non_existent_product', 'Add New Product (Non-Existent)') ?></button>
+                                    <button type="button" id="remove-new-product" class="btn btn-danger" style="display: none;"><?= get_label('remove_last_new_product', 'Remove Last New Product') ?></button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <button type="button" id="add-product" class="btn btn-secondary"><?= get_label('add_another_product', 'Add Another Product') ?></button>
-                        <button type="button" id="remove-product" class="btn btn-danger" style="display: none;"><?= get_label('remove_last_product', 'Remove Last Product') ?></button>
-                    </div>
 
-                    <!-- Montant Total -->
-                    <div class="mb-3 col-md-6">
-                        <label for="montant_total" class="form-label"><?= get_label('montant_total', 'Montant Total') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="number" id="montant_total" name="montant_total" step="0.01" placeholder="<?= get_label('enter_montant_total', 'Enter Total Amount') ?>" required>
-                    </div>
-
-                    <!-- TVA -->
-                    <div class="mb-3 col-md-6">
-                        <label for="tva" class="form-label"><?= get_label('tva', 'TVA') ?></label>
-                        <input class="form-control" type="number" id="tva" name="tva" step="0.01" placeholder="<?= get_label('enter_tva', 'Enter TVA') ?>" value="{{ old('tva') }}">
-                    </div>
-
-                    <!-- Date de Livraison -->
-                    <div class="mb-3 col-md-6">
-                        <label for="date_livraison" class="form-label"><?= get_label('date_livraison', 'Delivery Date') ?> <span class="asterisk">*</span></label>
-                        <input class="form-control" type="date" id="date_livraison" name="date_livraison" required>
-                    </div>
-
-                    <!-- Facture -->
-                    <div class="mb-3 col-md-6">
-                        <label for="fichier_facture" class="form-label"><?= get_label('facture', 'Facture') ?></label>
-                        <input class="form-control" type="file" id="fichier_facture" name="fichier_facture">
-                    </div>
 
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary"><?= get_label('create', 'Create') ?></button>
@@ -135,14 +146,18 @@ $products = Product::all();
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let productCount = 1;
+        let newProductCount = 0;  // For new products
         const addProductBtn = document.getElementById('add-product');
         const removeProductBtn = document.getElementById('remove-product');
         const productsContainer = document.getElementById('products-container');
+        const newProductsContainer = document.getElementById('new-products-container');
+        const addNewProductBtn = document.getElementById('add-new-product');
+        const removeNewProductBtn = document.getElementById('remove-new-product');
 
+        // Add existing product
         addProductBtn.addEventListener('click', function() {
             const productTemplate = `
                 <div class="product-entry mb-3">
@@ -158,17 +173,16 @@ $products = Product::all();
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="products[${productCount}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
+                            <label for="products[${productCount}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> </label>
                             <input class="form-control" type="number" name="products[${productCount}][quantity]" required min="1" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>">
                         </div>
                         <div class="col-md-4">
-                            <label for="products[${productCount}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                            <label for="products[${productCount}][price]" class="form-label"><?= get_label('price', 'Price') ?></label>
                             <input class="form-control" type="number" name="products[${productCount}][price]" required step="0.01" placeholder="<?= get_label('enter_price', 'Enter Price') ?>">
                         </div>
                     </div>
                 </div>
             `;
-
             productsContainer.insertAdjacentHTML('beforeend', productTemplate);
             productCount++;
             if (productCount > 1) {
@@ -176,6 +190,7 @@ $products = Product::all();
             }
         });
 
+        // Remove existing product
         removeProductBtn.addEventListener('click', function() {
             if (productCount > 1) {
                 productsContainer.removeChild(productsContainer.lastElementChild);
@@ -185,6 +200,54 @@ $products = Product::all();
                 }
             }
         });
+
+        // Add new non-existent product
+        addNewProductBtn.addEventListener('click', function() {
+            const newProductTemplate = `
+                <div class="new-product-entry mb-3">
+                    <h5><?= get_label('new_product', 'New Product') ?> ${newProductCount + 1}</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="new_products[${newProductCount}][name]" class="form-label"><?= get_label('product_name', 'Product Name') ?></label>
+                            <input class="form-control" type="text" name="new_products[${newProductCount}][name]" required placeholder="<?= get_label('please_enter_product_name', 'Please enter product name') ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="new_products[${newProductCount}][category_id]" class="form-label"><?= get_label('category', 'Category') ?></label>
+                            <select class="form-select" name="new_products[${newProductCount}][category_id]" required>
+                                <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ ucfirst($cat->name_cat) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="new_products[${newProductCount}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?></label>
+                            <input class="form-control" type="number" name="new_products[${newProductCount}][quantity]" required min="1" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="new_products[${newProductCount}][price]" class="form-label"><?= get_label('price', 'Price') ?></label>
+                            <input class="form-control" type="number" name="new_products[${newProductCount}][price]" required step="0.01" placeholder="<?= get_label('enter_price', 'Enter Price') ?>">
+                        </div>
+                    </div>
+                </div>
+            `;
+            newProductsContainer.insertAdjacentHTML('beforeend', newProductTemplate);
+            newProductCount++;
+            if (newProductCount > 0) {
+                removeNewProductBtn.style.display = 'block';
+            }
+        });
+
+        // Remove last non-existent product
+        removeNewProductBtn.addEventListener('click', function() {
+            if (newProductCount > 0) {
+                newProductsContainer.removeChild(newProductsContainer.lastElementChild);
+                newProductCount--;
+                if (newProductCount === 0) {
+                    removeNewProductBtn.style.display = 'none';
+                }
+            }
+        });
     });
-</script>
+    </script>
 @endsection

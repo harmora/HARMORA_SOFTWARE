@@ -28,24 +28,62 @@ $visibleColumns = getUserPreferences('BonDeCommande');
     @if (is_countable($bonDeCommandes) && count($bonDeCommandes) > 0)
     <div class="card">
         <div class="card-body">
+
+            <div class="col-md-4 mb-3 text-white">
+                <a
+                {{-- href="{{ route('achats.bonne') }}" --}}
+                 class="btn btn-primary">
+                    <i class="bx bx-box"></i> <?= get_label('Validated achat', ' Validated achat') ?>
+                </a>
+            </div>
+             <!-- Add Filters Section -->
+    <div class="row mb-4">
+        <!-- Fournisseur Filter -->
+        <div class="col-md-4 mb-3">
+            <select class="form-select" id="fournisseur_filter" aria-label="Default select example">
+                <option value=""><?= get_label('select_fournisseur', 'Select Fournisseur') ?></option>
+                @foreach($fournisseurs as $fournisseur)
+                <option value="{{ $fournisseur->id }}">{{ $fournisseur->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Type Achat Filter -->
+        <div class="col-md-4 mb-3">
+            <select class="form-select" id="type_achat_filter" aria-label="Default select example">
+                <option value=""><?= get_label('select_type_achat', 'Select Type Achat') ?></option>
+                @foreach($typesAchat as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="col-md-4 mb-3">
+            <select class="form-select" id="status_filter" aria-label="Default select example">
+                <option value=""><?= get_label('select_status', 'Select Status') ?></option>
+                <option value="pending"><?= get_label('pending', 'Pending') ?></option>
+                <option value="approved"><?= get_label('approved', 'Approved') ?></option>
+                <option value="rejected"><?= get_label('rejected', 'Rejected') ?></option>
+            </select>
+        </div>
+    </div>
             <div class="table-responsive text-nowrap">
                 <input type="hidden" id="data_type" value="bon_de_commande">
-                <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/bon_de_commande/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
+                <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/boncommande/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                     <thead>
                         <tr>
-                            <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
-                            <th data-field="fournisseur_id" data-visible="{{ (in_array('fournisseur_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('fournisseur', 'Fournisseur') ?></th>
-                            <th data-field="entreprise_id" data-visible="{{ (in_array('entreprise_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('entreprise', 'Entreprise') ?></th>
+                            <th data-field="manage" data-visible="{{ (in_array('manage', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" ><?= get_label('bon_de_commande', 'bon de commande') ?></th>
+
+                            <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('reference', 'Reference') ?></th>
+                            <th data-field="fournisseur" data-visible="{{ (in_array('fournisseur_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('fournisseur', 'Fournisseur') ?></th>
                             <th data-field="type_achat" data-visible="{{ (in_array('type_achat', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('type_achat', 'Type Achat') }}</th>
                             <th data-field="montant" data-visible="{{ (in_array('montant', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('montant', 'Montant') ?></th>
-                            <th data-field="tva" data-visible="{{ (in_array('tva', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('tva', 'TVA') }}</th>
-                            <th data-field="facture" data-visible="{{ (in_array('facture', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('facture', 'Facture') ?></th>
-                            <th data-field="date_paiement" data-visible="{{ (in_array('date_paiement', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_paiement', 'Date de Paiement') ?></th>
-                            <th data-field="date_limit" data-visible="{{ (in_array('date_limit', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_limit', 'Date Limite') ?></th>
-                            <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('reference', 'Reference') ?></th>
+                            <th data-field="date_commande" data-visible="{{ (in_array('date_commande', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_commande', 'Date de Commande') ?></th>
                             <th data-field="status" data-visible="{{ (in_array('status', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('status', 'Statut') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
+                            <th data-field="products" data-visible="true"><?= get_label('products', 'Products') ?></th> <!-- New column for products -->
                             <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('actions', 'Actions') ?></th>
                         </tr>
                     </thead>
@@ -59,4 +97,5 @@ $visibleColumns = getUserPreferences('BonDeCommande');
     <x-empty-state-card :type="$type" />
     @endif
 </div>
+<script src="{{asset('assets/js/pages/boncommande.js')}}"></script>
 @endsection

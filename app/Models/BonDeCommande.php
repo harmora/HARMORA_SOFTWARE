@@ -18,17 +18,11 @@ class BonDeCommande extends Model
         'entreprise_id',
         'type_achat',
         'montant',
-        'tva',
-        'facture',
-        'date_paiement',
-        'date_limit',
         'reference',
+        'date_commande',
         'montant_ht',
-        'bon_achat',
-        'montant_restant',
-        'montant_payée',
-        'devis',
-        'status'
+        'bon',
+        'status',
     ];
 
     /**
@@ -45,5 +39,12 @@ class BonDeCommande extends Model
     public function entreprise()
     {
         return $this->belongsTo(Entreprise::class);
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'bon_commande_product')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
     }
 }
