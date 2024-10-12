@@ -28,7 +28,11 @@
                         <label for="status" class="form-label">{{ get_label('status', 'Shipping Status') }} <span class="asterisk">*</span></label>
                         <select name="status" id="status" class="form-select">
                             @if($previousBonLivraisons->isNotEmpty())
-                            <option value="partial">{{ get_label('partial', 'Partial') }}</option>
+                            @if($previousBonLivraisons->contains('status', 'partial'))
+                                <option value="partial">{{ get_label('partial', 'Partial') }}</option>
+                            @elseif($previousBonLivraisons->contains('status', 'total'))
+                                <option value="total">{{ get_label('total', 'Total') }}</option>
+                            @endif
                             @else
                                 <option value="total">{{ get_label('total', 'Total') }}</option>
                                 <option value="partial">{{ get_label('partial', 'Partial') }}</option>
@@ -96,7 +100,11 @@
 
                 <!-- Submit Button -->
                 <div class="mt-4">
-                    <button type="submit" id="submitBtn" class="btn btn-primary">{{ get_label('confirmer_bonliv', 'Confirmer Bon Lovraision') }}</button>
+                    @if($commande->isFullyShipped())
+                        <button type="button" class="btn btn-success" disabled>{{ get_label('validated', 'Validated') }}</button>
+                    @else
+                        <button type="submit" id="submitBtn" class="btn btn-primary">{{ get_label('confirmer_bonliv', 'Confirmer Bon Livraison') }}</button>
+                    @endif
                 </div>
             </form>
 
@@ -125,18 +133,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const remainquantityInputs = document.querySelectorAll('input[name^="products"][name$="[remaining_quantity]"]');
     const quantityInputs = document.querySelectorAll('input[name^="products"][name$="[quantity]"]');
     const startDateInput = document.getElementById('start_date');
+    const submitBtn = document.getElementById('submitBtn');
 
     function toggleReadonly(status) {
         if (status === 'total') {
-            quantityInputs.forEach(input => input.setAttribute('readonly', true));        
+            quantityInputs.forEach(input => input.setAttribute('readonly', true));
             remainquantityInputs.forEach(input => input.setAttribute('readonly', true));
             startDateInput.removeAttribute('readonly');
         } else if (status === 'partial') {
-            if(remainingQuantity == 0) {
-                quantityInputs.forEach(input => input.setAttribute('readonly', true));
-            } else {
-                quantityInputs.forEach(input => input.removeAttribute('readonly'));
-            }
+            remainquantityInputs.forEach(input => {
+                // Only make the quantity input editable if there is remaining quantity
+                if (parseInt(input.value) === 0) {
+                    input.setAttribute('readonly', true);
+                } else {
+                    input.removeAttribute('readonly');
+                }
+            });
             quantityInputs.forEach(input => input.removeAttribute('readonly'));
             startDateInput.removeAttribute('readonly');
         }
@@ -147,6 +159,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     toggleReadonly(statusSelect.value);
+        // Check if all quantities are shipped
+        function checkAllQuantitiesShipped() {
+        const allShipped = Array.from(remainquantityInputs).every(input => parseInt(input.value) === 0);
+        if (allShipped) {
+            submitBtn.textContent = '{{ get_label('validated', 'Validated') }}';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-success');
+            submitBtn.disabled = true;
+        }
+    }
+
+    // Add event listeners to remaining quantity inputs
+    remainquantityInputs.forEach(input => {
+        input.addEventListener('change', checkAllQuantitiesShipped);
+    });
+
+    // Initial check
+    checkAllQuantitiesShipped();
+
 });
+
 </script>
 @endsection
