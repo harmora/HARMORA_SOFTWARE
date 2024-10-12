@@ -99,6 +99,14 @@ class ProductController extends Controller
          $product = Product::create($formFields);
          $product->product_category_id = $request->input('category_id');
          $product->save();
+         mouvements_stock::create([
+            'product_id'=>$product->id,
+            'quantitéajoutée'=>$product->stock,
+            'quantitéprecedente'=>0,
+            'date_mouvement'=>now(),
+            'type_mouvement'=>'entrée',
+            'reference'=>$product->name.'-'.$product->id,
+        ]);
 
          try {
              Session::flash('message', 'Product created successfully.');

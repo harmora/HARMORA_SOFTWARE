@@ -31,13 +31,24 @@ $user = getAuthenticatedUser();
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
                             </li>
                         </a>
-
-
-                        <a href="javascript:void(0);" class="delete" data-reload="true" data-type="commandes" data-id="{{ $item->id }}">
-                            <li class="dropdown-item">
-                                <i class='menu-icon tf-icons bx bx-trash text-danger'></i> <?= get_label('delete', 'Delete') ?>
-                            </li>
-                        </a>
+                        @if($type === 'facture')
+                            <a href="{{ route('commandes.bonliv', $item->id) }}">
+                                <li class="dropdown-item">
+                                    <i class='menu-icon tf-icons bx bx-package text-primary'></i> <?= get_label('bonlib', 'Bon livraision') ?>
+                                </li>
+                            </a>
+                        @endif
+                        @if($type === 'devis')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="devise" data-id="{{ $item->id }}">
+                        @elseif($type === 'facture')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="facture" data-id="{{ $item->id }}">
+                        @elseif($type === 'bon_livraison')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="bon_livraison" data-id="{{ $item->id }}">
+                        @endif
+                                <li class="dropdown-item">
+                                    <i class='menu-icon tf-icons bx bx-trash text-danger'></i> <?= get_label('delete', 'Delete') ?>
+                                </li>
+                            </a>
                     </ul>
                 </div>
 
@@ -75,14 +86,14 @@ $user = getAuthenticatedUser();
                        {{ get_label('bon_livraison', 'Bon Livraison') }} <i class='bx bx-truck'></i>
                     </button>
                 @endif
-
+{{-- 
                 @if ($item->status == "completed")
                 <a class="me-2">
                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#factureModal-{{ $item->id }}">
                        {{ get_label('facture', 'Facture') }} <i class='bx bx-dollar'></i>
                     </button>
                 </a>
-                @endif
+                @endif --}}
             </div>
             <div>
                 <small class="badge bg-label-primary mb-1"> <?= get_label('Created At:', 'Created At:') ?> {{ format_date($item->start_date) }}</small>

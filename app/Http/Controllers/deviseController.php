@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\bon_livraision;
 use App\Models\Commande;
 use App\Models\devise;
+use App\Models\mouvements_stock;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Document;
@@ -410,6 +412,14 @@ class deviseController extends Controller
              // Update product stock
              $product->stock -= $productData['quantity'];
              $product->save();
+             mouvements_stock::create([
+                'product_id'=>$product->id,
+                'quantitéajoutée'=>$productData['quantity'],
+                'quantitéprecedente'=>$product->stock+$productData['quantity'],
+                'date_mouvement'=>now(),
+                'type_mouvement'=>'sortie',
+                'reference'=>$devise->id."-".$devise->title,
+            ]);
          }
         // Calculate the total amount including TVA
         $totalAmountWithTva = $totalAmount + ($totalAmount * $request->tva / 100);
@@ -457,15 +467,117 @@ class deviseController extends Controller
     }
     }
 
-    public function createboncommande(Request $request, $id)
+    public function createbonlivraision(Request $request, $id)
     {
         $invoice = Invoice::findOrFail($id);
         $products = $this->user->entreprise->product;
         $clients = $this->user->entreprise->client;
         $users = $this->user->entreprise->user;
     
-        return view('boncommande.create_bon_commande', compact('invoice', 'products', 'clients', 'users'));
+        return view('boncommande.create_bon_livraision', compact('invoice', 'products', 'clients', 'users'));
+    }
+    // public function bonlivr(Request $request, $id)
+    // {
+    //     $commande = Invoice::findOrFail($id);
+    //     $products = $this->user->entreprise->product;
+    //     $clients = $this->user->entreprise->client;
+    //     $users = $this->user->entreprise->user;
+    
+    //     return view('boncommande.create_bon_commande', compact('commande', 'products', 'clients', 'users'));
+    // }
+    public function bonlivr(Request $request, $id)
+{
+    $commande = Invoice::findOrFail($id);
+    $products = $this->user->entreprise->product;
+    $clients = $this->user->entreprise->client;
+    $users = $this->user->entreprise->user;
+    
+    // Fetch existing bon livraisons
+    $previousBonLivraisons = $commande->bonLivraisons()->get();
+    
+    return view('boncommande.create_bon_livraision', compact('commande', 'products', 'clients', 'users', 'previousBonLivraisons'));
+}
+
+public function storeLivraison(Request $request, $invoiceId)
+{
+    // Retrieve the Invoice
+    $invoice = Invoice::findOrFail($invoiceId);
+    $bonLivraisonExists = $invoice->bonLivraisons()->exists() ? 1 : 0;
+
+    // Validate incoming data
+    $validatedData = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start' => 'nullable|date',
+        'products' => 'required|array|min:1',
+        'products.*.product_id' => 'required|exists:products,id',
+        'products.*.quantity' =>  $bonLivraisonExists?'nullable|integer|min:1':'required',
+        'products.*.remaining_quantity'=> $bonLivraisonExists?'required':'nullable|integer',
+        'status' => 'required|in:partial,total',
+    ]);
+
+    // Check if the status is 'total' and handle logic
+    if ($validatedData['status'] === 'total') {
+        // Mark the invoice as fully delivered
+        $invoice->status = 'completed';
+        $invoice->save();
+    }
+    $totalAmount = 0;
+    $totalproducts = 0;
+    foreach ($request->products as $productData) {
+        $product = Product::find($productData['product_id']);
+        $totalproducts +=  $bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity'];
+        $totalAmount +=   ($bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity']) * $productData['price'];
+    }
+    // Create the BonLivraison record
+    $bon=bon_livraision::create([
+        'user_id'=>$invoice->user_id,
+        'client_id'=>$invoice->client_id,
+        'entreprise_id'=>$invoice->entreprise_id,
+        'invoice_id' => $invoice->id,
+        'title' => $validatedData['title'],
+        'start_date' =>  now() ,
+        'due_date' => now(),
+        'status' => $validatedData['status'],
+        'total_amount'=>$totalAmount,
+    ]);
+    
+    foreach ($request->products as $productData) {
+        $product = Product::find($productData['product_id']);
+        $bon->products()->attach($productData['product_id'], [
+             'quantity' =>   $bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity']
+         ]);
+     }
+
+    // If status is 'partial', keep the invoice status as pending/partial
+    if ($validatedData['status'] === 'partial') {
+        $invoice->status = 'partial';
+        $invoice->save();
     }
 
+    // Redirect back to the appropriate page
+    return response()->json(['error' => false, 'message' => 'Bon de Livraison created successfully.']);
+}
 
+public function destroy($id)
+{
+    $client = devise::findOrFail($id);
+    $response = DeletionService::delete(devise::class, $id, 'devise');
+    // UserClientPreference::where('user_id', 'c_' . $id)->delete();
+    return $response;
+}
+public function destroyfacture($id)
+{
+    $client = invoice::findOrFail($id);
+    $response = DeletionService::delete(invoice::class, $id, 'facture');
+    // UserClientPreference::where('user_id', 'c_' . $id)->delete();
+    return $response;
+}
+public function destroybon($id)
+{
+    $client = bon_livraision::findOrFail($id);
+    $response = DeletionService::delete(bon_livraision::class, $id, 'bon_livraision');
+    // UserClientPreference::where('user_id', 'c_' . $id)->delete();
+    return $response;
+}
 }
