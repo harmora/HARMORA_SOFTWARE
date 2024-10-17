@@ -60,6 +60,7 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PackController;
+use App\Http\Controllers\ChatbotController;
 use App\Models\Entreprise;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -380,11 +381,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/boncommande/list', [BonneCommandeController::class, 'list'])->name('boncommande.list');
 
 
-
-
-
-
-
+        //chatbot-------------------------------------------------------------------------
+        Route::get('/chatbot', [ChatbotController::class, 'index'])->name(name: 'chatbot.index');
+        Route::post('/chatbot', [ChatbotController::class, 'chat'])->name('chatbot.getResponse');
 
 
 

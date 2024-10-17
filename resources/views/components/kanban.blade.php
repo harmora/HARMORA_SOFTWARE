@@ -25,12 +25,13 @@ $user = getAuthenticatedUser();
                         <i class='bx bx-cog'></i>
                     </a>
                     <ul class="dropdown-menu">
-
+                        @if($type === 'devis')
                         <a href="{{ route('commandes.editeditdevis', $item->id) }}">
                             <li class="dropdown-item">
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
                             </li>
                         </a>
+                        @endif
                         @if($type === 'facture')
                             <a href="{{ route('commandes.bonliv', $item->id) }}">
                                 <li class="dropdown-item">
@@ -110,7 +111,7 @@ $user = getAuthenticatedUser();
 
             </div>
 
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%;" class="mt-4">
+            {{-- <div style="display: flex; justify-content: center; align-items: center; height: 100%;" class="mt-4">
                 <a href="javascript:void(0);" class="mr-4"  data-bs-toggle="modal" data-bs-target="#commandeModal">
                     <button type="button" class="btn btn-info btn-sm"
                         data-id="{{ $item->id }}"
@@ -120,7 +121,7 @@ $user = getAuthenticatedUser();
                         <i class="bx bx-expand"></i>
                     </button>
                 </a>
-            </div>
+            </div> --}}
 
         </div>
     </div>
