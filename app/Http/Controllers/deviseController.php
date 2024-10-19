@@ -85,15 +85,15 @@ class deviseController extends Controller
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------
-    public function generateDevis($id)
-    {
-        $commande = devise::with('products')->findOrFail($id);
-        $entreprise = $this->user->entreprise;
-        $pdf = Pdf::loadView('pdf.devis', compact('commande'),compact('entreprise'));
+    // public function generateDevis($id)
+    // {
+    //     $commande = devise::with('products')->findOrFail($id);
+    //     $entreprise = $this->user->entreprise;
+    //     $pdf = Pdf::loadView('pdf.devis', compact('commande'),compact('entreprise'));
 
-        $pdfname = 'devis-'.$commande->id.'.pdf';
-        return $pdf->stream($pdfname);
-    }
+    //     $pdfname = 'devis-'.$commande->id.'.pdf';
+    //     return $pdf->stream($pdfname);
+    // }
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -165,33 +165,37 @@ class deviseController extends Controller
         }
         $entreprise = Entreprise::find($this->user->entreprise->id);
         $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
-   
         $filePath = 'devis/devis_'.$commande->id.'_' . time() . '.pdf';
-   
         $devisfile = Storage::disk('public')->put($filePath, $pdfContent);
-   
+
         $documentField['type'] ='devis';
         $documentField['facture'] = Null;
         $documentField['devis'] = $filePath;
-        $documentField['origin'] = 'commande';
-   
-   
-   
+        $documentField['origin'] = 'commande';   
         $documentField['reference'] = $commande->id."-".$commande->title;
-   
         $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
-   
         $documentField['total_amount'] = $commande->total_amount;
-   
-        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name;
-   
+        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
         Document::create($documentField);
    
         return response()->json(['error' => false, 'message' => 'Devise created successfully.']);
     }
-   
 //--------------------------------------------------------------------------------------------------------------------------------
+    public function show_devise($id)
+    {
+        $commande = devise::findOrFail($id);
+        $document = Document::where('type', 'devis')
+                            ->where('reference', 'like', $commande->id.'-%')
+                            ->first();
 
+        if (!$document || !Storage::disk('public')->exists($document->devis)) {
+            return response()->json(['error' => true, 'message' => 'Devis file not found.']);
+        }
+
+        $filePath = storage_path('app/public/' . $document->devis);
+        return response()->file($filePath);
+    }
+//--------------------------------------------------------------------------------------------------------------------------------
     public function listdevis()
     {
         $search = request('search');
@@ -437,7 +441,7 @@ class deviseController extends Controller
         $facturefile = Storage::disk('public')->put($filePath, $pdfContent);
 
         $documentField['type'] ='facture';
-        $documentField['facture'] = $facturefile;
+        $documentField['facture'] = $filePath;
         $documentField['devis'] = Null;
         $documentField['origin'] = 'commande';
 
@@ -465,6 +469,25 @@ class deviseController extends Controller
         // Handle any exceptions
         return response()->json(['error' => true, 'message' => 'An error occurred: ' . $e->getMessage()]);
     }
+    }
+    public function show_invoice($id)
+    {
+        try {
+            $invoice = Invoice::findOrFail($id);
+            
+            $document = Document::where('type', 'facture')
+                                ->where('reference', 'like', 'Update-' . $invoice->id . '-%')
+                                ->first();
+
+            if (!$document || !Storage::disk('public')->exists($document->facture)) {
+                return response()->json(['error' => true, 'message' => 'Invoice file not found.']);
+            }
+
+            $filePath = storage_path('app/public/' . $document->facture);
+            return response()->file($filePath);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
     }
 
     public function createbonlivraision(Request $request, $id)
@@ -548,17 +571,51 @@ public function storeLivraison(Request $request, $invoiceId)
              'quantity' =>   $bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity']
          ]);
      }
-
     // If status is 'partial', keep the invoice status as pending/partial
     if ($validatedData['status'] === 'partial') {
         $invoice->status = 'partial';
         $invoice->save();
     }
+    // $entreprise = Entreprise::find($invoice->entreprise_id);
+    // $pdfContent = PDF::loadView('pdf.bon_livraison', compact('bon', 'entreprise'))->output();
+    // // Store PDF file
+    $filePath = 'bon_livraison/bon_livraison_' . $bon->id . '_' . time() . '.pdf';
+    // Storage::disk('public')->put($filePath, $pdfContent);
+    // // Create document record
+    Document::create([
+        'type' => 'bon_livraison',
+        'bon_livraison' => $filePath,
+        'origin' => 'commande',
+        'reference' => $bon->id . "-" . $bon->title,
+        'from_to' => "client : " . $bon->client_id . "-" . $bon->client->first_name . " " . $bon->client->last_name,
+        'total_amount' => $bon->total_amount,
+        'user' => $bon->user->first_name . ' ' . $bon->user->last_name,
+    ]);
+
 
     // Redirect back to the appropriate page
     return response()->json(['error' => false, 'message' => 'Bon de Livraison created successfully.']);
 }
 
+public function show_bonliv($id)
+{
+    try {
+        $bonLivraison = bon_livraision::findOrFail($id);
+        
+        $document = Document::where('type', 'bon_livraison')
+                            ->where('reference', 'like', $bonLivraison->id . '-%')
+                            ->first();
+
+        if (!$document || !Storage::disk('public')->exists($document->bon_livraison)) {
+            return response()->json(['error' => true, 'message' => 'Bon de Livraison file not found.']);
+        }
+
+        $filePath = storage_path('app/public/' . $document->bon_livraison);
+        return response()->file($filePath);
+    } catch (\Exception $e) {
+        return response()->json(['error' => true, 'message' => 'An error occurred: ' . $e->getMessage()]);
+    }
+}
 public function destroy($id)
 {
     $client = devise::findOrFail($id);

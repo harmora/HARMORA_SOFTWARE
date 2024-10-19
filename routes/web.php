@@ -267,7 +267,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
-        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
+        Route::get('commandes/facture/{id}', [deviseController::class, 'show_invoice'])->name('facture.pdf');
         Route::get('/commandes/getforaffiche/{id}', [CommandesController::class, 'getCommande']);
 
             //----devis
@@ -276,7 +276,8 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
             Route::get('/commandes/{id}/editdevise', [deviseController::class, 'editdevis'])->name('commandes.editeditdevis');
             Route::put('/commandes/{id}', [deviseController::class, 'accepter'])->name('commandes.accepter');
             Route::get('/commandes/list/{id?}', [deviseController::class, 'listdevis']);
-            Route::get('commandes/devis/{id}', [deviseController::class, 'generateDevis'])->name('devis.pdf');
+            Route::get('commandes/devis/{id}', [deviseController::class, 'show_devise'])->name('devis.pdf');
+            Route::get('commandes/bonliv/{id}', [deviseController::class, 'show_bonliv'])->name('bonliv.pdf');
             Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
             Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createbonlivraision'])->name('boncommande.create_bon_livraision');
             Route::get('commandes/bonlivraision/{id}', [deviseController::class, 'bonlivr'])->name('commandes.bonliv');
