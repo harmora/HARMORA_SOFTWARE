@@ -60,6 +60,7 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PackController;
+use App\Http\Controllers\ChatbotController;
 use App\Models\Entreprise;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -266,7 +267,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
 
         Route::get('/commandes/counter', [CommandesController::class, 'listForCounter'])->name('commandes.counter');
         Route::post('commandes/updatestatus/{id}', [CommandesController::class, 'updateStatus']);
-        Route::get('commandes/facture/{id}', [CommandesController::class, 'generateFacture'])->name('facture.pdf');
+        Route::get('commandes/facture/{id}', [deviseController::class, 'show_invoice'])->name('facture.pdf');
         Route::get('/commandes/getforaffiche/{id}', [CommandesController::class, 'getCommande']);
 
             //----devis
@@ -275,8 +276,15 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
             Route::get('/commandes/{id}/editdevise', [deviseController::class, 'editdevis'])->name('commandes.editeditdevis');
             Route::put('/commandes/{id}', [deviseController::class, 'accepter'])->name('commandes.accepter');
             Route::get('/commandes/list/{id?}', [deviseController::class, 'listdevis']);
-            Route::get('commandes/devis/{id}', [deviseController::class, 'generateDevis'])->name('devis.pdf');
+            Route::get('commandes/devis/{id}', [deviseController::class, 'show_devise'])->name('devis.pdf');
+            Route::get('commandes/bonliv/{id}', [deviseController::class, 'show_bonliv'])->name('bonliv.pdf');
             Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
+            Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createbonlivraision'])->name('boncommande.create_bon_livraision');
+            Route::get('commandes/bonlivraision/{id}', [deviseController::class, 'bonlivr'])->name('commandes.bonliv');
+            Route::put('/commandes/storebonliv/{id}', [deviseController::class, 'storeLivraison'])->name('commandes.livraison');
+            Route::delete('/devise/destroy/{id}', [deviseController::class, 'destroy']);
+            Route::delete('/facture/destroy/{id}', [deviseController::class, 'destroyfacture']);
+            Route::delete('/bon_livraison/destroy/{id}', [deviseController::class, 'destroybon']);
             Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createboncommande'])->name('boncommande.create_bon_commande');
 
 
@@ -384,11 +392,9 @@ Route::post('/achats/store-validated', [BonneCommandeController::class, 'storeVa
 
 
 
-
-
-
-
-
+        //chatbot-------------------------------------------------------------------------
+        Route::get('/chatbot', [ChatbotController::class, 'index'])->name(name: 'chatbot.index');
+        Route::post('/chatbot', [ChatbotController::class, 'chat'])->name('chatbot.getResponse');
 
 
 

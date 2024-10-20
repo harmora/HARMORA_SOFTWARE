@@ -775,15 +775,15 @@ public function generateDevis($id)
 //     $pdfname = 'devis-'.$commande->id.'.pdf';
 //     return $pdf->stream($pdfname);
 // }
-public function generateFacture($id)
-{
-    $commande = invoice::with('products')->findOrFail($id);
-    $entreprise = $this->user->entreprise;
-    $pdf = Pdf::loadView('pdf.facture', compact('commande'),compact('entreprise'));
+// public function generateFacture($id)
+// {
+//     $commande = invoice::with('products')->findOrFail($id);
+//     $entreprise = $this->user->entreprise;
+//     $pdf = Pdf::loadView('pdf.facture', compact('commande'),compact('entreprise'));
 
-    $pdfname = 'facture-'.$commande->id.'.pdf';
-    return $pdf->stream($pdfname);
-}
+//     $pdfname = 'facture-'.$commande->id.'.pdf';
+//     return $pdf->stream($pdfname);
+// }
 
 
 

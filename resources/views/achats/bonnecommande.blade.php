@@ -1,3 +1,4 @@
+
 @extends('layout')
 @section('title')
 <?= get_label('bon_de_commande', 'Bon de Commande') ?>

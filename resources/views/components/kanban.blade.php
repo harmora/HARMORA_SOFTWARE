@@ -25,19 +25,31 @@ $user = getAuthenticatedUser();
                         <i class='bx bx-cog'></i>
                     </a>
                     <ul class="dropdown-menu">
-
+                        @if($type === 'devis')
                         <a href="{{ route('commandes.editeditdevis', $item->id) }}">
                             <li class="dropdown-item">
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
                             </li>
                         </a>
-
-
-                        <a href="javascript:void(0);" class="delete" data-reload="true" data-type="commandes" data-id="{{ $item->id }}">
-                            <li class="dropdown-item">
-                                <i class='menu-icon tf-icons bx bx-trash text-danger'></i> <?= get_label('delete', 'Delete') ?>
-                            </li>
-                        </a>
+                        @endif
+                        @if($type === 'facture')
+                            <a href="{{ route('commandes.bonliv', $item->id) }}">
+                                <li class="dropdown-item">
+                                    <i class='menu-icon tf-icons bx bx-package text-primary'></i> <?= get_label('bonlib', 'Bon livraision') ?>
+                                </li>
+                            </a>
+                        @endif
+                        @if($type === 'devis')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="devise" data-id="{{ $item->id }}">
+                        @elseif($type === 'facture')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="facture" data-id="{{ $item->id }}">
+                        @elseif($type === 'bon_livraison')
+                            <a href="javascript:void(0);" class="delete" data-reload="true" data-type="bon_livraison" data-id="{{ $item->id }}">
+                        @endif
+                                <li class="dropdown-item">
+                                    <i class='menu-icon tf-icons bx bx-trash text-danger'></i> <?= get_label('delete', 'Delete') ?>
+                                </li>
+                            </a>
                     </ul>
                 </div>
 
@@ -54,8 +66,6 @@ $user = getAuthenticatedUser();
             </div>
         </div>
         <div class="d-flex flex-column">
-
-
             <div class="mb-3" style="display: flex; justify-content: center; align-items: center;">
                 @if ($type === 'devis')
                 <a class="me-2">
@@ -75,14 +85,13 @@ $user = getAuthenticatedUser();
                        {{ get_label('bon_livraison', 'Bon Livraison') }} <i class='bx bx-truck'></i>
                     </button>
                 @endif
-
-                @if ($item->status == "completed")
-                <a class="me-2">
-                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#factureModal-{{ $item->id }}">
-                       {{ get_label('facture', 'Facture') }} <i class='bx bx-dollar'></i>
-                    </button>
-                </a>
-                @endif
+                {{-- @if ($item->status == "completed")
+                    <a class="me-2">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#factureModal-{{ $item->id }}">
+                        {{ get_label('facture', 'Facture') }} <i class='bx bx-dollar'></i>
+                        </button>
+                    </a>
+                @endif --}}
             </div>
             <div>
                 <small class="badge bg-label-primary mb-1"> <?= get_label('Created At:', 'Created At:') ?> {{ format_date($item->start_date) }}</small>
@@ -99,7 +108,7 @@ $user = getAuthenticatedUser();
 
             </div>
 
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%;" class="mt-4">
+            <div style="" class="mt-4">
                 <a href="javascript:void(0);" class="mr-4"  data-bs-toggle="modal" data-bs-target="#commandeModal">
                     <button type="button" class="btn btn-info btn-sm"
                         data-id="{{ $item->id }}"
@@ -294,13 +303,15 @@ $user = getAuthenticatedUser();
     </div>
 </div>
 {{-- @endif --}}
-<!-- bon livraision Modal -->
-{{-- <div class="modal fade" id="bonLivraisonModal-{{ $item->id }}" tabindex="-1" aria-labelledby="bonLivraisonModalLabel-{{ $item->id }}" aria-hidden="true">
+<!-- Bon Livraison Modal -->
+<div class="modal fade" id="bonLivraisonModal-{{ $item->id }}" tabindex="-1" aria-labelledby="bonLivraisonModalLabel-{{ $item->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h1 class="modal-title text-primary" id="bonLivraisonModalLabel-{{ $item->id }}"> <?= get_label('Bon Livraison', 'Bon Livraison') ?></h1>
+                    <h1 class="modal-title text-success" id="bonLivraisonModalLabel-{{ $item->id }}">
+                        {{ __('Bon Livraison') }}
+                    </h1>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -314,44 +325,51 @@ $user = getAuthenticatedUser();
 
                 <div class="row">
                     <div class="col-md-12">
-                        <label ><strong><?= get_label('Title:', 'Title:') ?></strong></label>
-                        <span >{{ $item->title }}</span>
+                        <label><strong>{{ __('Title:') }}</strong></label>
+                        <span>{{ $item->title }}</span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label ><strong><?= get_label('Description:', 'Description:') ?></strong></label>
-                        <span >{{ $item->description }}</span>
+                        <label><strong>{{ __('Description:') }}</strong></label>
+                        <span>{{ $item->description }}</span>
                     </div>
                 </div>
 
-                @if ($item->client && $item->client->first_name != null)
                 <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label ><strong><?= get_label('Client:', 'Client:') ?></strong></label>
-                            <span >{{ $item->client->first_name .' '.$item->client->last_name }}</span>
-                        </div>
+                    <div class="col-md-12">
+                        <h6>{{ __('Products:') }}</h6>
+                        <ul class="list-group">
+                            @foreach ($item->products as $product)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $product->name }}</span>
+                                    <span>{{ $product->pivot->quantity }} x {{ $product->pivot->price }} MAD</span>
+                                </li>
+                            @endforeach
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ __('Total HT:') }}</span>
+                                <span>{{ number_format($item->total_amount / (1 + 20 / 100), 2) }} MAD</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ __('TVA:') }}</span>
+                                <span>20%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ __('Total TTC:') }}</span>
+                                <span>{{ $item->total_amount }} MAD</span>
+                            </li>
+                        </ul>
                     </div>
-                @elseif($item->client && $item->client->denomenation != null)
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label ><strong><?= get_label('Denomination:', 'Denomination:') ?></strong></label>
-                            <span >{{ $item->client->denomenation }}</span>
-                        </div>
-                    </div>
-                @endif
-                @if($item->client)
-                        <label><strong><?= get_label('Email:', 'Email:') ?></strong></label>
-                        <span>{{ $item->client->email }}</span><br>
-                        <label><strong><?= get_label('Phone:', 'Phone:') ?></strong></label>
-                        <span>{{ $item->client->phone }}</span><br>
-                @endif --}}
-
-
-
-
-
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-success" id="generatePdfButton-{{ $item->id }}">{{ __('Bon Livraison [PDF]') }}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>

@@ -23,8 +23,22 @@ class invoice extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
-    public function bon_livraison()
+    public function bonLivraisons()
     {
         return $this->hasMany(bon_livraision::class);
     }
+    public function isFullyShipped()
+    {
+        foreach ($this->products as $product) {
+            $totalShipped = $this->bonLivraisons->sum(function($bl) use ($product) {
+                return $bl->products->where('id', $product->id)->sum('pivot.quantity');
+            });
+
+            if ($totalShipped < $product->pivot->quantity) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

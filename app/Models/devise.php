@@ -19,7 +19,7 @@ class devise extends Model
     {
         return $this->morphToMany(Product::class, 'related', 'vente_products')
         ->withPivot('quantity', 'price');
-    }
+    }       
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

@@ -673,8 +673,8 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
         </div>
     </div>
 </div>
-<div class="modal fade" id="timerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-md" role="document">
+<div class="modal fade " id="timerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md " style="overflow-y: hidden;" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title" id="exampleModalLabel2"><?= get_label('time_tracker', 'Time tracker') ?></h6>

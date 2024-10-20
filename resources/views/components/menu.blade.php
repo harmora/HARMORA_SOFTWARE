@@ -59,7 +59,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
 
     @if(auth()->user()->role->rolename === 'user')
         <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
-            <a href="/commandes" class="menu-link">
+            <a href="/commandes/draggable" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
                 <div><?= get_label('commandes', 'Commandes') ?>
 
