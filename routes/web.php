@@ -375,6 +375,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::delete('/achats/destroy/{id}', [AchatController::class, 'destroy']);
         Route::get('/achats/getforaffiche/{id}', [AchatController::class, 'getachat']);
 
+        Route::get('/achats/payment/{id}', [AchatController::class, 'payment'])->name('achats.payment');
+
+
 
         Route::get('/bonnecommande', [BonneCommandeController::class, 'index'])->name('bonnecommande.index');
         Route::get('/bondecommande/create', [BonneCommandeController::class, 'create']);

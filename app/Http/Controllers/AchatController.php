@@ -76,6 +76,25 @@ private function generateAchaatReference()
 }
 
 
+
+public function payment($id)
+{
+    // Retrieve the Achat with related fournisseur and products, or fail if not found
+    $achat = Achat::with(['fournisseur', 'products'])->findOrFail($id);
+
+    // Retrieve all fournisseurs and products (if needed for the view)
+    $fournisseurs = Fournisseur::all();
+    $products = Product::all();
+
+    // Return the 'manage' view, passing achat, fournisseurs, and products
+    return view('achats.payment', [
+        'achat' => $achat,
+        'fournisseurs' => $fournisseurs,
+        'products' => $products,
+    ]);
+}
+
+
     public function store(Request $request)
     {
         // Validate initial form fields
@@ -504,9 +523,9 @@ public function list()
                 '</button>' .
             '</a>' .
 
-            '<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#paymentModal">' .
-                '<button type="button" class="btn btn-success btn-sm" ' . // Changed to success
-                    'data-id="' . htmlspecialchars($achat->id) . '" ' .
+            // Payment button leading to the 'payment' route
+            '<a href="' . route('achats.payment', $achat->id) . '">' . // Use the route helper
+                '<button type="button" class="btn btn-success btn-sm" ' .
                     'data-bs-toggle="tooltip" ' .
                     'data-bs-placement="left" ' .
                     'data-bs-original-title="' . htmlspecialchars(get_label('Payment', 'Payment')) . '">' .

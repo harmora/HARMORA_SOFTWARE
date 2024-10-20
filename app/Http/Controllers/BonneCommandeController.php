@@ -515,6 +515,7 @@ public function storeValidated(Request $request)
         'reference' => $reference, // Generated reference
         'type_achat' => "Matériel/Produits",
         'status_payement' => 'unpaid',
+        'marge' => $request->marge,
         'montant' => 0, // This will be updated later
         'montant_ht' => 0,
         'tva' => $request->tva, // Set the TVA value from the request
