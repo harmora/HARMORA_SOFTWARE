@@ -381,6 +381,9 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::post('/boncommande/store', [BonneCommandeController::class, 'store'])->name('boncommande.store');
         Route::get('/boncommande/list', [BonneCommandeController::class, 'list'])->name('boncommande.list');
 
+        Route::post('/boncommande/cancel/{id}', [BonneCommandeController::class, 'cancelBonCommande'])->name('bon-commande.cancel');
+
+
 
 Route::get('/bon-commande/{id}/generate', [BonneCommandeController::class, 'generateBonCommande'])
 ->name('bon-commande.generate');
@@ -408,6 +411,7 @@ Route::post('/achats/store-validated', [BonneCommandeController::class, 'storeVa
         Route::resource('commandes', CommandesController::class);
 
 
+        //chatbot-------------------------------------------------------------------------
 
 
 

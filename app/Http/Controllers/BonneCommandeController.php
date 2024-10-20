@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Achat;
 use App\Models\BonDeCommande;
 use App\Models\fournisseur;
+use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -23,7 +24,32 @@ public function __construct()
         $this->user = getAuthenticatedUser();
         return $next($request);
     });
+
 }
+
+private function generateProductReference()
+{
+    // Get the last product with the highest reference
+    $lastProduct = Product::orderBy('reference', 'desc')->first();
+
+    // If there is no previous reference, start with Product_00000001
+    if (!$lastProduct) {
+        return 'Product_00000001';
+    }
+
+    // Extract the hexadecimal part of the last reference
+    $lastHex = substr($lastProduct->reference, 8); // Skip the 'Product_' prefix
+
+    // Convert the hexadecimal part to a decimal number, increment it, and then convert back to hexadecimal
+    $nextHex = strtoupper(dechex(hexdec($lastHex) + 1));
+
+    // Pad the new hex value to 8 characters (e.g., 00000001, 0000000A)
+    $nextReference = str_pad($nextHex, 8, '0', STR_PAD_LEFT);
+
+    // Return the new reference with the Product_ prefix
+    return 'Product_' . $nextReference;
+}
+
 
 public function index()
 {
@@ -56,6 +82,22 @@ public function index()
         'statuses' => $statuses,
         'typesAchat' => $typesAchat,
     ]);
+}
+
+
+public function cancelBonCommande($id)
+{
+    // Find the BonDeCommande by ID
+    $bonDeCommande = BonDeCommande::findOrFail($id);
+
+    // Perform the cancellation logic, e.g., update the status
+    $bonDeCommande->status = 'cancelled';
+    $bonDeCommande->save();
+
+    // Redirect back or to another page with a success message
+
+    Session::flash('message', 'Bon de commande was cancelled successfully.');
+    return response()->json(['error' => false, 'id' => $bonDeCommande->id]);
 }
 
 
@@ -169,14 +211,21 @@ public function list()
 
         // Documents (Devis, Facture)
 
-        $manage = '<div class="btn-group" role="group" aria-label="Manage Buttons">
-        <a href="' . route('bon-commande.generate', $bonDeCommande->id) . '" title="' . get_label('download_bon', 'Download Bon de Commande') . '" class="btn btn-sm btn-outline-info mx-1">
-            <i class="bx bx-download"></i> ' . get_label('download', 'Download') . '
-        </a>
-        <a href="' . route('bon_commande.manage', $bonDeCommande->id) . '" title="' . get_label('manage', 'Manage Bon de Commande') . '" class="btn btn-sm btn-outline-success mx-1">
+        $manage = '<div class="text-center">
+        <div class="btn-group" role="group" aria-label="Manage Buttons">
+            <a href="' . route('bon-commande.generate', $bonDeCommande->id) . '" title="' . get_label('download_bon', 'Download Bon de Commande') . '" class="btn btn-sm btn-outline-info mx-1">
+                <i class="bx bx-download"></i> ' . get_label('download', 'Download') . '
+            </a>';
+
+    if ($bonDeCommande->status == 'pending') {
+        $manage .= '<a href="' . route('bon_commande.manage', $bonDeCommande->id) . '" title="' . get_label('manage', 'Manage Bon de Commande') . '" class="btn btn-sm btn-outline-success mx-1">
             <i class="bx bx-cog"></i> ' . get_label('manage', 'Manage') . '
-        </a>
-    </div>';
+        </a>';
+    }
+
+    $manage .= '</div></div>';
+
+
 
 
 
@@ -310,7 +359,9 @@ public function store(Request $request)
                 // Create a new product
                 $createdProduct = Product::create([
                     'name' => $newProduct['name'],
-                    'category_id' => $newProduct['category_id'],
+                    'reference' => $this->generateProductReference(),
+                    'entreprise_id' => $this->user->entreprise->id,
+                    'product_category_id' => $newProduct['category_id'],
                     'price' => 0,
                 ]);
 
@@ -453,6 +504,8 @@ public function storeValidated(Request $request)
     // Handle file upload for devis, or use the existing path from hidden input
     $devisPath = $request->input('boncmddevis'); // Get value from hidden input
 
+    $bonnecommandeid = $request->input('bonnecommandeid');
+
 
     // Create the achat
     $achat = Achat::create([
@@ -471,24 +524,86 @@ public function storeValidated(Request $request)
 
     // Save existing products and calculate total amounts
 
-        foreach ($request->products as $product) {
-            if (!empty($product['product_id'])) {
-                $productModel = Product::find($product['product_id']);
-                $quantity = $product['quantity'];
-                $price = $product['price'];
-                $amountHT = $quantity * $price;
+      // Retrieve the margin from the request (assuming it's passed as a percentage)
+$marge = $request->input('marge', 0) / 100;
+$tva = $request->input('tva', 0) / 100;// Convert percentage to decimal (e.g., 15% => 0.15)
 
-                // Attach the product to the achat with quantity, price, and total_ht
-                $achat->products()->attach($productModel, [
-                    'quantity' => $quantity,
-                    'price' => $price,
+foreach ($request->products as $product) {
+    if (!empty($product['product_id'])) {
+        $productModel = Product::find($product['product_id']);
+        $quantity = $product['quantity'];
+        $basePrice = $product['price'];
 
-                ]);
+        // Adjust the price based on the margin for updating productModel price
+        $adjustedPrice = $basePrice + ($basePrice * $marge) + ($basePrice * $tva);
+// price + (price * marge)
 
-                // Update total amounts
-                $totalAmountHT += $amountHT;
+        $amountHT = $quantity * $basePrice; // For achat, use the base price without margin
+
+        // Attach the product to the achat with quantity and base price (without margin)
+        $achat->products()->attach($productModel, [
+            'quantity' => $quantity,
+            'price' => $basePrice, // Use the base price without margin here
+        ]);
+
+
+
+        $bonDeCommande = BonDeCommande::findOrFail($bonnecommandeid);
+
+        // Update the desired column (e.g., 'status' column)
+        $bonDeCommande->status = 'validated';  // Change 'status' to the column you want to update
+
+        // Save the changes to the database
+        $bonDeCommande->save();
+
+
+        mouvements_stock::create([
+            'product_id'=>$productModel->id,
+            'achat_id'=>$achat->id,
+            'quantitéajoutée'=>$quantity,
+            'quantitéprecedente'=>$productModel->stock,
+            'date_mouvement'=>now(),
+            'type_mouvement'=>'entrée',
+            'reference'=> $reference,
+        ]);
+
+        // Update total amounts for the achat
+        $totalAmountHT += $amountHT;
+
+        // Update stock and price based on the current stock and CUMP method
+        if ($productModel->stock == 0 || $productModel->price == 0) {
+            // If stock or price is zero, update stock and set the product price to the adjusted price (with margin)
+
+            if ($productModel->price == 0) {
+                $productModel->prev_price = $adjustedPrice;
+            } else {
+                // If the price is different from zero, set prev_price to the current price
+                $productModel->prev_price = $productModel->price;
             }
+
+            $productModel->stock += $quantity;
+            $productModel->price = $adjustedPrice; // Set the new price with margin included
+        } else {
+            // Apply the CUMP method:
+
+            $productModel->prev_price = $productModel->price;
+
+            $oldStockValue = $productModel->stock * $productModel->price;
+            $newPurchaseValue = $adjustedPrice * $quantity;
+            $newTotalStock = $productModel->stock + $quantity;
+
+            // Update the stock
+            $productModel->stock = $newTotalStock;
+
+            // Calculate the new CUMP (average price)
+            $productModel->price = ($oldStockValue + $newPurchaseValue) / $newTotalStock;
         }
+
+        // Save the updated product data
+        $productModel->save();
+    }
+}
+
 
 
 

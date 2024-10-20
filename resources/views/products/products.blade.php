@@ -68,11 +68,14 @@ $visibleColumns = getUserPreferences('products');
                 <table id="table" data-toggle="table" data-loading-template="loadingTemplate" data-url="/products/list" data-icons-prefix="bx" data-icons="icons" data-show-refresh="true" data-total-field="total" data-trim-on-search="false" data-data-field="rows" data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true" data-side-pagination="server" data-show-columns="true" data-pagination="true" data-sort-name="id" data-sort-order="desc" data-mobile-responsive="true" data-query-params="queryParams">
                     <thead>
                         <tr>
-                            <th data-checkbox="true"></th>
-                            <th data-field="id" data-visible="{{ (in_array('id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('id', 'ID') ?></th>
+
                             <th data-field="profile" data-visible="{{ (in_array('profile', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('product', 'Product') ?></th>
+                            <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">
+                                <?= get_label('reference', 'Reference') ?>
+                            </th>
                             <th data-field="name" data-visible="{{ (in_array('name', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" ><?= get_label('name', 'Name') ?></th>
                             <th data-field="price" data-visible="{{ (in_array('price', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('price', 'Price') ?></th>
+                            <th data-field="prevprice" data-visible="{{ (in_array('prevprice', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('prevprice', 'Previous Price') ?></th>
                             <th data-field="category" data-visible="{{ (in_array('category', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('category', 'Category') ?> </th>
                             <th data-field="stock" data-visible="{{ (in_array('stock', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('stock', 'Stock') ?> </th>
                             <th data-field="stock_def" data-visible="{{ (in_array('stock_def', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('Stock deffective', 'Stock defective') ?> </th>

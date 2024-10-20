@@ -90,6 +90,8 @@ class ProductController extends Controller
          $formFields['prev_price'] = $formFields['price'];
          $formFields['prev_stock'] = $formFields['stock'];
 
+         $formFields['reference'] = $this->generateProductReference();
+
          $formFields['entreprise_id'] = $this->user ->entreprise->id;
          if($formFields['stock_defective'] == null){
              $formFields['stock_defective'] = 0;
@@ -105,7 +107,7 @@ class ProductController extends Controller
             'quantitéprecedente'=>0,
             'date_mouvement'=>now(),
             'type_mouvement'=>'entrée',
-            'reference'=>$product->name.'-'.$product->id,
+            'reference'=>$product->name.'-'.$product->reference,
         ]);
 
          try {
@@ -267,11 +269,13 @@ class ProductController extends Controller
             return [
                 'id' => $product->id,
                 'name' => $product->name,
+                'reference' => $product->reference,
                 'category' => $product_category,
                 'stock' => $product_stock,
                 'stock_def' => $stock_def,
                 'profile' => $formattedHtml,
                 'price' => $product->price,
+                'prevprice' => $product->prev_price,
                 'created_at' => format_date($product->created_at, true),
                 'updated_at' => format_date($product->updated_at, true),
                 'actions' => $actions
@@ -331,6 +335,30 @@ class ProductController extends Controller
 
     }
 
+
+
+    private function generateProductReference()
+{
+    // Get the last product with the highest reference
+    $lastProduct = Product::orderBy('reference', 'desc')->first();
+
+    // If there is no previous reference, start with Product_00000001
+    if (!$lastProduct) {
+        return 'Product_00000001';
+    }
+
+    // Extract the hexadecimal part of the last reference
+    $lastHex = substr($lastProduct->reference, 8); // Skip the 'Product_' prefix
+
+    // Convert the hexadecimal part to a decimal number, increment it, and then convert back to hexadecimal
+    $nextHex = strtoupper(dechex(hexdec($lastHex) + 1));
+
+    // Pad the new hex value to 8 characters (e.g., 00000001, 0000000A)
+    $nextReference = str_pad($nextHex, 8, '0', STR_PAD_LEFT);
+
+    // Return the new reference with the Product_ prefix
+    return 'Product_' . $nextReference;
+}
 
 
 

@@ -40,6 +40,7 @@
                 <div class="step active">
                     <h5>Purchase Details</h5>
 
+                    <input type="hidden" id="bonnecommandeid" name="bonnecommandeid" value="{{ $bonDeCommande->id }}">
                     <!-- Row 1 -->
                     <div class="row">
                         <div class="mb-3 col-md-6">
@@ -220,11 +221,18 @@
                 <div class="step text-center">
                     <h5>Your Stock</h5>
 
-                    
-
-                    <p class="badge bg-primary p-3">
+                    <div class="alert alert-primary mb-3">
                         Please review your purchase details before submission.
-                    </p>
+                    </div>
+
+                    <div class="alert alert-warning mb-3">
+                        If a product exists already in stock, the method used to update its price is CUMP.
+                        You can access your stock at any time to modify the products' prices!
+                    </div>
+
+                    <small class="text-muted">
+                        CUMP = (Valeur du stock précédent à l’ancien CUMP + Coût d’acquisition de la nouvelle entrée) / Total des quantités en stock
+                    </small>
                 </div>
 
 
@@ -237,7 +245,19 @@
 
             <!-- Multi-Step Form Ends Here -->
         </div>
+
+
     </div>
+
+    <form action="{{ route('bon-commande.cancel', $bonDeCommande->id) }}" method="POST" class="form-submit-event form-group text-center mt-4" enctype="multipart/form-data">
+            <input type="hidden" name="redirect_url" value="/bonnecommande">
+        @csrf
+        <button type="submit" class="btn btn-danger btn-custom" style="width: 30%;">
+            <?= get_label('cancel', 'Cancel') ?>
+        </button>
+    </form>
+
+
 </div>
 
 <style>
