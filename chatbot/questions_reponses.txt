@@ -1,0 +1,138 @@
+Q: What is Harmora?
+A: Harmora is a comprehensive management software platform that centralizes key business operations for companies, including CRM (Customer Relationship Management), supply chain management, storage management, and agenda scheduling. It is designed to streamline business processes, improve efficiency, and provide a single interface for managing clients, suppliers, employees, orders, and resources.
+
+Q: What are the main features of Harmora?
+A: Harmora offers several core features including:
+   - **CRM Management**: Manage client, supplier, and employee data, communication, and transactions.
+   - **Supply Chain Management**: Oversee purchase orders, supply tracking, and supplier interactions.
+   - **Storage Management**: Handle inventory tracking, stock movement, and warehouse location management.
+   - **Agenda Management**: Schedule and manage resources, equipment reservations, and tasks with a built-in calendar system.
+
+Q: How does Harmora help businesses?
+A: Harmora helps businesses by providing a centralized platform where they can manage all their operations. It reduces inefficiencies by offering tools for managing customer relations, supply chains, storage operations, and resource planning—all in one place. This leads to better organization, data-driven decision-making, and time savings for businesses.
+
+Q: Who can use Harmora?
+A: Harmora is suitable for businesses of all sizes, particularly those in sectors that require coordinated management of clients, suppliers, and resources, such as manufacturing, retail, logistics, and service industries.
+
+Q: What services does the platform offer?
+A: The platform provides centralized management of business operations, including CRM management (suppliers, clients, employees), supply chain management (purchasing and orders), storage management (in/out operations and location tracking), and an agenda for resource scheduling and material reservations.
+
+Q: How do I access the different sections of the platform?
+A: You can access the various modules (CRM, Supply Chain, Storage, Agenda) through the main navigation menu. Each module provides specific tools for managing that aspect of your business.
+
+Q: Can multiple users access the platform simultaneously?
+A: Yes, the platform supports multi-user access. Permissions can be set to control which sections of the platform each user can access.
+
+Q: How can I contact support for platform-related issues?
+A: You can contact support by clicking the "Support" button in the top navigation bar. You can also email or call our support team directly using the contact information provided there.
+
+Q: How do I add a new client?
+A: Navigate to the "Clients" section in CRM, click on "Add New Client," fill out the required fields (name, email, contact details), and save the client.
+
+Q: Can I import a list of clients?
+A: Yes, in the "Clients" section, there is an option to import clients via  Excel files. Use the provided template to format your data correctly before importing.
+
+Q: How do I edit client details?
+A: Go to the "Clients" section, search for the client, and click on "Edit" next to the client’s name. You can update contact information, transaction history, and other details.
+
+Q: How do I delete a client?
+A: In the "Clients" section, search for the client you want to delete, and click the "Delete" button. Be cautious, as this action is irreversible.
+
+Q: How do I manage client communication history?
+A: In the "Clients" section, select a client and click on the "Communication History" tab to view all past interactions, including emails, calls, and meetings.
+
+Q: Can I assign a sales representative to a client?
+A: Yes, when adding or editing a client, you can assign a sales representative to that client using the "Assigned Rep" dropdown menu.
+
+Q: How do I track sales opportunities with clients?
+A: You can track sales opportunities by using the "Opportunities" section under CRM. You can add, update, and monitor the status of each opportunity.
+
+Q: How do I add a new supplier?
+A: Go to the "Suppliers" section, click on "Add New Supplier," fill in the necessary details such as name, contact info, and address, and save the supplier.
+
+Q: How can I search for a specific supplier?
+A: In the "Suppliers" section, use the search bar to look up suppliers by name, contact info, or supplier code.
+
+Q: Can I categorize suppliers?
+A: Yes, suppliers can be categorized based on their industry, product type, or other criteria by using the "Categories" feature under the "Suppliers" section.
+
+Q: How do I update supplier details?
+A: In the "Suppliers" section, search for the supplier you want to update, and click the "Edit" button. You can modify the supplier’s contact details, address, and other relevant information.
+
+Q: How do I track purchase orders with suppliers?
+A: In the "Suppliers" section, click on a supplier’s name to view all associated purchase orders. You can track the order status, delivery dates, and payment history.
+
+Q: How do I create a new purchase order?
+A: In the "Supply Chain" section, click on "Create Purchase Order," select the supplier, choose the products, enter the quantities, and confirm the order.
+
+Q: How do I check the delivery status of an order?
+A: In the "Orders" section, search for the order using its ID or supplier name. The current status (e.g., pending, shipped, delivered) will be displayed next to the order.
+
+Q: Can I modify a purchase order after it's been created?
+A: Purchase orders can be modified if they haven't been shipped. Go to the "Orders" section, select the order, and make the necessary changes.
+
+Q: How do I generate a purchase report?
+A: In the "Supply Chain" section, click on "Reports," select the date range or suppliers you want to include, and generate a detailed purchase report.
+
+Q: Can I create recurring purchase orders?
+A: Yes, when creating a purchase order, you can set it as recurring by selecting the recurrence frequency (e.g., weekly, monthly) in the order settings.
+
+Q: How do I manage supplier payments?
+A: In the "Suppliers" section, you can view payment histories, outstanding balances, and process payments for each supplier.
+
+Q: How do I check the stock levels of a product?
+A: Navigate to the "Storage" section, use the search bar to find the product, and its current stock level will be displayed.
+
+Q: How do I add new stock to storage?
+A: In the "Storage" section, click on "Add New Stock," select the product, enter the quantity, specify the storage location, and save the entry.
+
+Q: Can I track items across multiple storage locations?
+A: Yes, the platform allows you to manage multiple storage locations. Each product can be assigned a specific location, and you can transfer stock between locations.
+
+Q: How do I perform a stock audit?
+A: In the "Storage" section, use the "Stock Audit" feature to compare current stock levels with the recorded inventory and adjust quantities as needed.
+
+Q: Can I set low-stock alerts?
+A: Yes, you can configure low-stock alerts in the "Storage" settings. When stock levels fall below a specified threshold, you will receive a notification.
+
+Q: How do I remove stock from storage?
+A: To remove stock, go to the "Storage" section, select the product, and use the "Remove Stock" option to enter the quantity and reason for removal.
+
+Q: Can I view storage history for a product?
+A: Yes, in the "Storage" section, select the product, and click on "Storage History" to view all incoming and outgoing stock movements.
+
+Q: How do I reserve equipment using the agenda?
+A: Open the "Agenda" module, select the date and time for the reservation, choose the equipment from the available list, and save the reservation.
+
+Q: How can I view all scheduled reservations?
+A: In the "Agenda" section, you can view a calendar that displays all scheduled reservations. You can filter by resource type or user.
+
+Q: How do I cancel a reservation?
+A: Go to the "Agenda" section, find the reservation, and click "Cancel" to free up the resource for others to use.
+
+Q: Can I create recurring reservations?
+A: Yes, when creating a reservation, you can select the "Recurring" option and set the frequency (daily, weekly, monthly) as well as the end date.
+
+Q: How can I manage multiple reservations for the same resource?
+A: The platform will notify you if a resource is double-booked. You can either reschedule one of the reservations or modify the resource availability in the "Agenda" settings.
+
+Q: How do I assign a resource to a user?
+A: In the "Agenda" section, select the resource and assign it to a user by selecting their name from the dropdown list during the reservation process.
+
+Q: How do I update my profile information?
+A: Go to the "Profile" section in your account settings. You can update your name, contact details, password, and other personal information.
+
+Q: How do I reset my password?
+A: If you forgot your password, click on the "Forgot Password" link on the login page. Enter your registered email to receive password reset instructions.
+
+Q: How can I manage user roles and permissions?
+A: In the "Admin Settings" section, you can assign roles and set permissions for users, controlling their access to different modules based on their role.
+
+Q: How do I enable two-factor authentication (2FA)?
+A: In the "Security Settings" section, you can enable two-factor authentication (2FA) for added security. You will need a valid phone number or authentication app.
+
+Q: How do I view system notifications?
+A: Click on the notification icon in the top navigation bar to view recent system alerts, updates, and important messages.
+
+Q: How can I deactivate a user account?
+A: In the "Admin Settings" section, find the user you wish to deactivate, and click the "Deactivate" button. The user will no longer have access to the platform.

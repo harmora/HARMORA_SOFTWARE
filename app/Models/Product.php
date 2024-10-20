@@ -20,6 +20,10 @@ class Product extends Model
     {
         return $this->belongsTo(Entreprise::class);
     }
+    public function depots()
+{
+    return $this->belongsToMany(Depot::class,'depot_product')->withPivot('quantity')->withTimestamps();
+}
     public function commandes()
     {
         return $this->belongsToMany(Commande::class, 'commande_products')

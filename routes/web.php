@@ -61,6 +61,7 @@ use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\DepotController;
 use App\Models\Entreprise;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -206,9 +207,12 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/mouvements/list', [ProductController::class, 'list_mv']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
+        Route::get('/products/addproductquantity', [ProductController::class, 'add_quantity']);
+        Route::post('/products/add-quantity', [ProductController::class, 'storeQuantity'])->name('products.add_quantity');
         Route::get('/products/edit/{id}', [ProductController::class, 'edit']);
         Route::put('/products/update/{id}', [ProductController::class, 'update']);
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
+        Route::post('/depots', [DepotController::class, 'store'])->name('depots.store');
 
 
 

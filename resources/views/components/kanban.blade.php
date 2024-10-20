@@ -25,7 +25,7 @@ $user = getAuthenticatedUser();
                         <i class='bx bx-cog'></i>
                     </a>
                     <ul class="dropdown-menu">
-                        @if($type === 'devis')
+                        @if($type === 'devis' && $item->status !=='validated')
                         <a href="{{ route('commandes.editeditdevis', $item->id) }}">
                             <li class="dropdown-item">
                                 <i class='menu-icon tf-icons bx bx-edit text-primary'></i> <?= get_label('update', 'Update') ?>
@@ -84,6 +84,7 @@ $user = getAuthenticatedUser();
                     <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#bonLivraisonModal-{{ $item->id }}">
                        {{ get_label('bon_livraison', 'Bon Livraison') }} <i class='bx bx-truck'></i>
                     </button>
+                </a>
                 @endif
                 {{-- @if ($item->status == "completed")
                     <a class="me-2">
@@ -93,12 +94,12 @@ $user = getAuthenticatedUser();
                     </a>
                 @endif --}}
             </div>
-            <div>
+            <div class="d-flex flex-column">
                 <small class="badge bg-label-primary mb-1"> <?= get_label('Created At:', 'Created At:') ?> {{ format_date($item->start_date) }}</small>
 
-                @if ($item->status == "completed")
+                {{-- @if ($item->status == "completed")
               <small class="badge bg-label-dark"> <?= get_label('validated At:', 'validated At:') ?>{{ format_date($item->due_date) }}</small>
-                @endif
+                @endif --}}
 
                 @if ($item->status == "cancelled")
                 <small class="badge bg-label-danger"> <?= get_label('Canceled At:', 'Canceled At:') ?> {{ format_date($item->due_date) }}</small>
@@ -108,7 +109,7 @@ $user = getAuthenticatedUser();
 
             </div>
 
-            <div style="" class="mt-4">
+            {{-- <div style="" class="mt-4">
                 <a href="javascript:void(0);" class="mr-4"  data-bs-toggle="modal" data-bs-target="#commandeModal">
                     <button type="button" class="btn btn-info btn-sm"
                         data-id="{{ $item->id }}"
@@ -118,7 +119,7 @@ $user = getAuthenticatedUser();
                         <i class="bx bx-expand"></i>
                     </button>
                 </a>
-            </div>
+            </div> --}}
 
         </div>
     </div>
@@ -344,7 +345,7 @@ $user = getAuthenticatedUser();
                             @foreach ($item->products as $product)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ $product->name }}</span>
-                                    <span>{{ $product->pivot->quantity }} x {{ $product->pivot->price }} MAD</span>
+                                    <span>{{ $product->pivot->quantity }} x {{ $product->pivot->price}} MAD</span>
                                 </li>
                             @endforeach
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -364,7 +365,7 @@ $user = getAuthenticatedUser();
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-success" id="generatePdfButton-{{ $item->id }}">{{ __('Bon Livraison [PDF]') }}</button>
+                <button type="button" class="btn btn-success" id="generatePdfliv-{{ $item->id }}">{{ __('Bon Livraison [PDF]') }}</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
             </div>
         </div>
@@ -384,4 +385,9 @@ document.getElementById('generatePdfButton-{{ $item->id }}').addEventListener('c
     document.getElementById('generatefactureButton-{{ $item->id }}').addEventListener('click', function() {
         window.open("{{ route('facture.pdf', $item->id) }}", '_blank');
     });
-    </script>
+</script>
+<script>
+    document.getElementById('generatePdfliv-{{ $item->id }}').addEventListener('click', function() {
+        window.open("{{ route('bonliv.pdf', $item->id) }}", '_blank');
+    });
+</script>

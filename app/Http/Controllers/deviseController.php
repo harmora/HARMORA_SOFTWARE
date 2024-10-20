@@ -7,6 +7,7 @@ use App\Models\devise;
 use App\Models\mouvements_stock;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\depot;
 use App\Models\Document;
 use App\Models\Entreprise;
 use App\Models\invoice;
@@ -14,6 +15,7 @@ use App\Models\ProdCategory;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
+use Illuminate\Database\QueryException;
 
 use Illuminate\Support\Arr;
 use App\Services\DeletionService;
@@ -79,10 +81,27 @@ class deviseController extends Controller
         $clients = $this->user->entreprise->client;
         $users = $this->user->entreprise->user;
         $allProducts = $this->user->entreprise->product;
-
         $products = $this->user->entreprise->product;
-        return view('devise.edit', compact('commande','clients', 'users', 'allProducts', 'products'));
-    }
+    
+        // Fetch products with their available depots
+        $productsWithDepots = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'depots' => $product->depots->map(function ($depot) use ($product) {
+                    return [
+                        'id' => $depot->id,
+                        'name' => $depot->name,
+                        'quantity' => $depot->pivot->quantity
+                    ];
+                })->filter(function ($depot) {
+                    return $depot['quantity'] > 0;
+                })->values()
+            ];
+        });
+    
+        return view('devise.edit', compact('commande', 'clients', 'users', 'allProducts', 'productsWithDepots'));
+    } 
 
     //--------------------------------------------------------------------------------------------------------------------------------
     // public function generateDevis($id)
@@ -98,87 +117,103 @@ class deviseController extends Controller
 //--------------------------------------------------------------------------------------------------------------------------------
 
     public function store_devise(Request $request)
-    {
-        // Validate the request
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.price' => 'required|numeric|min:1',
-            'start' => 'required|date',
-            'description' => 'nullable|string',
-            'note' => 'nullable|string',
-            'client_id' => 'required|integer|exists:clients,id',
-            'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
-        ]);
-        // Calculate total amount before TVA
-        $totalAmount = 0;
-        foreach ($request->products as $productData) {
-   
-           $product = Product::find($productData['product_id']);
-   
-   
-           if($productData['quantity'] > $product->stock)
-           {
-               return response()->json(['error' => true, 'message' => 'Quantity of product : '.$product->name.' is not availiable. [ Stock available : '.$product->stock.' ]']);
-           }
-           else
-           {
-               $totalAmount += $productData['quantity'] * $productData['price'];
-           }
-        }
-   
-        // Calculate total amount after applying TVA
-        $tvaAmount = ($request->tva / 100) * $totalAmount;
-        $totalAmountWithoutTva = $totalAmount - $tvaAmount;
-   
-        // Create a new commande
-        $commande = devise::create([
-            'client_id' => $request->client_id,
-            'entreprise_id'=>$this->user->entreprise->id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'start_date' => $request->start,
-            'due_date' => now(),
-            'total_amount' => $totalAmount,
-            'status' => 'pending',
-            'created_at' => now(),
-            'updated_at' => now(),
-            'user_id' => $this->user->id,
-        ]);
-   
-       //  Attach products to the commande
-        foreach ($request->products as $productData) {
-           $product = Product::find($productData['product_id']);
-   
-            $commande->products()->attach($productData['product_id'], [
-                'quantity' => $productData['quantity'],
-                'price' => $productData['price'],
+    {   
+        try {
+            // Validate the request
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'products' => 'required|array|min:1',
+                'products.*.product_id' => 'required|exists:products,id|distinct', // Ensure product_id is unique in the array
+                'products.*.quantity' => 'required|integer|min:1',
+                'products.*.price' => 'required|numeric|min:1',
+                'start' => 'required|date',
+                'description' => 'nullable|string',
+                'note' => 'nullable|string',
+                'client_id' => 'required|integer|exists:clients,id',
+                'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
             ]);
-            
-   
-            // Update product stock
-           //  $product->stock -= $productData['quantity'];
-           //  $product->total_amount -= $productData['quantity'] * $product->price;
-           //  $product->save();
-        }
-        $entreprise = Entreprise::find($this->user->entreprise->id);
-        $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
-        $filePath = 'devis/devis_'.$commande->id.'_' . time() . '.pdf';
-        $devisfile = Storage::disk('public')->put($filePath, $pdfContent);
+            // Calculate total amount before TVA
+            $totalAmount = 0;
+            foreach ($request->products as $productData) {
+    
+            $product = Product::find($productData['product_id']);
+    
+    
+            if($productData['quantity'] > $product->stock)
+            {
+                return response()->json(['error' => true, 'message' => 'Quantity of product : '.$product->name.' is not availiable. [ Stock available : '.$product->stock.' ]']);
+            }
+            else
+            {
+                $totalAmount += $productData['quantity'] * $productData['price'];
+            }
+            }
+    
+            // Calculate total amount after applying TVA
+            $tvaAmount = ($request->tva / 100) * $totalAmount;
+            $totalAmountWithoutTva = $totalAmount - $tvaAmount;
+    
+            // Create a new commande
+            $commande = devise::create([
+                'client_id' => $request->client_id,
+                'entreprise_id'=>$this->user->entreprise->id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'start_date' => $request->start,
+                'due_date' => now(),
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'user_id' => $this->user->id,
+            ]);
+    
+        //  Attach products to the commande
+            foreach ($request->products as $productData) {
+            $product = Product::find($productData['product_id']);
+    
+                $commande->products()->attach($productData['product_id'], [
+                    'quantity' => $productData['quantity'],
+                    'price' => $productData['price'],
+                ]);
+                
+    
+                // Update product stock
+            //  $product->stock -= $productData['quantity'];
+            //  $product->total_amount -= $productData['quantity'] * $product->price;
+            //  $product->save();
+            }
+            $entreprise = Entreprise::find($this->user->entreprise->id);
+            $pdfContent = Pdf::loadView('pdf.devis', compact('commande', 'entreprise'))->output();
+            $filePath = 'devis/devis_'.$commande->id.'_' . time() . '.pdf';
+            $devisfile = Storage::disk('public')->put($filePath, $pdfContent);
 
-        $documentField['type'] ='devis';
-        $documentField['facture'] = Null;
-        $documentField['devis'] = $filePath;
-        $documentField['origin'] = 'commande';   
-        $documentField['reference'] = $commande->id."-".$commande->title;
-        $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
-        $documentField['total_amount'] = $commande->total_amount;
-        $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
-        Document::create($documentField);
+            $documentField['type'] ='devis';
+            $documentField['facture'] = Null;
+            $documentField['devis'] = $filePath;
+            $documentField['entreprise_id']=$this->user->entreprise_id;
+            $documentField['origin'] = 'commande';   
+            $documentField['reference'] = $commande->id."-".$commande->title;
+            $documentField['from_to'] = "client : ".$commande->id."-". $commande->client->first_name."". $commande->client->last_name;
+            $documentField['total_amount'] = $commande->total_amount;
+            $documentField['user'] = $this->user->first_name . ' ' . $this->user->last_name; 
+            Document::create($documentField);
+            return response()->json(['error' => false, 'message' => 'Devise created successfully.']);
+
+        }catch (QueryException $e) {
+            // Check if the error is related to duplicate entries
+            if ($e->getCode() == 23000) { // Integrity constraint violation: 23000 is the SQL code for uniqueness violation
+                return response()->json([
+                    'error' => true,
+                    'message' => 'This entry already exists, please enter a unique value.'
+                ], 422);
+            }
+            return response()->json([
+                'error' => true,
+                'message' => 'An error occurred. Please try again.'
+            ], 500);
+        }
    
-        return response()->json(['error' => false, 'message' => 'Devise created successfully.']);
     }
 //--------------------------------------------------------------------------------------------------------------------------------
     public function show_devise($id)
@@ -312,9 +347,6 @@ class deviseController extends Controller
 
     $documentsHtml .= '</div>';
 
-
-
-
             return [
                 'id' => $id_holder,
                 'title' => $commande->title,
@@ -347,7 +379,8 @@ class deviseController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.product_id' => 'required|exists:products,id|distinct',
+            'products.*.depot_id' => 'required|exists:depots,id',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.price' => 'required|numeric|min:1',
             'start' => 'required|date',
@@ -369,16 +402,28 @@ class deviseController extends Controller
         foreach ($request->products as $productData) {
    
            $product = Product::find($productData['product_id']);
-   
-   
+           $depot = depot::findOrFail($productData['depot_id']);
+
+           $depotQuantity = $depot->products()->where('product_id', $product->id)->first()->pivot->quantity;
+
            if($productData['quantity'] > $product->stock)
            {
-               return response()->json(['error' => true, 'message' => 'Quantity of product : '.$product->name.' is not availiable. [ Stock available : '.$product->stock.' ]']);
-           }
-           else
-           {
+            return response()->json([
+                'error' => true, 
+                'message' => get_label('quantity_of_product', 'Quantity of product') . ' : ' . $product->name . ' ' . 
+                             get_label('not_available', 'is not available') . '. [ ' . 
+                             get_label('stock_available', 'Stock available') . ' : ' . $product->stock . ' ]'
+            ]);           }
+           if ($productData['quantity'] > $depotQuantity) {
+            return response()->json([
+                'error' => true, 
+                'message' => get_label('quantity_of_product', 'Quantity of product') . ' : ' . $product->name . ' ' .
+                             get_label('not_available_depot', 'is not available in the selected depot').'. [ ' .
+                             get_label('stock_available', 'Stock available') . ' : ' . $depotQuantity . ']'
+            ]);           }
+
                $totalAmount += $productData['quantity'] * $productData['price'];
-           }
+
         }
 
         $invoice=invoice::create([
@@ -407,15 +452,19 @@ class deviseController extends Controller
 
         foreach ($request->products as $productData) {
             $product = Product::find($productData['product_id']);
-
+            $depot = Depot::findOrFail($productData['depot_id']);
              $invoice->products()->attach($productData['product_id'], [
                  'quantity' => $productData['quantity'],
-                 'price' => $product->price,
+                 'price' => $productData['price'],
+                 'depot_id' => $productData['depot_id'],
              ]);
 
              // Update product stock
              $product->stock -= $productData['quantity'];
              $product->save();
+             $depot->products()->updateExistingPivot($product->id, [
+                'quantity' => DB::raw("quantity - {$productData['quantity']}")
+            ]);
              mouvements_stock::create([
                 'product_id'=>$product->id,
                 'quantitéajoutée'=>$productData['quantity'],
@@ -423,6 +472,7 @@ class deviseController extends Controller
                 'date_mouvement'=>now(),
                 'type_mouvement'=>'sortie',
                 'reference'=>$devise->id."-".$devise->title,
+                'depot_id'=>$depot->id,
             ]);
          }
         // Calculate the total amount including TVA
@@ -444,8 +494,8 @@ class deviseController extends Controller
         $documentField['facture'] = $filePath;
         $documentField['devis'] = Null;
         $documentField['origin'] = 'commande';
-
-        $documentField['reference'] = "Update-".$invoice->id."-".$invoice->title;
+        $documentField['entreprise_id']=$this->user->entreprise_id;
+        $documentField['reference'] = $invoice->id."-".$invoice->title;
         if($invoice->client->first_name != Null)
         {
             $documentField['from_to'] = "client : ".$invoice->id."-". $invoice->client->first_name."". $invoice->client->last_name;
@@ -568,7 +618,8 @@ public function storeLivraison(Request $request, $invoiceId)
     foreach ($request->products as $productData) {
         $product = Product::find($productData['product_id']);
         $bon->products()->attach($productData['product_id'], [
-             'quantity' =>   $bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity']
+            'quantity' =>   $bonLivraisonExists ? $productData['remaining_quantity']:$productData['quantity'],
+            'price' => $productData['price'],
          ]);
      }
     // If status is 'partial', keep the invoice status as pending/partial
@@ -576,16 +627,18 @@ public function storeLivraison(Request $request, $invoiceId)
         $invoice->status = 'partial';
         $invoice->save();
     }
-    // $entreprise = Entreprise::find($invoice->entreprise_id);
-    // $pdfContent = PDF::loadView('pdf.bon_livraison', compact('bon', 'entreprise'))->output();
+    $entreprise = Entreprise::find($invoice->entreprise_id);
+    $commande=$bon;
+    $pdfContent = PDF::loadView('pdf.bonliv', compact('commande', 'entreprise'))->output();
     // // Store PDF file
-    $filePath = 'bon_livraison/bon_livraison_' . $bon->id . '_' . time() . '.pdf';
-    // Storage::disk('public')->put($filePath, $pdfContent);
+    $filePath = 'bon_livraision/bon_livraision_' . $bon->id . '_' . time() . '.pdf';
+    Storage::disk('public')->put($filePath, $pdfContent);
     // // Create document record
     Document::create([
-        'type' => 'bon_livraison',
-        'bon_livraison' => $filePath,
+        'type' => 'bon_livraision',
+        'bon_livraision' => $filePath,
         'origin' => 'commande',
+        'entreprise_id'=>$this->user->entreprise_id,
         'reference' => $bon->id . "-" . $bon->title,
         'from_to' => "client : " . $bon->client_id . "-" . $bon->client->first_name . " " . $bon->client->last_name,
         'total_amount' => $bon->total_amount,
@@ -602,15 +655,15 @@ public function show_bonliv($id)
     try {
         $bonLivraison = bon_livraision::findOrFail($id);
         
-        $document = Document::where('type', 'bon_livraison')
+        $document = Document::where('type', 'bon_livraision')
                             ->where('reference', 'like', $bonLivraison->id . '-%')
                             ->first();
 
-        if (!$document || !Storage::disk('public')->exists($document->bon_livraison)) {
+        if (!$document || !Storage::disk('public')->exists($document->bon_livraision)) {
             return response()->json(['error' => true, 'message' => 'Bon de Livraison file not found.']);
         }
 
-        $filePath = storage_path('app/public/' . $document->bon_livraison);
+        $filePath = storage_path('app/public/' . $document->bon_livraision);
         return response()->file($filePath);
     } catch (\Exception $e) {
         return response()->json(['error' => true, 'message' => 'An error occurred: ' . $e->getMessage()]);

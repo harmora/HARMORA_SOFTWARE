@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\depot;
 use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
@@ -57,9 +58,52 @@ class ProductController extends Controller
     public function create()
     {
         $categories = ProdCategory::all();
-        return view('products.create',['categories'=>$categories]);
+        $depots=depot::where('entreprise_id', $this->user->entreprise_id)->get();
+
+
+        return view('products.create',['categories'=>$categories,'depots'=>$depots]);
     }
 
+    public function add_quantity()
+    {
+        $depots=depot::where('entreprise_id', $this->user->entreprise_id)->get();
+        $products = Product::where('entreprise_id', $this->user->entreprise_id)->get();
+
+        return view('products.addquantity',['products'=>$products,'depots'=>$depots]);
+    }
+    public function storeQuantity(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'depot_id' => 'required|exists:depots,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        // Retrieve the product and depot
+        $product = Product::findOrFail($request->product_id);
+        $depot = Depot::findOrFail($request->depot_id);
+
+        // Here you can implement logic to update stock quantity based on the depot
+        // Example: Increase the product's stock for the specified depot
+        $existingDepot = $product->depots()->where('depot_id', $depot->id)->first();
+
+        if ($existingDepot) {
+            // If it exists, update the quantity (adding the new quantity to the existing one)
+            $currentQuantity = $existingDepot->pivot->quantity;
+            $newQuantity = $currentQuantity + $request->quantity;
+            $product->depots()->updateExistingPivot($depot->id, ['quantity' => $newQuantity]);
+        } else {
+            // If it doesn't exist, create a new record
+            $product->depots()->attach($depot->id, ['quantity' => $request->quantity]);
+        }        
+        $product->stock += $request->quantity;
+        $product->save();
+
+        // Flash message and redirect
+        return response()->json(['error' => false, 'id' => $product->id]);
+        // return redirect()->route('products.index')->with('success', 'Quantity added successfully.');
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -80,6 +124,9 @@ class ProductController extends Controller
              'category_id' => ['required', 'exists:prod_categories,id'],
              'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
          ]);
+         $depot=$request->validate([
+            'depot_id' => ['required', 'exists:depots,id']
+        ]);
 
          if ($request->hasFile('photo')) {
              $formFields['photo'] = $request->file('photo')->store('photos', 'public');
@@ -92,7 +139,7 @@ class ProductController extends Controller
 
          $formFields['reference'] = $this->generateProductReference();
 
-         $formFields['entreprise_id'] = $this->user ->entreprise->id;
+         $formFields['entreprise_id'] = $this->user->entreprise->id;
          if($formFields['stock_defective'] == null){
              $formFields['stock_defective'] = 0;
          }
@@ -100,7 +147,9 @@ class ProductController extends Controller
 
          $product = Product::create($formFields);
          $product->product_category_id = $request->input('category_id');
+         $product->depots()->attach($depot['depot_id'], ['quantity' => $formFields['stock']]);
          $product->save();
+
          mouvements_stock::create([
             'product_id'=>$product->id,
             'quantitéajoutée'=>$product->stock,
@@ -266,20 +315,20 @@ class ProductController extends Controller
                 '</div>';
 
 
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'reference' => $product->reference,
-                'category' => $product_category,
-                'stock' => $product_stock,
-                'stock_def' => $stock_def,
-                'profile' => $formattedHtml,
-                'price' => $product->price,
-                'prevprice' => $product->prev_price,
-                'created_at' => format_date($product->created_at, true),
-                'updated_at' => format_date($product->updated_at, true),
-                'actions' => $actions
-            ];
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'reference' => $product->reference,
+                    'category' => $product_category,
+                    'stock' => $product_stock,
+                    'stock_def' => $stock_def,
+                    'profile' => $formattedHtml,
+                    'price' => $product->price,
+                    'prevprice' => $product->prev_price,
+                    'created_at' => format_date($product->created_at, true),
+                    'updated_at' => format_date($product->updated_at, true),
+                    'actions' => $actions
+                ];
         });
 
         return response()->json([
@@ -326,6 +375,7 @@ class ProductController extends Controller
                 'quantity' => $mouvement['quantitéajoutée'],
                 'batch_number' => $mouvement['quantitéprecedente'],
                 'movement_date' => $mouvement['date_mouvement'],
+                'depot' => $mouvement->depot->name??'-',
         ];
         });
         return response()->json([
@@ -334,9 +384,9 @@ class ProductController extends Controller
         ]);
 
     }
-
-
-
+    
+    
+    
     private function generateProductReference()
 {
     // Get the last product with the highest reference

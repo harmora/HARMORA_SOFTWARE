@@ -36,6 +36,10 @@ class Entreprise extends Model
     {
         return $this->hasMany(Product::class);
     }
+    public function depot()
+    {
+        return $this->hasMany(depot::class);
+    }
     public function commande()
     {
         return $this->hasMany(Commande::class);

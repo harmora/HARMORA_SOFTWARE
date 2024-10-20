@@ -18,7 +18,7 @@ class ModifyBonDeCommandeTable extends Migration
         Schema::create('bon_de_commande', function (Blueprint $table) {
             $table->id();  // Primary key
             $table->unsignedBigInteger('fournisseur_id')->nullable();  // Foreign key for fournisseur
-            $table->unsignedBigInteger('entreprise_id')->nullable();   // Foreign key for entreprise
+            $table->unsignedBigInteger(column: 'entreprise_id')->nullable();   // Foreign key for entreprise
             $table->string('type_achat');  // Type of purchase
             $table->decimal('montant', 15, 2);  // Montant (amount)
             $table->string('reference')->nullable();  // Reference number

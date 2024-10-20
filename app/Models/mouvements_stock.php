@@ -23,5 +23,9 @@ class mouvements_stock extends Model
     {
         return $this->belongsTo(Achat::class);
     }
+    public function depot()
+    {
+        return $this->belongsTo(Depot::class);
+    }
 
 }

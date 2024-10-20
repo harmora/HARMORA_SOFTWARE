@@ -1,0 +1,5 @@
+.env
+venvharmo/
+test/
+vector_db/
+.idea/

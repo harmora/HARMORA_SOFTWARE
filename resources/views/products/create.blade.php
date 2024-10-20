@@ -20,6 +20,10 @@
                 </ol>
             </nav>
         </div>
+        <div>
+            <button type="button" id="add_depot_btn" class="btn btn-sm btn-primary">{{ get_label('add_new_depot', 'Add New Depot') }}</button>
+            {{-- <a href="{{url('/products/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_stock', 'Add Stock') ?>"><i class='bx bx-plus'></i></button></a> --}}
+        </div>
     </div>
 
     <div class="card">
@@ -42,6 +46,15 @@
                             <option value=""><?= get_label('please_select', 'Please select') ?></option>
                             @foreach ($categories as $cat)
                             <option value="{{$cat->id}}" {{ old('product_category_id') == $cat->id ? "selected" : "" }}>{{ ucfirst($cat->name_cat) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label" for="depot"><?= get_label('depot', 'Depot') ?> <span class="asterisk">*</span></label>
+                        <select class="form-select text-capitalize" id="depot_id" name="depot_id">
+                            <option value=""><?= get_label('please_select', 'Please select') ?></option>
+                            @foreach ($depots as $depot)
+                            <option value="{{$depot->id}}" {{ old('depot_id') == $depot->id ? "selected" : "" }}>{{ ucfirst($depot->name) }}</option>
                             @endforeach
                         </select>
                     </div>
