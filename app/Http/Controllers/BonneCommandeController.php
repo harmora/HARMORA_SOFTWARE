@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achat;
 use App\Models\BonDeCommande;
 use App\Models\fournisseur;
 use App\Models\ProdCategory;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -57,6 +59,7 @@ public function index()
 }
 
 
+
 public function create(Request $request)
 {
     // Fetch products, fournisseurs, and categories for the authenticated user's entreprise
@@ -80,8 +83,6 @@ public function list()
     $type_achat_filter = request('type_achat', '');
     $fournisseur_filter = request('fournisseur', '');
 
-
-
     // Query for BonDeCommande with related fournisseur and products
     $query = BonDeCommande::with(['fournisseur', 'products'])
         ->where('entreprise_id', $this->user->entreprise->id);
@@ -100,8 +101,6 @@ public function list()
     if ($status_filter !== '') {
         $query->where('status', $status_filter);
     }
-
-
 
     if ($type_achat_filter !== '') {
         $query->where('type_achat', $type_achat_filter);
@@ -150,7 +149,6 @@ public function list()
                         </span>
                     </div>
                 </div>";
-
             })->implode('') . "</div>";
 
         // Actions (edit, delete)
@@ -170,44 +168,55 @@ public function list()
             '">' . $bonDeCommande->status . '</span>';
 
         // Documents (Devis, Facture)
-        $documentsHtml = '<div class="mb-3" style="display: flex; justify-content: center; align-items: center;">
-            <a class="me-2">
-              pdf
-            </a>';
-
-        if ($bonDeCommande->status == "validated") {
-            $documentsHtml .= '<a class="me-2">
-                    <button id="generateFactureButton-' . $bonDeCommande->id . '" data-url="' . route('facture.pdf', $bonDeCommande->id) . '" type="button" class="btn btn-sm btn-primary">
-                        ' . get_label('facture', 'Facture') . ' <i class="bx bx-dollar"></i>
-                    </button>
-                </a>';
-        }
-
-        $documentsHtml .= '</div>';
 
         $manage = '<div class="btn-group" role="group" aria-label="Manage Buttons">
-              <a href="/bondecommande/download/' . $bonDeCommande->id . '" title="' . get_label('download_bon', 'Download Bon de Commande') . '" class="btn btn-sm btn-outline-info mx-1">
-                  <i class="bx bx-download"></i> ' . get_label('download', 'Download') . '
-              </a>
-              <a href="/bondecommande/manage/' . $bonDeCommande->id . '" title="' . get_label('manage', 'Manage Bon de Commande') . '" class="btn btn-sm btn-outline-success mx-1">
-                  <i class="bx bx-cog"></i> ' . get_label('manage', 'Manage') . '
-              </a>
-           </div>';
+        <a href="' . route('bon-commande.generate', $bonDeCommande->id) . '" title="' . get_label('download_bon', 'Download Bon de Commande') . '" class="btn btn-sm btn-outline-info mx-1">
+            <i class="bx bx-download"></i> ' . get_label('download', 'Download') . '
+        </a>
+        <a href="' . route('bon_commande.manage', $bonDeCommande->id) . '" title="' . get_label('manage', 'Manage Bon de Commande') . '" class="btn btn-sm btn-outline-success mx-1">
+            <i class="bx bx-cog"></i> ' . get_label('manage', 'Manage') . '
+        </a>
+    </div>';
 
 
-           return [
+
+    $devisButton = '_';
+
+// Check if a devis file exists and create the "Download Devis" button
+if (!empty($bonDeCommande->devis)) {
+    // Get the full path to the file, assuming it's stored in 'achat/devis' within 'storage/app/public'
+    $filePath = asset('storage/' . $bonDeCommande->devis);
+
+
+    // Get the file name (with extension) to use in the download attribute
+    $fileName = basename($bonDeCommande->devis);
+
+    // Create the download button using the stored devis path and the file name
+    $devisButton = '
+    <a href="' . $filePath . '" title="' . get_label('download_devis', 'Download Devis') . '" class="btn btn-sm btn-outline-primary" download="' . $fileName . '">
+        <i class="bx bx-file"></i> ' . get_label('download_devis', 'Download Devis') . '
+    </a>';
+}
+
+
+
+
+           $tvaFormatted = number_format($bonDeCommande->tva, 2) . '%';
+        // Add tva to the returned data
+        return [
             'manage' => $manage,
             'reference' => $bonDeCommande->reference,
             'fournisseur' => $fournisseurProfileHtml . ' ' . $bonDeCommande->fournisseur->name,
+            'devis' => $devisButton,  // Added this line for the devis button
             'products' => $productsHtml,
             'type_achat' => $bonDeCommande->type_achat,
             'montant' => number_format($bonDeCommande->montant, 2),
+            'tva' => $tvaFormatted,  // Added this line
             'status' => $bonDeCommandeStatus,
             'date_commande' => $bonDeCommande->date_commande ? Carbon::parse($bonDeCommande->date_commande)->format('Y-m-d') : 'N/A',
             'created_at' => format_date($bonDeCommande->created_at, true),
             'updated_at' => format_date($bonDeCommande->updated_at, true),
-            'actions' => $actions,
-            'documents' => $documentsHtml
+            'actions' => $actions
         ];
     });
 
@@ -216,6 +225,8 @@ public function list()
         "total" => $totalBonDeCommandes,
     ]);
 }
+
+
 public function store(Request $request)
 {
     // Validate the request
@@ -231,6 +242,8 @@ public function store(Request $request)
         'new_products.*.category_id' => 'nullable|exists:prod_categories,id',
         'new_products.*.quantity' => 'required_with:new_products.*.name|integer|min:1',
         'new_products.*.price' => 'required_with:new_products.*.name|numeric|min:0',
+        'tva' => 'required|in:0,7,10,14,16,20', // Validate the tva input
+        'devis' => 'nullable|file|mimes:pdf,doc,docx,jpg,png,jpeg|max:2048', // Optional file upload with size limit
     ]);
 
     // Check if at least one product (existing or new) has been provided
@@ -243,8 +256,22 @@ public function store(Request $request)
     // Generate the next reference
     $reference = $this->generateReference();
 
-    // Initialize the total amount
-    $totalAmount = 0;
+    // Initialize total amounts
+    $totalAmountHT = 0; // Total amount without TVA
+    $totalAmountTTC = 0; // Total amount with TVA
+
+    $devisPath = null;
+
+
+    if ($request->hasFile('devis')) {
+        $extension = $request->file('devis')->getClientOriginalExtension();
+        $filename = 'Devis_' . $reference . '.' . $extension;
+
+        // Store the file with the correct extension
+        $devisPath = $request->file('devis')->store('achat/devis', 'public');
+
+    }
+
 
     // Create the bon de commande
     $bonCommande = BonDeCommande::create([
@@ -255,9 +282,12 @@ public function store(Request $request)
         'type_achat' => $request->type_achat,
         'status' => 'pending',
         'montant' => 0, // This will be updated later
+        'montant_ht' => 0,
+        'tva' => $request->tva, // Set the tva value from the request
+        'devis' => $devisPath,
     ]);
 
-    // Save existing products and calculate total amount
+    // Save existing products and calculate total amounts
     if ($hasExistingProducts) {
         foreach ($request->products as $product) {
             if (!empty($product['product_id'])) {
@@ -267,13 +297,13 @@ public function store(Request $request)
                     'price' => $product['price'],
                 ]);
 
-                // Add to the total amount
-                $totalAmount += $product['quantity'] * $product['price'];
+                // Add to the total amount without TVA (montant_ht)
+                $totalAmountHT += $product['quantity'] * $product['price'];
             }
         }
     }
 
-    // Save new products and calculate total amount
+    // Save new products and calculate total amounts
     if ($hasNewProducts) {
         foreach ($request->new_products as $newProduct) {
             if (!empty($newProduct['name'])) {
@@ -290,18 +320,44 @@ public function store(Request $request)
                     'price' => $newProduct['price'],
                 ]);
 
-                // Add to the total amount
-                $totalAmount += $newProduct['quantity'] * $newProduct['price'];
+                // Add to the total amount without TVA (montant_ht)
+                $totalAmountHT += $newProduct['quantity'] * $newProduct['price'];
             }
         }
     }
 
-    // Update the bon de commande with the total amount
-    $bonCommande->update(['montant' => $totalAmount]);
+    // Calculate the total amount with TVA
+    $totalAmountTTC = $totalAmountHT + ($totalAmountHT * ($request->tva / 100));
+
+    // Update the bon de commande with the total amounts
+    $bonCommande->update([
+        'montant' => $totalAmountTTC,
+        'montant_ht' => $totalAmountHT,
+    ]);
 
     Session::flash('message', 'Bon de commande created successfully.');
     return response()->json(['error' => false, 'id' => $bonCommande->id]);
 }
+
+public function generateBonCommande($id)
+{
+    // Fetch the "Bon de Commande" with related products
+    $bonCommande = BonDeCommande::with('products')->findOrFail($id);
+
+    // Get the entreprise information of the logged-in user
+    $entreprise = $this->user->entreprise;
+
+    // Load the PDF view for "Bon de Commande"
+    $pdf = Pdf::loadView('pdf.boncmd', compact('bonCommande', 'entreprise'));
+
+    // Create a filename for the PDF
+    $pdfname = 'bon_commande-' . $bonCommande->id .'_'.$bonCommande->reference.'.pdf';
+
+    // Stream the PDF for download
+    return $pdf->stream($pdfname);
+}
+
+
 
 // Function to generate the next reference
 private function generateReference()
@@ -328,5 +384,147 @@ private function generateReference()
 }
 
 
+// Function to generate the next achat reference
+private function generateAchaatReference()
+{
+    // Get the last achat with the highest reference
+    $lastAchat = Achat::orderBy('reference', 'desc')->first();
+
+    // If there is no previous reference, start with Achat_00000001
+    if (!$lastAchat) {
+        return 'Achat_00000001';
+    }
+
+    // Extract the hexadecimal part of the last reference
+    $lastHex = substr($lastAchat->reference, 6); // Skip the 'Achat_' prefix
+
+    // Convert the hexadecimal part to a decimal number, increment it, and then convert back to hexadecimal
+    $nextHex = strtoupper(dechex(hexdec($lastHex) + 1));
+
+    // Pad the new hex value to 8 characters (e.g., 00000001, 0000000A)
+    $nextReference = str_pad($nextHex, 8, '0', STR_PAD_LEFT);
+
+    // Return the new reference with the Achat_ prefix
+    return 'Achat_' . $nextReference;
+}
+
+
+public function storeValidated(Request $request)
+{
+    // Validate the request
+    $request->validate([
+        'fournisseur_id' => 'required|exists:fournisseurs,id',
+        'date_achat' => 'required|date',
+        // Validate existing products
+        'products.*.product_id' => 'nullable|exists:products,id',
+        'products.*.quantity' => 'required_with:products.*.product_id|integer|min:1',
+        'products.*.price' => 'required_with:products.*.product_id|numeric|min:0',
+        // Validate new products
+        'new_products.*.name' => 'nullable|string',
+        'new_products.*.category_id' => 'nullable|exists:prod_categories,id',
+        'new_products.*.quantity' => 'required_with:new_products.*.name|integer|min:1',
+        'new_products.*.price' => 'required_with:new_products.*.name|numeric|min:0',
+        'tva' => 'required|in:0,7,10,14,16,20', // Validate the tva input
+        'facture' => 'nullable|file|mimes:pdf,doc,docx,jpg,png,jpeg|max:2048', // Optional facture file upload
+    ]);
+
+    // Check if at least one product (existing or new) has been provided
+    $hasExistingProducts = !empty($request->products);
+    $hasNewProducts = !empty($request->new_products);
+    if (!$hasExistingProducts && !$hasNewProducts) {
+        return redirect()->back()->withErrors(['products' => 'You must add at least one existing or new product.']);
+    }
+
+    // Generate the next reference
+    $reference = $this->generateAchaatReference(); // Assuming you have a reference generator
+
+    // Initialize total amounts
+    $totalAmountHT = 0; // Total amount without TVA
+    $totalAmountTTC = 0; // Total amount with TVA
+
+    // Handle file upload for facture
+    $facturePath = null;
+    if ($request->hasFile('facture')) {
+        $extension = $request->file('facture')->getClientOriginalExtension();
+        $filename = 'Facture_' . $reference . '.' . $extension;
+        $facturePath = $request->file('facture')->storeAs('achat/factures', $filename, 'public');
+    }
+
+    // Handle file upload for devis, or use the existing path from hidden input
+    $devisPath = $request->input('boncmddevis'); // Get value from hidden input
+
+
+    // Create the achat
+    $achat = Achat::create([
+        'fournisseur_id' => $request->fournisseur_id,
+        'date_achat' => $request->date_achat,
+        'entreprise_id' => $this->user->entreprise->id,
+        'reference' => $reference, // Generated reference
+        'type_achat' => "Matériel/Produits",
+        'status_payement' => 'unpaid',
+        'montant' => 0, // This will be updated later
+        'montant_ht' => 0,
+        'tva' => $request->tva, // Set the TVA value from the request
+        'facture' => $facturePath,
+        'devis' => $devisPath, // Set the value of devis
+    ]);
+
+    // Save existing products and calculate total amounts
+
+        foreach ($request->products as $product) {
+            if (!empty($product['product_id'])) {
+                $productModel = Product::find($product['product_id']);
+                $quantity = $product['quantity'];
+                $price = $product['price'];
+                $amountHT = $quantity * $price;
+
+                // Attach the product to the achat with quantity, price, and total_ht
+                $achat->products()->attach($productModel, [
+                    'quantity' => $quantity,
+                    'price' => $price,
+
+                ]);
+
+                // Update total amounts
+                $totalAmountHT += $amountHT;
+            }
+        }
+
+
+
+
+    // Calculate total amount with TVA
+    $totalAmountTTC = $totalAmountHT * (1 + $request->tva / 100);
+
+    // Update achat with total amounts
+    $achat->update([
+        'montant_ht' => $totalAmountHT,
+        'montant' => $totalAmountTTC,
+    ]);
+
+    return redirect()->route('achats.index')->with('success', 'Achat created successfully.');
+}
+
+
+
+public function manage($id)
+{
+    $bonDeCommande = BonDeCommande::with(['fournisseur', 'products'])->findOrFail($id);
+    $fournisseurs = Fournisseur::all(); // Assuming you're passing this to the view
+    $products = Product::all(); // Assuming you're passing this to the view
+
+    return view('achats.manage', [
+        'bonDeCommande' => $bonDeCommande,
+        'fournisseurs' => $fournisseurs,
+        'products' => $products,
+    ]);
+}
+
+
+
+
+
 
 }
+
+

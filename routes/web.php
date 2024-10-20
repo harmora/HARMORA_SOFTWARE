@@ -374,6 +374,16 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/boncommande/list', [BonneCommandeController::class, 'list'])->name('boncommande.list');
 
 
+Route::get('/bon-commande/{id}/generate', [BonneCommandeController::class, 'generateBonCommande'])
+->name('bon-commande.generate');
+
+Route::get('/bon_commande/manage/{id}', [BonneCommandeController::class, 'manage'])->name('bon_commande.manage');
+
+Route::post('/achats/store-validated', [BonneCommandeController::class, 'storeValidated'])->name('achats.storeValidated');
+
+
+
+
 
 
 

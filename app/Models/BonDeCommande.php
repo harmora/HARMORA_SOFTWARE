@@ -23,6 +23,9 @@ class BonDeCommande extends Model
         'montant_ht',
         'bon',
         'status',
+        'tva',
+        'devis',
+
     ];
 
     /**

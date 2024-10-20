@@ -76,14 +76,19 @@ $visibleColumns = getUserPreferences('BonDeCommande');
                             <th data-field="manage" data-visible="{{ (in_array('manage', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" ><?= get_label('bon_de_commande', 'bon de commande') ?></th>
 
                             <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('reference', 'Reference') ?></th>
-                            <th data-field="fournisseur" data-visible="{{ (in_array('fournisseur_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('fournisseur', 'Fournisseur') ?></th>
-                            <th data-field="type_achat" data-visible="{{ (in_array('type_achat', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('type_achat', 'Type Achat') }}</th>
-                            <th data-field="montant" data-visible="{{ (in_array('montant', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('montant', 'Montant') ?></th>
-                            <th data-field="date_commande" data-visible="{{ (in_array('date_commande', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_commande', 'Date de Commande') ?></th>
+
                             <th data-field="status" data-visible="{{ (in_array('status', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('status', 'Statut') ?></th>
+                            <th data-field="fournisseur" data-visible="{{ (in_array('fournisseur_id', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('fournisseur', 'Fournisseur') ?></th>
+                            <th data-field="devis" data-visible="{{ (in_array('devis', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('devis', 'Devis') ?></th>
+
+                            <th data-field="type_achat" data-visible="{{ (in_array('type_achat', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('type_achat', 'Type Achat') }}</th>
+                            <th data-field="tva" data-visible="{{ (in_array('tva', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('tva', 'TVA') ?></th>
+                            <th data-field="montant" data-visible="{{ (in_array('montant', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('montant tcc', 'Montant TCC') ?></th>
+                            <th data-field="products" data-visible="{{ (in_array('products', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('products', 'Products') ?></th>
+                            <th data-field="date_commande" data-visible="{{ (in_array('date_commande', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('date_commande', 'Date de Commande') ?></th>
                             <th data-field="created_at" data-visible="{{ (in_array('created_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('created_at', 'Created at') ?></th>
                             <th data-field="updated_at" data-visible="{{ (in_array('updated_at', $visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('updated_at', 'Updated at') ?></th>
-                            <th data-field="products" data-visible="true"><?= get_label('products', 'Products') ?></th> <!-- New column for products -->
+                          <!-- New column for products -->
                             <th data-field="actions" data-visible="{{ (in_array('actions', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('actions', 'Actions') ?></th>
                         </tr>
                     </thead>

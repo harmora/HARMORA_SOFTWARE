@@ -65,6 +65,19 @@ $products = Product::all();
                         </select>
                     </div>
 
+                    <div class="mb-3 col-md-6">
+                        <label for="tva" class="form-label"><?= get_label('tva', 'TVA') ?> <span class="asterisk">*</span></label>
+                        <select class="form-select" id="tva" name="tva">
+                            <option value="0"><?= get_label('0 ', '0%') ?></option>
+                            <option value="7"><?= get_label('7', '7%') ?></option>
+                            <option value="10"><?= get_label('10', '10%') ?></option>
+                            <option value="14"><?= get_label('14', '14%') ?></option>
+                            <option value="16"><?= get_label('16', '16%') ?></option>
+                            <option value="20"><?= get_label('20', '20%') ?></option>
+                        </select>
+                    </div>
+
+
 
 
                     <!-- Date of Command -->
@@ -72,6 +85,12 @@ $products = Product::all();
                         <label for="date_commande" class="form-label"><?= get_label('date_commande', 'Date of Command') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="date" id="date_commande" name="date_commande" value="<?= old('date_commande', date('Y-m-d')) ?>" required>
                     </div>
+
+                    <div class="mb-3 col-md-12">
+                        <label for="devis" class="form-label"><?= get_label('devis', 'Devis') ?></label>
+                        <input class="form-control" type="file" id="devis" name="devis" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg">
+                    </div>
+
 
 
                     <div class="container">
