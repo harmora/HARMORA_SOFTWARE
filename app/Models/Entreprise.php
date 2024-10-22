@@ -24,6 +24,10 @@ class Entreprise extends Model
     {
         return $this->hasMany(Fournisseur::class);
     }
+    public function regelement()
+    {
+        return $this->hasMany(Regelement::class);
+    }
     public function document()
     {
         return $this->hasMany(Document::class);

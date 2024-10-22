@@ -13,19 +13,23 @@ return new class extends Migration
     {
         Schema::create('regelements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger(column: 'client_id')->nullable(); // Foreign key for clients table
-            $table->unsignedBigInteger(column: 'facture_id')->nullable(); // Foreign key for clients table
+            $table->unsignedBigInteger(column: 'achat_id')->nullable(); // Foreign key for clients table
             $table->unsignedBigInteger('entreprise_id')->nullable(); // Foreign key for users table
-            $table->string('mode_virement')->nullable();
-            $table->decimal('total_amount', 20, places: 2)->default(value: 0.00); // Total amount of the command
+            $table->unsignedBigInteger(column: 'invoice_vente_id')->nullable(); // Foreign key for clients table
+
+
+            $table->enum('mode_virement', ['espece', 'cheque', 'virement'])->default(value: 'espece');
             $table->decimal('amount_payed', 20, places: 2)->default(value: 0.00); // Total amount of the command
-            $table->decimal('remaining_amount', 20, places: 2)->default(value: 0.00); // Total amount of the command
-            
-            
-            $table->foreign('client_id')->references('id')->on('clients')->onDelete('set null');
-            $table->foreign('facture_id')->references('id')->on('factures')->onDelete('set null');
+            $table->decimal('remaining_amount', total: 20, places: 2)->default(value: 0.00); // Total amount of the command
+            $table->date('date');
+            $table->enum('origin',['commande','achat']);
+        
             $table->foreign('entreprise_id')->references('id')->on('entreprises')->onDelete('set null');
+            $table->foreign('achat_id')->references('id')->on('achats')->onDelete('set null');
+            $table->foreign('invoice_vente_id')->references('id')->on('invoices')->onDelete('set null');
             $table->timestamps();
+
+
         });
     }
 

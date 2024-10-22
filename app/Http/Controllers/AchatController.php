@@ -10,6 +10,7 @@ use App\Models\fournisseur;
 use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
+use App\Models\regelement;
 use App\Services\DeletionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -85,15 +86,96 @@ public function payment($id)
     // Retrieve all fournisseurs and products (if needed for the view)
     $fournisseurs = Fournisseur::all();
     $products = Product::all();
+    $previousReglements = $achat->reglements()->get();
+
 
     // Return the 'manage' view, passing achat, fournisseurs, and products
     return view('achats.payment', [
         'achat' => $achat,
         'fournisseurs' => $fournisseurs,
         'products' => $products,
+        'previousReglements' => $previousReglements,
     ]);
 }
 
+public function store_reglement(Request $request, $id)
+{
+    // Validate the form fields
+    $formFields = $request->validate([
+        'montant_paye' => 'required|numeric|min:0',
+        // 'date_reglement' => 'required|date',
+        'payment_type' => 'required|string|max:255',
+        // 'reference' => 'required|string|max:255',
+        // 'notes' => 'nullable|string|max:255',
+    ]);
+
+    // Retrieve the Achat instance
+    $achat = Achat::findOrFail($id);
+    
+    if($achat->montant_payée == null){
+        if($achat->montant-$formFields['montant_paye'] < 0)
+        {
+            return response()->json([
+                'error' => true, 
+                'message' => 'chose an amount less than the total amount'
+            ]);           
+        }
+    }
+    if($formFields['montant_paye'] + $achat->montant_payée> $achat->montant)
+    {
+        return response()->json([
+            'error' => true, 
+            'message' => 'chose an amount less than the remaining amount'
+        ]);           
+    }
+
+    // Calculate the new total amount paid and remaining amount
+    if($achat->montant_payée == null)
+        $newTotalPaid =$formFields['montant_paye'];
+    else
+        $newTotalPaid = $achat->montant_payée + $formFields['montant_paye'];
+
+    $newRemainingAmount = $achat->montant - $newTotalPaid;
+
+    // Update the Achat instance with the new total paid and remaining amount
+    $achat->update([
+        'montant_payée' => $newTotalPaid,
+        'montant_restant' => $newRemainingAmount,
+    ]);
+    
+    if($achat->montant_restant ==0)
+    {
+        $achat->update([
+            'status_payement' => 'paid',
+        ]);
+    }
+
+    $reglement=regelement::create([
+        'achat_id'=>$achat->id,
+        'date'=>now(),
+        'origin'=>'achat',
+        'mode_virement'=>$formFields['payment_type'],
+        'entreprise_id'=>$this->user->entreprise_id,
+        'amount_payed'=>$newTotalPaid,
+        'remaining_amount'=>$newRemainingAmount,
+    ]);
+
+    // Create a new Document instance for the reglement
+    // Document::create([
+    //     'reference' => $formFields['reference'],
+    //     'total_amount' => $formFields['montant'],
+    //     'remaining_amount' => $newRemainingAmount,
+    //     'from_to' => $achat->fournisseur->name,
+    //     'user' => $this->user->first_name . ' ' . $this->user->last_name,
+    //     'type' => 'reglement',
+    //     'entreprise_id' => $this->user->entreprise_id,
+    //     'date' => $formFields['date_reglement'],
+    //     'notes' => $formFields['notes'],
+    // ]);
+    // Redirect back to the achat payment page with a success message
+    return response()->json(['error' => false, 'message' => 'Reglement added successfully.']);
+    // return redirect()->route('achats.payment', parameters: $id)->with('success', 'Reglement added successfully.');
+}   
 
     public function store(Request $request)
     {

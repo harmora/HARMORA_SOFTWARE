@@ -5,6 +5,7 @@ use App\Models\bon_livraision;
 use App\Models\Commande;
 use App\Models\devise;
 use App\Models\mouvements_stock;
+use App\Models\regelement;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\depot;
@@ -73,6 +74,8 @@ class deviseController extends Controller
             return abort(500, 'Something went wrong.');
         }
     }
+
+
     //--------------------------------------------------------------------------------------------------------------------------------
     public function editdevis($id)
     {
@@ -131,6 +134,8 @@ class deviseController extends Controller
                 'note' => 'nullable|string',
                 'client_id' => 'required|integer|exists:clients,id',
                 'tva' => 'nullable|numeric|min:0|max:100', // Validate TVA
+            ], [
+                'products.*.product_id.distinct' => 'Duplicate products are not allowed.',
             ]);
             // Calculate total amount before TVA
             $totalAmount = 0;
@@ -526,8 +531,8 @@ class deviseController extends Controller
             $invoice = Invoice::findOrFail($id);
             
             $document = Document::where('type', 'facture')
-                                ->where('reference', 'like', 'Update-' . $invoice->id . '-%')
-                                ->first();
+            ->where('reference', 'like', $invoice->id . '-' . $invoice->title . '%')
+            ->first();
 
             if (!$document || !Storage::disk('public')->exists($document->facture)) {
                 return response()->json(['error' => true, 'message' => 'Invoice file not found.']);
@@ -549,6 +554,60 @@ class deviseController extends Controller
     
         return view('boncommande.create_bon_livraision', compact('invoice', 'products', 'clients', 'users'));
     }
+    //--------------------------------------------------------------------------------------------------------------------------------
+
+    public function showregelement($id){
+        $invoice=Invoice::findOrFail($id);
+        $previousReglements = $invoice->reglements()->get();
+
+        return view('boncommande.reglement', compact('invoice','previousReglements'));
+
+    }
+    //--------------------------------------------------------------------------------------------------------------------------------
+    public function store_reglement(Request $request, $id)
+    {
+        // Validate the form fields
+        $formFields = $request->validate([
+            'montant_paye' => 'required|numeric|min:0',
+            'payment_type' => 'required|string|max:255',
+        ]);
+    
+        // Retrieve the Invoice instance
+        $invoice = Invoice::findOrFail($id);
+        
+        // Check that the payment amount does not exceed the total remaining amount
+        if ($formFields['montant_paye'] + $invoice->total_paid > $invoice->total_amount) {
+            return response()->json([
+                'error' => true, 
+                'message' => 'The amount entered exceeds the total remaining amount.',
+            ]);
+        }
+    
+        // Calculate the new total amount paid and remaining amount
+        $newTotalPaid = $invoice->total_paid + $formFields['montant_paye'];
+        $newRemainingAmount = $invoice->total_amount - $newTotalPaid;
+    
+        // Update the Invoice instance with the new total paid and remaining amount
+        $invoice->update(attributes: [
+            'total_paid' => $newTotalPaid,
+            'payment_status' => $newRemainingAmount == 0 ? 'paid' : 'partial',
+        ]);
+    
+        // Create a new Reglement (Payment) record
+        regelement::create([
+            'invoice_vente_id' => $invoice->id,
+            'date' => now(),
+            'origin' => 'commande',
+            'mode_virement' => $formFields['payment_type'],
+            'entreprise_id' => $this->user->entreprise_id,
+            'amount_payed' => $formFields['montant_paye'],
+            'remaining_amount' => $newRemainingAmount,
+        ]);
+    
+        // Redirect back to the order payment page with a success message
+        return response()->json(['error' => false, 'message' => 'Payment added successfully.']);
+    }
+//--------------------------------------------------------------------------------------------------------------------------------
     // public function bonlivr(Request $request, $id)
     // {
     //     $commande = Invoice::findOrFail($id);

@@ -71,7 +71,7 @@ class ProductController extends Controller
 
         return view('products.addquantity',['products'=>$products,'depots'=>$depots]);
     }
-    public function storeQuantity(Request $request)
+    public function     storeQuantity(Request $request)
     {
         // Validation
         $request->validate([

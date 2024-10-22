@@ -38,6 +38,15 @@ $user = getAuthenticatedUser();
                                     <i class='menu-icon tf-icons bx bx-package text-primary'></i> <?= get_label('bonlib', 'Bon livraision') ?>
                                 </li>
                             </a>
+                            <a href="{{route('commandes.showregelement', $item->id)}}">
+                                <li class="dropdown-item">
+                                    <i class="menu-icon tf-icons bx bx-credit-card text-warning"></i> {{ get_label('reglement', 'Reglement') }}
+                                </li>
+                                {{-- <button 
+                                    type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('reglement', 'Reglement') ?>">
+                                    <i class="bx bx-credit-card"></i> {{ get_label('Payment', 'Payment') }}
+                                </button> --}}
+                            </a>
                         @endif
                         @if($type === 'devis')
                             <a href="javascript:void(0);" class="delete" data-reload="true" data-type="devise" data-id="{{ $item->id }}">

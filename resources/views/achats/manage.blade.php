@@ -96,7 +96,7 @@
                             <div class="product-entry mb-3">
                                 <h5><?= get_label('product', 'Product') ?> {{ $index + 1 }}</h5>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label for="products[{{$index}}][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
                                         <select class="form-select" name="products[{{$index}}][product_id]" >
                                             <option value=""><?= get_label('select_product', 'Select product') ?></option>
@@ -105,11 +105,20 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <label for="products[{{$index}}][depot_id]" class="form-label"><?= get_label('select_depot', 'Select depot') ?></label>
+                                        <select class="form-select" name="products[{{$index}}][depot_id]" required>
+                                            <option value=""><?= get_label('select_depot', 'Select depot') ?></option>
+                                            @foreach($depots ?? [] as $depot)
+                                                <option value="{{ $depot->id }}" {{ $product->pivot->depot_id == $depot->id ? 'selected' : '' }}>{{ $depot->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
                                         <label for="products[{{$index}}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
                                         <input class="form-control" type="number" name="products[{{$index}}][quantity]" value="{{ $product->pivot->quantity }}" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" >
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label for="products[{{$index}}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
                                         <input class="form-control" type="number" name="products[{{$index}}][price]" value="{{ $product->pivot->price }}" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" >
                                     </div>
@@ -484,7 +493,7 @@ document.getElementById('montant_ht').value = montantHT.toFixed(2); // Amount ex
             newProductDiv.innerHTML = `
                 <h5><?= get_label('product', 'Product') ?> ${++productCount}</h5>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="products[${productCount-1}][product_id]" class="form-label"><?= get_label('select_product', 'Select product') ?></label>
                         <select class="form-select" name="products[${productCount-1}][product_id]" required>
                             <option value=""><?= get_label('select_product', 'Select product') ?></option>
@@ -493,11 +502,20 @@ document.getElementById('montant_ht').value = montantHT.toFixed(2); // Amount ex
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label for="products[${productCount-1}][depot_id]" class="form-label"><?= get_label('select_depot', 'Select depot') ?></label>
+                        <select class="form-select" name="products[${productCount-1}][depot_id]" required>
+                            <option value=""><?= get_label('select_depot', 'Select depot') ?></option>
+                            @foreach($depots ?? [] as $depot)
+                                <option value="{{ $depot->id }}">{{ $depot->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label for="products[${productCount-1}][quantity]" class="form-label"><?= get_label('quantity', 'Quantity') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" name="products[${productCount-1}][quantity]" placeholder="<?= get_label('enter_quantity', 'Enter quantity') ?>" required min="1">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="products[${productCount-1}][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
                         <input class="form-control" type="number" name="products[${productCount-1}][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" required>
                     </div>
