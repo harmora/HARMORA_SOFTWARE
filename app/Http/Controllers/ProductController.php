@@ -431,8 +431,17 @@ class ProductController extends Controller
         ->where('products.id', $id)
         ->select('products.*', 'prod_categories.name_cat as category_name')
         ->firstOrFail();
+        $depots = $product->depots->map(function ($depot) {
+            return [
+                'id' => $depot->id,
+                'name' => $depot->name,
+                'quantity' => $depot->pivot->quantity
+            ];
+        })->filter(function ($depot) {
+            return $depot['quantity'] > 0; // Only keep depots with quantity > 0
+        })->values();
 
-        return view('products.product_info', ['product' => $product, 'auth_user' => getAuthenticatedUser()]);
+        return view('products.product_info', ['product' => $product, 'auth_user' => getAuthenticatedUser(),'depots'=>$depots]);
     }
 }
 

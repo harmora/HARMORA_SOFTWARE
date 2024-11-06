@@ -889,4 +889,15 @@
 'completed'=>'complétée',
 'cancelled'=>'annulée',
 'montant_paye'=>'Montant payé',
+'sales'=>'ventes',
+'sale'=>'vente',
+'bon_de_commandes'=>'Bon de commandes',
+'bon_de_commande'=>'Bon de commande',
+'bon_liv'=>"Bon de livraison",
+'priceunit'=>'Prix unitaire',
+'custumer_service'=>'Service client',
+'custumer_services'=>'Services client',
+'confirm_sale'=>'Confirmer la vente',
+'confirm_commande'=>'Confirmer la commande',
+
 ];

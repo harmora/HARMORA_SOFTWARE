@@ -61,7 +61,7 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
         <li class="menu-item {{ Request::is('commandes') || Request::is('commandes/*') ? 'active' : '' }}">
             <a href="/commandes/draggable" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-list-check text-dark'></i>
-                <div><?= get_label('commandes', 'Commandes') ?>
+                <div><?= get_label('sales', 'Sales') ?>
 
                 </div>
             </a>
@@ -221,6 +221,12 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
             <a href="/ocr" class="menu-link">
                 <i class='menu-icon tf-icons  bx bx-scan text-primary'></i>
                 <div><?= get_label('ocr', 'OCR')  ?></div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/chatbot" class="menu-link">
+                <i class='menu-icon tf-icons bx bx-message-square-dots text-primary'></i>
+                <div><?= get_label('custumer_service', 'Custumer service')  ?></div>
             </a>
         </li>
 

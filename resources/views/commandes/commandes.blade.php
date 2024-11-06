@@ -130,8 +130,8 @@ $visibleColumns = getUserPreferences('commandes');
             </nav>
         </div>
         <div>
-            <a href="{{url('/commandes/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_commande', 'Add Commande') ?>"><i class='bx bx-plus'></i></button></a>
-            <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus text-black'></i></button></a>
+            <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus'></i></button></a>
+            {{-- <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus text-black'></i></button></a> --}}
 
             <a href="{{url('/commandes/draggable')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="<?= get_label('draggable', 'Draggable') ?>">

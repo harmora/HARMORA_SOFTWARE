@@ -5,13 +5,13 @@
 @endsection
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-1">
     <div class="row">
-        <div class="col-md-8 offset-md-2">
+        <div class="card-body text-center">
+            <h4 class="card-title text-primary">{{ get_label('custumer', 'Customer Service Chatbot') }}</h4>
+        </div>
+        <div class="col-md-10 offset-md-1">
             <div class="chat-container">
-                <div class="bg-primary p-2">
-                    <h3 class="text-center m-0 text-bold text-white-10">Customer Service Chatbot</h3>
-                </div>
                 <div id="chat-window">
                     <div id="chat-output"></div>
                 </div>

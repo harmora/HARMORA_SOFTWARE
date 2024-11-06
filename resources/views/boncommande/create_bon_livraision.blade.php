@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-<?= get_label('bon_livraison', 'Bon Livraison') ?>
+<?= get_label('bon_liv', 'Bon Livraison') ?>
 @endsection
 @section('content')
 
@@ -9,8 +9,8 @@
         <nav aria-label="breadcrumb" class="mb-0">
             <ol class="breadcrumb breadcrumb-style1 mb-0">
                 <li class="breadcrumb-item"><a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a></li>
-                <li class="breadcrumb-item"><a href="{{url('/commandes')}}"><?= get_label('achat', 'Commandes') ?></a></li>
-                <li class="breadcrumb-item active"><?= get_label('bon_livraison', 'Bon Livraison') ?></li>
+                <li class="breadcrumb-item"><a href="{{url('/commandes')}}"><?= get_label('sale', 'Commandes') ?></a></li>
+                <li class="breadcrumb-item active"><?= get_label('bon_liv', 'Bon Livraison') ?></li>
             </ol>
         </nav>
     </div>
@@ -114,7 +114,7 @@
                     <h5>{{ get_label('previous_bon_livraisons', 'Previous Bon Livraisons') }}</h5>
                     @foreach($previousBonLivraisons as $bonLivraison)
                         <div class="bon-livraison-entry mb-3">
-                            <p>{{ get_label('bon_livraison', 'Bon Livraison') }} #{{ $loop->iteration }}</p>
+                            <p>{{ get_label('bon_liv', 'Bon Livraison') }} #{{ $loop->iteration }}</p>
                             <p>{{ get_label('start_date', 'Start Date') }}: {{ $bonLivraison->start_date }}</p>
                             @foreach($bonLivraison->products as $product)
                                 <p>{{ $product->name }}: {{ $product->pivot->quantity }} {{ get_label('quantity_shipped', 'shipped') }}</p>

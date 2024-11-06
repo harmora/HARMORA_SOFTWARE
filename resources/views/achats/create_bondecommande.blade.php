@@ -19,7 +19,7 @@ $products = Product::all();
                     <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{url('/boncommandes')}}"><?= get_label('bon_commandes', 'Bon Commandes') ?></a>
+                    <a href="{{url('/boncommandes')}}"><?= get_label('bon_de_commandes', 'Bon Commandes') ?></a>
                 </li>
                 <li class="breadcrumb-item active">
                     <?= get_label('create', 'Create') ?>

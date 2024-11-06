@@ -36,7 +36,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <input type="hidden" name="redirect_url" value="/commandes/draggable">
                 @csrf
                 <div class="row">
-                    <div class="mb-3 col-md-12">
+                    <div class="mb-3 col-md-6">
                         <label for="title" class="form-label">{{ get_label('title', 'Title') }} <span class="asterisk">*</span></label>
                         <input class="form-control" type="text" name="title" placeholder="{{ get_label('please_enter_title', 'Please enter title') }}" value="{{ old('title') }}" required>
                     </div>
@@ -65,7 +65,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                                     <input class="form-control" type="number" id="products[0][quantity]" name="products[0][quantity]" placeholder="{{ get_label('enter_quantity', 'Enter quantity') }}" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="products[0][price]" class="form-label"><?= get_label('price', 'Price') ?> <span class="asterisk">*</span></label>
+                                    <label for="products[0][price]" class="form-label"><?= get_label('priceunit', 'unit price') ?> <span class="asterisk">*</span></label>
                                     <input class="form-control" id="products[0][price]" type="number" name="products[0][price]" step="0.01" placeholder="<?= get_label('enter_price', 'Enter price') ?>" >
                                 </div>
                             </div>

@@ -35,7 +35,7 @@ $user = getAuthenticatedUser();
                         @if($type === 'facture')
                             <a href="{{ route('commandes.bonliv', $item->id) }}">
                                 <li class="dropdown-item">
-                                    <i class='menu-icon tf-icons bx bx-package text-primary'></i> <?= get_label('bonlib', 'Bon livraision') ?>
+                                    <i class='menu-icon tf-icons bx bx-package text-primary'></i> <?= get_label('bon_liv', 'Bon livraision') ?>
                                 </li>
                             </a>
                             <a href="{{route('commandes.showregelement', $item->id)}}">
@@ -91,7 +91,7 @@ $user = getAuthenticatedUser();
                 @elseif ($type === 'bon_livraison')
                 <a class="me-2">
                     <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#bonLivraisonModal-{{ $item->id }}">
-                       {{ get_label('bon_livraison', 'Bon Livraison') }} <i class='bx bx-truck'></i>
+                       {{ get_label('bon_liv', 'Bon Livraison') }} <i class='bx bx-truck'></i>
                     </button>
                 </a>
                 @endif
@@ -320,7 +320,7 @@ $user = getAuthenticatedUser();
             <div class="modal-header">
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     <h1 class="modal-title text-success" id="bonLivraisonModalLabel-{{ $item->id }}">
-                        {{ __('Bon Livraison') }}
+                        {{ get_label('bon_liv', 'Bon Livraison') }} 
                     </h1>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -374,7 +374,7 @@ $user = getAuthenticatedUser();
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-success" id="generatePdfliv-{{ $item->id }}">{{ __('Bon Livraison [PDF]') }}</button>
+                <button type="button" class="btn btn-success" id="generatePdfliv-{{ $item->id }}">{{ get_label('bon_liv', 'Bon Livraison') }} {{ __('[PDF]') }}</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
             </div>
         </div>

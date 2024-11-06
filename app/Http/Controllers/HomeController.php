@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use App\Models\Entreprise;
+use App\Models\invoice;
 use App\Models\Pack;
 use App\Models\ProdCategory;
 
@@ -40,7 +41,7 @@ class HomeController extends Controller
         $users =  auth()->user()->entreprise->user;
         $clients = auth()->user()->entreprise->client;
         $products = auth()->user()->entreprise->product;
-        $commandes = auth()->user()->entreprise->commande;
+        $commandes = auth()->user()->entreprise->invoice;
 
            // Initialize variables for counting entreprises, users, and admins
     $entrepriseforadmin = null;
@@ -65,12 +66,11 @@ class HomeController extends Controller
             $currentYear = date('Y');
 
             // Query to fetch total revenue for the current year
-            $totalRevenue = DB::table('commandes')
+            $totalRevenue = DB::table('invoices')
             ->where('entreprise_id', $this->user->entreprise->id)
-
-                ->whereYear('due_date', $currentYear)
-                ->where('status', 'completed')
-                ->sum('total_amount');
+            ->whereYear('due_date', $currentYear)
+            ->whereIn('status', ['completed', 'validated'])
+            ->sum('total_amount');
 
         return view('dashboard', ['commandes'=> $commandes,'users' => $users, 'clients' => $clients, 'ca' => $totalRevenue, 'products' => $products,
         'auth_user' => $this->user,
@@ -173,10 +173,10 @@ public function getChiffreAffaires(Request $request)
     $grouping = $request->query('group_by', 'month'); // Default to 'month' if not provided
     $year = $request->query('year', date('Y')); // Default to current year
 
-    $query = DB::table('commandes')
+    $query = DB::table('invoices')
         ->whereYear('due_date', $year)
         ->where('entreprise_id', $this->user->entreprise->id)
-        ->where('status', 'completed');
+        ->whereIn('status', ['completed', 'validated']);
 
     if ($grouping === 'year') {
         $chiffreAffaires = $query->select(DB::raw('YEAR(due_date) as period'), DB::raw('SUM(total_amount) as total'))
@@ -217,7 +217,7 @@ public function getChiffreAffaires(Request $request)
 public function getChiffreAffaireParCategorie()
 {
     // Fetch the total revenue per category from the commandes table
-    $revenues = DB::table('commandes')
+    $revenues = DB::table('invoices')
     ->where('entreprise_id',$this->user->entreprise->id)
         ->select('status as categorie', DB::raw('SUM(total_amount) as total'))
         ->groupBy('categorie')
@@ -241,7 +241,7 @@ public function getChiffreAffaireParCategorie()
 public function getChiffreAffaireParCategorieProduit()
 {
     // Fetch the commandes with their related products and categories
-    $commandes = Commande::with(['products'])->get()
+    $commandes = invoice::with(['products'])->get()
     ->where('entreprise_id',$this->user->entreprise->id);
 
     // Initialize an array to store total revenue per category
@@ -335,10 +335,10 @@ public function getClientChiffreAffaires(Request $request)
         return response()->json(['error' => 'Client ID is required'], 400);
     }
 
-    $query = DB::table('commandes')
+    $query = DB::table('invoices')
         ->where('entreprise_id', $this->user->entreprise->id)
         ->whereYear('due_date', $year)
-        ->where('status', 'completed')
+        ->whereIn('status', ['completed', 'validated'])
         ->where('client_id', $clientId);
 
     if ($grouping === 'year') {

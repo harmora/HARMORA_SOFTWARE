@@ -17,10 +17,10 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{url('/commandes/draggable')}}"><?= get_label('devise', 'devise') ?></a>
+                    <a href="{{url('/commandes/draggable')}}"><?= get_label('devis', 'devise') ?></a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <?= get_label('edit', 'Edit') ?>
+                    <?= get_label('confirm_sale', 'Confirm sale') ?>
                 </li>
             </ol>
         </nav>
@@ -113,7 +113,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     </div>
                 </div>
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary" id="submit_btn">{{ get_label('Confirmer_devis', 'Confirmer Devis') }}</button>
+                    <button type="submit" class="btn btn-primary" id="submit_btn">{{ get_label('Confirmer_vente', 'confirm sale') }}</button>
                 </div>
             </form>
         </div>

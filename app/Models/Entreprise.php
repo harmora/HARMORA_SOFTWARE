@@ -48,6 +48,18 @@ class Entreprise extends Model
     {
         return $this->hasMany(Commande::class);
     }
+    public function invoice()
+    {
+        return $this->hasMany(invoice::class);
+    }
+    public function devise()
+    {
+        return $this->hasMany(devise::class);
+    }
+    public function bon_livraision()
+    {
+        return $this->hasMany(bon_livraision::class);
+    }
     public function meetings()
     {
         return $this->hasMany(Meeting::class);

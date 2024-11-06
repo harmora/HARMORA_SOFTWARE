@@ -866,6 +866,17 @@
 'create_achat' => 'Create Purchase',
 'montant'=>'amount',
 'facture_bon'=>'',
+'bon_liv'=>'Delivery Note',
+'custumer_service'=>'Customer Service',
+'confirmer_bonliv'=>'Confirm Delivery Note',
+'bon_de_commande'=>'Purchase Order',
+'manage_bon_commandes'=>'Manage Purchase Orders',
+'bon_de_commandes'=>'Purchase Orders',
+'previous_bon_livraisons'=>'Previous Delivery Notes',
+'sales' => 'Sales',
+'sale' => 'Sale',
+'priceunit' => 'Unit Price',
+'confirm_sale' => 'Confirm Sale',
 'add_new_supplier'=> 'Add New Supplier',
 'add_new_product'=> 'Add New Product',
 'Matériel/Produits'=> 'Materielle/Products',
@@ -1038,4 +1049,10 @@
 
 'completed'=>'Completed',
 'cancelled'=>'Canceled',
+'depot_info'=>'Depot Information',
+'add_depot'=>'Add Depot',
+'depot_name'=>'Depot Name',
+'no_depot_info'=>'No Depot Information available',
+'add_new_depot'=>'Add New Depot',
+
 ];

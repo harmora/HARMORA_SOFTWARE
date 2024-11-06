@@ -117,19 +117,19 @@
                         <a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a>
                     </li>
                     <li class="breadcrumb-item active">
-                        <?= get_label('commandes', 'Commandes') ?>
+                        <?= get_label('sales', 'Commandes') ?>
                     </li>
                 </ol>
             </nav>
         </div>
 
         <div>
-            <a href="{{url('/commandes/create')}}">
+            {{-- <a href="{{url('/commandes/create')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_commande', 'Add Commande') ?>">
                     <i class='bx bx-plus'></i>
                 </button>
-            </a>
-            <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus text-black'></i></button></a>
+            </a> --}}
+            <a href="{{url('/commandes/createDevise')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_devis', 'Add Devise') ?>"><i class='bx bx-plus'></i></button></a>
 
             <a href="{{url('/commandes')}}">
                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="<?= get_label('list', 'list') ?>">
@@ -155,13 +155,13 @@
             <h4 class="fw-bold mx-4 my-2">
             @if ($type === 'devis')
                 <i class="menu-icon tf-icons bx bx-file bx-md text-primary"></i>
-                <?= get_label("Devis", "Devis") ?>
+                <?= get_label("devis", "Devis") ?>
             @elseif ($type === 'facture')
                 <i class="menu-icon tf-icons bx bx-dollar bx-md text-success"></i>
-                <?= get_label("Facture", "Facture") ?>
+                <?= get_label("facture", "Facture") ?>
             @elseif ($type === 'bon_livraison')
                 <i class="menu-icon tf-icons bx bx-package bx-md text-warning"></i>
-                <?= get_label("Bon de Livraison", "Bon de Livraison") ?>
+                <?= get_label("bon_liv", "Bon de Livraison") ?>
             @endif
             </h4>
     

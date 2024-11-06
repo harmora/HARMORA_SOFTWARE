@@ -156,7 +156,7 @@ public function store_reglement(Request $request, $id)
         'origin'=>'achat',
         'mode_virement'=>$formFields['payment_type'],
         'entreprise_id'=>$this->user->entreprise_id,
-        'amount_payed'=>$newTotalPaid,
+        'amount_payed'=>$formFields['montant_paye'],
         'remaining_amount'=>$newRemainingAmount,
     ]);
 

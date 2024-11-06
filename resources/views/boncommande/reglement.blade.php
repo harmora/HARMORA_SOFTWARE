@@ -19,7 +19,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                     <a href="{{ url('/home') }}">{{ get_label('home', 'Home') }}</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ url('/orders') }}">{{ get_label('orders', 'Orders') }}</a>
+                    <a href="{{ url('/orders') }}">{{ get_label('sale', 'Orders') }}</a>
                 </li>
                 <li class="breadcrumb-item active">
                     {{ get_label('order_payment', 'Order Payment') }}

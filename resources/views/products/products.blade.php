@@ -27,6 +27,7 @@ $visibleColumns = getUserPreferences('products');
                     <?= get_label('import Excel', 'import Excel') ?> <i class="bx bx-file"></i>
                 </button>
             </a>
+            <button type="button" id="add_depot_btn" class="btn btn-sm btn-primary">{{ get_label('add_new_depot', 'Add New Depot') }}</button>
             <a href="{{url('/products/create')}}"><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="<?= get_label('add_stock', 'Add Stock') ?>"><i class='bx bx-plus'></i></button></a>
         </div>
     </div>

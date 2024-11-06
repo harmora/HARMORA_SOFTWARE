@@ -274,7 +274,11 @@ background-repeat: no-repeat;
     <!-- First Large Empty Card -->
     <div class="col-md-6 col-lg-6 col-xl-6 mb-4">
         <div class="card overflow-hidden mb-4 statisticsDivSmall2">
-            <!-- Empty Card Content -->
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <i class="fas fa-tools fa-3x mb-3 text-warning"></i>
+                <h5 class="card-title">Still in Development</h5>
+                <p class="card-text text-muted">We're working on this feature. Stay tuned!</p>
+            </div>
         </div>
     </div>
 

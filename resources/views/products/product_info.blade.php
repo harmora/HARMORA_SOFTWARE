@@ -46,6 +46,14 @@
                             <div class="input-group input-group-merge">
                                 <input class="form-control" type="text" id="stock" value="{{ $product->stock }}" readonly="">
                             </div>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="category"><?= get_label('category', 'Category') ?></label>
+                            <div class="input-group input-group-merge">
+                                <input class="form-control" type="text" id="category" value="{{ $product->category_name ?? '--' }}" readonly="">
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-6">
                             <label class="form-label" for="stock"><?= get_label('stock deffective', 'Stock Deffective') ?></label>
                             <div class="input-group input-group-merge">
                                 <input class="form-control" type="text" id="stock" value="{{ $product->stock_defective }}" readonly="">
@@ -54,20 +62,42 @@
                         <div class="mb-3 col-md-12">
                             <label class="form-label" for="description"><?= get_label('description', 'Description') ?></label>
                             <div class="input-group input-group-merge">
-                                <textarea class="form-control" id="description" rows="3" readonly="">{{ $product->description ?? '--' }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <label class="form-label" for="category"><?= get_label('category', 'Category') ?></label>
-                            <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="category" value="{{ $product->category_name ?? '--' }}" readonly="">
+                                <textarea class="form-control" id="description"  readonly="">{{ $product->description ?? '--' }}</textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+                    <!-- Depot Information -->
+        <div class="card mb-4 shadow-sm" style="border-radius: 0.5rem; background-color: #f8f9fa;">
+            <div class="card-header">
+                <h5 class="card-title"><?= get_label('depot_info', 'Depot Info') ?></h5>
+            </div>
+            <div class="card-body">
+                @if ($depots->isEmpty())
+                    <p><?=  get_label('no_depot_info','No depot information available.')?></p>
+                @else
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><?= get_label('depot_name', 'Depot Name') ?></th>
+                                <th><?= get_label('quantity', 'Quantity') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($depots as $depot)
+                                <tr>
+                                    <td>{{ $depot['name'] }}</td>
+                                    <td>{{ $depot['quantity'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
+        </div>        
+
         </div>
     </div>
 </div>
-<!-- / products -->
 @endsection
