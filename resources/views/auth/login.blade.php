@@ -1,6 +1,24 @@
 @extends('layout')
 <title>Login - {{$general_settings['company_title']}}</title>
 @section('content')
+<style>
+    #submit_btn {
+        background: linear-gradient(45deg, #007bff, #00aaff);
+    }
+
+    #submit_btn:hover {
+        background: linear-gradient(45deg, #0056b3, #007bff);
+        transform: scale(1.05);
+    }
+
+    #submit_btn:active {
+        background: linear-gradient(45deg, #004085, #0066cc);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+
+
 <!-- Content -->
 <div class="container-fluid">
     @if (config('constants.ALLOW_MODIFICATION') === 0)
@@ -24,7 +42,7 @@
                         </a>
                     </div>
                     <!-- /Logo -->
-                    <h4 class="mb-2">Welcome to <?= $general_settings['company_title'] ?>! 👋</h4>
+                    <h4 class="mb-2">Welcome to HARMORA! 👋</h4>
                     <p class="mb-4">Sign into your account</p>
                     <form id="formAuthentication" class="mb-3 form-submit-event" action="/users/authenticate" method="POST">
                         <input type="hidden" name="redirect_url" value="/home">
@@ -47,7 +65,10 @@
                             <span class="text-danger text-xs mt-1 error-message"></span>
                         </div>
                         <div class="mb-4">
-                            <button class="btn btn-primary d-grid w-100" id="submit_btn" type="submit">Login</button>
+                            <button class="btn btn-primary  d-grid w-100 border-0  text-white position-relative" id="submit_btn" type="submit">
+                                Login
+                                <div class="button-ripple"></div>
+                            </button>
                         </div>
                         @if (!isset($general_settings['allowSignup']) || $general_settings['allowSignup'] == 1)
                         <div class="text-center">
