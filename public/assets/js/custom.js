@@ -1110,7 +1110,9 @@ $(document).on('submit', '.form-submit-event', function (e) {
                 var errors = response.errors;
 
                 // Example: Display the first validation error message
-                toastr.error(label_please_correct_errors);
+                if (response.message) {
+                    toastr.error(response.message);
+                }                
                 // Assuming you have a list of all input fields with error messages
                 var inputFields = currentForm.find('input[name], select[name], textarea[name]');
                 inputFields = $(inputFields.toArray().reverse());
@@ -3104,6 +3106,11 @@ $(document).ready(function () {
     });
     // Initialize the field visibility on page load
     toggleProductNameField();
+});
+$(document).ready(function () {
+    $('#add_depot_btn').click(function() {
+        $('#createDepotModal').modal('show');
+    });
 });
 
 function toggleDarkMode() {

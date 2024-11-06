@@ -888,4 +888,5 @@
 
 'completed'=>'complétée',
 'cancelled'=>'annulée',
+'montant_paye'=>'Montant payé',
 ];

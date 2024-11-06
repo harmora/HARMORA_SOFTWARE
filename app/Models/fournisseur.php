@@ -18,6 +18,10 @@ class fournisseur extends Model
     {
         return $this->belongsTo(Entreprise::class);
     }
+    public function regelements()
+    {
+        return $this->hasMany(Regelement::class);
+    }
     public function achats()
     {
         return $this->hasMany(Achat::class);

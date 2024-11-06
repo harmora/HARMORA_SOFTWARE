@@ -23,6 +23,10 @@ class invoice extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
+    public function reglements()
+    {
+        return $this->hasMany(regelement::class, 'invoice_vente_id');
+    }
     public function bonLivraisons()
     {
         return $this->hasMany(bon_livraision::class);
@@ -40,5 +44,6 @@ class invoice extends Model
         }
         return true;
     }
+
 
 }

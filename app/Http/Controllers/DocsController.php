@@ -103,6 +103,12 @@ public function downloadZip($id)
         else
             return response()->download(storage_path('app/public/' . $document->devis));
     }
+    if ($document->type=="bon_livraision") {
+        if($document->origin=='achat')
+            return response()->download(storage_path('app/public/' . $document->bon_livraision));
+        else
+            return response()->download(storage_path('app/public/' . $document->bon_livraision));
+    }
 }
 
     public function list(Request $request)

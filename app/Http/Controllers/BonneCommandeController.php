@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Achat;
 use App\Models\BonDeCommande;
+use App\Models\depot;
+use App\Models\Document;
 use App\Models\fournisseur;
 use App\Models\mouvements_stock;
 use App\Models\ProdCategory;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -283,7 +287,7 @@ public function store(Request $request)
         'fournisseur_id' => 'required|exists:fournisseurs,id',
         'date_commande' => 'required|date',
         // Validate existing products
-        'products.*.product_id' => 'nullable|exists:products,id',
+        'products.*.product_id' => 'nullable|exists:products,id|distinct',
         'products.*.quantity' => 'required_with:products.*.product_id|integer|min:1',
         'products.*.price' => 'required_with:products.*.product_id|numeric|min:0',
         // Validate new products
@@ -465,16 +469,14 @@ public function storeValidated(Request $request)
     // Validate the request
     $request->validate([
         'fournisseur_id' => 'required|exists:fournisseurs,id',
+        'marge' => 'required|numeric|min:0',
         'date_achat' => 'required|date',
         // Validate existing products
-        'products.*.product_id' => 'nullable|exists:products,id',
+        'products.*.product_id' => 'nullable|exists:products,id|distinct',
+        'products.*.depot_id' => 'required|exists:depots,id',
         'products.*.quantity' => 'required_with:products.*.product_id|integer|min:1',
-        'products.*.price' => 'required_with:products.*.product_id|numeric|min:0',
+        'products.*.price' => 'required_with:products.*.product_id|numeric|min:1',
         // Validate new products
-        'new_products.*.name' => 'nullable|string',
-        'new_products.*.category_id' => 'nullable|exists:prod_categories,id',
-        'new_products.*.quantity' => 'required_with:new_products.*.name|integer|min:1',
-        'new_products.*.price' => 'required_with:new_products.*.name|numeric|min:0',
         'tva' => 'required|in:0,7,10,14,16,20', // Validate the tva input
         'facture' => 'nullable|file|mimes:pdf,doc,docx,jpg,png,jpeg|max:2048', // Optional facture file upload
     ]);
@@ -526,89 +528,90 @@ public function storeValidated(Request $request)
     // Save existing products and calculate total amounts
 
       // Retrieve the margin from the request (assuming it's passed as a percentage)
-$marge = $request->input('marge', 0) / 100;
-$tva = $request->input('tva', 0) / 100;// Convert percentage to decimal (e.g., 15% => 0.15)
+    $marge = $request->input('marge', 0) / 100;
+    $tva = $request->input('tva', 0) / 100;// Convert percentage to decimal (e.g., 15% => 0.15)
 
-foreach ($request->products as $product) {
-    if (!empty($product['product_id'])) {
-        $productModel = Product::find($product['product_id']);
-        $quantity = $product['quantity'];
-        $basePrice = $product['price'];
+    foreach ($request->products as $product) {
+        if (!empty($product['product_id'])) {
+            $productModel = Product::find($product['product_id']);
+            $depot = Depot::findOrFail($product['depot_id']);
+            $quantity = $product['quantity'];
+            $basePrice = $product['price'];
 
-        // Adjust the price based on the margin for updating productModel price
-        $adjustedPrice = $basePrice + ($basePrice * $marge) + ($basePrice * $tva);
-// price + (price * marge)
+            // Adjust the price based on the margin for updating productModel price
+            $adjustedPrice = $basePrice + ($basePrice * $marge) + ($basePrice * $tva); // price + (price * marge)
+            $amountHT = $quantity * $basePrice; // For achat, use the base price without margin
 
-        $amountHT = $quantity * $basePrice; // For achat, use the base price without margin
-
-        // Attach the product to the achat with quantity and base price (without margin)
-        $achat->products()->attach($productModel, [
-            'quantity' => $quantity,
-            'price' => $basePrice, // Use the base price without margin here
-        ]);
-
-
-
-        $bonDeCommande = BonDeCommande::findOrFail($bonnecommandeid);
-
-        // Update the desired column (e.g., 'status' column)
-        $bonDeCommande->status = 'validated';  // Change 'status' to the column you want to update
-
-        // Save the changes to the database
-        $bonDeCommande->save();
-
-
-        mouvements_stock::create([
-            'product_id'=>$productModel->id,
-            'achat_id'=>$achat->id,
-            'quantitéajoutée'=>$quantity,
-            'quantitéprecedente'=>$productModel->stock,
-            'date_mouvement'=>now(),
-            'type_mouvement'=>'entrée',
-            'reference'=> $reference,
-        ]);
-
-        // Update total amounts for the achat
-        $totalAmountHT += $amountHT;
-
-        // Update stock and price based on the current stock and CUMP method
-        if ($productModel->stock == 0 || $productModel->price == 0) {
-            // If stock or price is zero, update stock and set the product price to the adjusted price (with margin)
-
-            if ($productModel->price == 0) {
-                $productModel->prev_price = $adjustedPrice;
+            // Attach the product to the achat with quantity and base price (without margin)
+            $achat->products()->attach($productModel, [
+                'quantity' => $quantity,
+                'price' => $basePrice, // Use the base price without margin here
+                'depot_id' => $depot->id,
+            ]);
+            $depotProduct = $depot->products()->where('product_id', $productModel->id)->first();
+            if ($depotProduct) {
+                $depot->products()->updateExistingPivot($productModel->id, [
+                    'quantity' => DB::raw("quantity + {$quantity}")
+                ]);
             } else {
-                // If the price is different from zero, set prev_price to the current price
+                $depot->products()->attach($productModel->id, ['quantity' => $quantity]);
+            }
+            $bonDeCommande = BonDeCommande::findOrFail($bonnecommandeid);
+
+            // Update the desired column (e.g., 'status' column)
+            $bonDeCommande->status = 'validated';  // Change 'status' to the column you want to update
+
+            // Save the changes to the database
+            $bonDeCommande->save();
+
+
+            mouvements_stock::create([
+                'product_id'=>$productModel->id,
+                'achat_id'=>$achat->id,
+                'quantitéajoutée'=>$quantity,
+                'quantitéprecedente'=>$productModel->stock,
+                'date_mouvement'=>now(),
+                'type_mouvement'=>'entrée',
+                'reference'=> $reference,
+                'depot_id' => $depot->id,
+            ]);
+
+            // Update total amounts for the achat
+            $totalAmountHT += $amountHT;
+
+            // Update stock and price based on the current stock and CUMP method
+            if ($productModel->stock == 0 || $productModel->price == 0) {
+                // If stock or price is zero, update stock and set the product price to the adjusted price (with margin)
+
+                if ($productModel->price == 0) {
+                    $productModel->prev_price = $adjustedPrice;
+                } else {
+                    // If the price is different from zero, set prev_price to the current price
+                    $productModel->prev_price = $productModel->price;
+                }
+
+                $productModel->stock += $quantity;
+                $productModel->price = $adjustedPrice; // Set the new price with margin included
+            } else {
+                // Apply the CUMP method:
+
                 $productModel->prev_price = $productModel->price;
+
+                $oldStockValue = $productModel->stock * $productModel->price;
+                $newPurchaseValue = $adjustedPrice * $quantity;
+                $newTotalStock = $productModel->stock + $quantity;
+
+                // Update the stock
+                $productModel->stock = $newTotalStock;
+
+                // Calculate the new CUMP (average price)
+                $productModel->price = ($oldStockValue + $newPurchaseValue) / $newTotalStock;
             }
 
-            $productModel->stock += $quantity;
-            $productModel->price = $adjustedPrice; // Set the new price with margin included
-        } else {
-            // Apply the CUMP method:
-
-            $productModel->prev_price = $productModel->price;
-
-            $oldStockValue = $productModel->stock * $productModel->price;
-            $newPurchaseValue = $adjustedPrice * $quantity;
-            $newTotalStock = $productModel->stock + $quantity;
-
-            // Update the stock
-            $productModel->stock = $newTotalStock;
-
-            // Calculate the new CUMP (average price)
-            $productModel->price = ($oldStockValue + $newPurchaseValue) / $newTotalStock;
+            // Save the updated product data
+            $productModel->save();
         }
-
-        // Save the updated product data
-        $productModel->save();
     }
-}
-
-
-
-
-
     // Calculate total amount with TVA
     $totalAmountTTC = $totalAmountHT * (1 + $request->tva / 100);
 
@@ -616,6 +619,16 @@ foreach ($request->products as $product) {
     $achat->update([
         'montant_ht' => $totalAmountHT,
         'montant' => $totalAmountTTC,
+    ]);
+    Document::create([
+        'type' => 'facture',
+        'facture' => $facturePath,
+        'origin' => 'achat',
+        'entreprise_id'=>$this->user->entreprise_id,
+        'reference' => $achat->id . "-" . $achat->type_achat,
+        'from_to' => "fournsisur : " . $achat->client_id . "-" . $achat->fournisseur->name ,
+        'total_amount' => $achat->total_amount,
+        'user' => $this->user->first_name . ' ' . $this->user->last_name,
     ]);
 
     return redirect()->route('achats.index')->with('success', 'Achat created successfully.');
@@ -626,13 +639,14 @@ foreach ($request->products as $product) {
 public function manage($id)
 {
     $bonDeCommande = BonDeCommande::with(['fournisseur', 'products'])->findOrFail($id);
-    $fournisseurs = Fournisseur::all(); // Assuming you're passing this to the view
-    $products = Product::all(); // Assuming you're passing this to the view
-
+    $fournisseurs = Fournisseur::where('entreprise_id', $this->user->entreprise_id)->get(); // Assuming you're passing this to the view
+    $products = Product::where('entreprise_id', $this->user->entreprise_id)->get();// Assuming you're passing this to the view
+    $depots= depot::where('entreprise_id', $this->user->entreprise_id)->get();
     return view('achats.manage', [
         'bonDeCommande' => $bonDeCommande,
         'fournisseurs' => $fournisseurs,
         'products' => $products,
+        'depots' => $depots,
     ]);
 }
 

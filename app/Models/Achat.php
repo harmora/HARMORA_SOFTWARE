@@ -18,6 +18,10 @@ class Achat extends Model
     {
         return $this->belongsTo(Entreprise::class);
     }
+    public function reglements()
+    {
+        return $this->hasMany(regelement::class,);
+    }
     public function products()
     {
         return $this->belongsToMany(Product::class, 'achat_product')

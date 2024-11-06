@@ -54,9 +54,10 @@
                             <th data-field="product" data-visible="{{ (in_array('product', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('product', 'product') ?></th>
                             <th data-field="type" data-visible="{{ (in_array('type', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}" data-sortable="true"><?= get_label('type', 'Type') ?></th>
                             <th data-field="reference" data-visible="{{ (in_array('reference', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}"><?= get_label('reference', 'Reference') ?></th>
-                            <th data-field="description" data-visible="{{ (in_array('description', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('description', 'Description') }}</th>
                             <th data-field="quantity" data-visible="{{ (in_array('quantity', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('quantity', 'Quantity') }}</th>
+                            <th data-field="depot" data-visible="{{ (in_array('depot', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('depot', 'Depot') }}</th>
                             <th data-field="batch_number" data-visible="{{ (in_array('batch_number', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('batch_number', 'Quantity precedente') }}</th>
+                            <th data-field="description" data-visible="{{ (in_array('description', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('description', 'Description') }}</th>
                             {{-- <th data-field="departure" data-visible="{{ (in_array('departure', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('departure', 'Departure') }}</th>
                             <th data-field="arrival" data-visible="{{ (in_array('arrival', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('arrival', 'Arrival') }}</th>
                             <th data-field="reason" data-visible="{{ (in_array('reason', $visibleColumns) || empty($visibleColumns)) ? 'true' : 'false' }}">{{ get_label('reason', 'Reason') }}</th> --}}

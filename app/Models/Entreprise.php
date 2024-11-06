@@ -24,6 +24,10 @@ class Entreprise extends Model
     {
         return $this->hasMany(Fournisseur::class);
     }
+    public function regelement()
+    {
+        return $this->hasMany(Regelement::class);
+    }
     public function document()
     {
         return $this->hasMany(Document::class);
@@ -35,6 +39,10 @@ class Entreprise extends Model
     public function product()
     {
         return $this->hasMany(Product::class);
+    }
+    public function depot()
+    {
+        return $this->hasMany(depot::class);
     }
     public function commande()
     {

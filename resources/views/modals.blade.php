@@ -1790,3 +1790,42 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 </div>
 
 @endif
+
+<!-- Add New Depot Modal -->
+<div class="modal fade" id="createDepotModal" tabindex="-1" aria-labelledby="createDepotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createDepotModalLabel">{{ get_label('create_depot', 'Create Depot') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('depots.store') }}" method="POST" class="form-submit-event" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="depot_name" class="form-label">{{ get_label('name', 'Name') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" id="depot_name" name="name" placeholder="{{ get_label('please_enter_name', 'Please enter name') }}" value="{{ old('name') }}" required>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="depot_address" class="form-label">{{ get_label('address', 'Address') }}</label>
+                            <input class="form-control" type="text" id="depot_address" name="address" placeholder="{{ get_label('please_enter_address', 'Please enter address') }}" value="{{ old('address') }}">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="depot_city" class="form-label">{{ get_label('city', 'City') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" id="depot_city" name="city" placeholder="{{ get_label('please_enter_city', 'Please enter city') }}" value="{{ old('city') }}" required>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="depot_country" class="form-label">{{ get_label('country', 'Country') }} <span class="asterisk">*</span></label>
+                            <input class="form-control" type="text" id="depot_country" name="country" placeholder="{{ get_label('please_enter_country', 'Please enter country') }}" value="{{ old('country') }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ get_label('close', 'Close') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ get_label('save', 'Save Depot') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

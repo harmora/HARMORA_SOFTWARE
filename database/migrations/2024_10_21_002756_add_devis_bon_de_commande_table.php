@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-
+        Schema::table('bon_de_commande', function (Blueprint $table) {
+            //
+            $table->string('devis')->nullable();
         });
     }
 
@@ -21,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::table('bon_de_commande', function (Blueprint $table) {
+            //
+            $table->dropColumn('devis');
+        });
     }
 };

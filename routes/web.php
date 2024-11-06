@@ -61,6 +61,7 @@ use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\DepotController;
 use App\Models\Entreprise;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -206,9 +207,12 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/mouvements/list', [ProductController::class, 'list_mv']);
         Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy']);
         Route::get('/products/create', [ProductController::class, 'create']);
+        Route::get('/products/addproductquantity', [ProductController::class, 'add_quantity']);
+        Route::post('/products/add-quantity', [ProductController::class, 'storeQuantity'])->name('products.add_quantity');
         Route::get('/products/edit/{id}', [ProductController::class, 'edit']);
         Route::put('/products/update/{id}', [ProductController::class, 'update']);
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
+        Route::post('/depots', [DepotController::class, 'store'])->name('depots.store');
 
 
 
@@ -274,13 +278,17 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
             Route::get('commandes/createDevise', [deviseController::class, 'createdevise'])->name('commandes.createdevise');
             Route::post('/commandes/storeDevise', [deviseController::class, 'store_devise'])->name('commandes.store_devise');
             Route::get('/commandes/{id}/editdevise', [deviseController::class, 'editdevis'])->name('commandes.editeditdevis');
+            
+            Route::get('/commandes/{id}/reglementvente', [deviseController::class, 'showregelement'])->name('commandes.showregelement');
+            Route::post('/commandes/{id}/reglementvente', [deviseController::class, 'store_reglement'])->name('commandes.store_reglement');
+
             Route::put('/commandes/{id}', [deviseController::class, 'accepter'])->name('commandes.accepter');
             Route::get('/commandes/list/{id?}', [deviseController::class, 'listdevis']);
             Route::get('commandes/devis/{id}', [deviseController::class, 'show_devise'])->name('devis.pdf');
             Route::get('commandes/bonliv/{id}', [deviseController::class, 'show_bonliv'])->name('bonliv.pdf');
             Route::get('/commandes/draggable', [CommandesController::class, 'dragula']);
             Route::get('/commandes/{id}/bonliv', [deviseController::class, 'createbonlivraision'])->name('boncommande.create_bon_livraision');
-            Route::get('commandes/bonlivraision/{id}', [deviseController::class, 'bonlivr'])->name('commandes.bonliv');
+            Route::get('/commandes/bonlivraision/{id}', [deviseController::class, 'bonlivr'])->name('commandes.bonliv');
             Route::put('/commandes/storebonliv/{id}', [deviseController::class, 'storeLivraison'])->name('commandes.livraison');
             Route::delete('/devise/destroy/{id}', [deviseController::class, 'destroy']);
             Route::delete('/facture/destroy/{id}', [deviseController::class, 'destroyfacture']);
@@ -376,6 +384,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/achats/getforaffiche/{id}', [AchatController::class, 'getachat']);
 
         Route::get('/achats/payment/{id}', [AchatController::class, 'payment'])->name('achats.payment');
+        Route::post('/achats/payment/store/{id}', [AchatController::class, 'store_reglement'])->name('achats.storePayment');
 
 
 
