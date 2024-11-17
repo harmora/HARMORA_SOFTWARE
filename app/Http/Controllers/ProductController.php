@@ -264,9 +264,9 @@ class ProductController extends Controller
         $totalproducts = $query->count();
 
         $products = $query->select('products.*', 'prod_categories.name_cat as category_name')
-            ->join('prod_categories', 'products.product_category_id', '=', 'prod_categories.id')
-            ->orderBy($sort, $order)
-            ->paginate(request("limit"));
+        ->leftJoin('prod_categories', 'products.product_category_id', '=', 'prod_categories.id')
+        ->orderBy($sort, $order)
+        ->paginate(request("limit"));
 
         $products = $products->through(function ($product) {
 
@@ -292,8 +292,9 @@ class ProductController extends Controller
             </a>
           </div>";
 
-            $product_category = '<span class="badge bg-dark"> '.$product->category_name.'</span>';
-
+            $product_category = $product->category_name 
+                ? '<span class="badge bg-dark"> '.$product->category_name.'</span>' 
+                : '<span class="badge bg-secondary">No Category</span>';
             $price_gray = '<span class="badge bg-secondary"> '.$product->price.'</span>';
 
 

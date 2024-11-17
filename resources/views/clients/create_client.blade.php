@@ -88,7 +88,7 @@
                         <input class="form-control" type="text" id="doj" name="doj" placeholder="<?= get_label('please_select', 'Please select') ?>" autocomplete="off">
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="ICE" class="form-label"><?= get_label('ice', "Identifiant Commun de l'Entreprise") ?></label>
+                        <label for="ICE" class="form-label"><?= get_label('ice', "Identifiant Commun de l'Entreprise") ?><span class="asterisk">*</span></label>
                         <input class="form-control" type="text" id="ICE" name="ICE" placeholder="<?= get_label('ice', "Identifiant Commun de l'Entreprise") ?>" value="{{ old('ICE') }}">
                     </div>
                     <div class="mb-3 col-md-6">

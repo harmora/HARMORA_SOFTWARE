@@ -29,7 +29,7 @@ class ProfileController extends Controller
             'first_name' => ['required'],
             'last_name' => ['required'],
             'phone' => 'nullable',
-            'role' => 'required',
+            // 'role' => 'required',
             'address' => 'nullable',
             'city' => 'nullable',
             'state' => 'nullable',

@@ -72,9 +72,12 @@ class ClientController extends Controller
             'last_name' => $internal_purpose ? 'required' : 'nullable',
             'denomenation'=> $internal_purpose ? 'nullable' : 'required',
             'tva' => 'required|in:0,7,10,14,16,20',
-            'RC' => 'nullable|numeric|digits_between:10,14',
-            'ICE' => 'nullable|numeric|digits_between:3,8',
-            'IF' => 'nullable|numeric|digits_between:4,6',
+            // 'RC' => 'nullable|numeric|digits_between:10,14',
+            // 'ICE' => 'nullable|numeric|digits_between:3,8',
+            // 'IF' => 'nullable|numeric|digits_between:4,6',
+            'RC' => 'nullable|numeric',
+            'ICE' => 'required|numeric|unique:clients,ICE',
+            'IF' => 'nullable|numeric',
             'email' => ['required', 'email', 'unique:clients,email'],
             'phone' => 'nullable',
             'country_code' => 'nullable',
@@ -95,6 +98,7 @@ class ClientController extends Controller
             'ICM.numeric' => 'ce champ doit être un nombre.',
             'ICM.digits_between' => 'ce champdoit avoir entre 1 et 8 chiffres.',
             'IF.numeric' => 'ce champ doit être un nombre.',
+            'ICE.unique' => 'ICE doit etre unique , ce numer est deja existe'
         ]);
         // if (!$internal_purpose && $request->input('password')) {
         //     $password = $request->input('password');
@@ -102,7 +106,6 @@ class ClientController extends Controller
         // }
 
         $formFields['internal_purpose'] =  $internal_purpose;
-
         if ($request->hasFile('profile')) {
             $formFields['photo'] = $request->file('profile')->store('photos', 'public');
         } else {
@@ -213,8 +216,11 @@ class ClientController extends Controller
             'last_name' => $internal_purpose ? 'required' : 'nullable',
             'denomenation'=> $internal_purpose ? 'nullable' : 'required',
             'RC' => 'nullable|numeric|digits_between:10,14',
-            'ICE' => 'nullable|numeric|digits_between:3,8',
-            'IF' => 'nullable|numeric|digits_between:4,6',
+            'ICE' => [
+                'required',
+                'numeric',
+                Rule::unique('clients')->ignore($id),
+            ],            'IF' => 'nullable|numeric|digits_between:4,6',
             'tva' => 'required|in:0,7,10,14,16,20',
             'email' => [
                 'required',
@@ -443,6 +449,9 @@ class ClientController extends Controller
                     'denomenation' => $client->denomenation,
                     // 'company' => $client->denomenation,
                     'email' => $client->email,
+                    'ice' => $client->ICE,
+                    'if' => $client->IF,
+                    'rc' => $client->RC,
                     'phone' => $phone,
                     'profile' => $formattedHtml,
                     'status' => $client->status,

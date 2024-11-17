@@ -191,21 +191,40 @@ class ImportController extends Controller
                     else{
                         $dataToUpdate['photo'] = 'photos/no-image.jpg'; // Default image if no photo provided
                     }
-
+                    $dataToUpdate['ICE'] = $row['ice'];
                     Client::create($dataToUpdate);
                     $count++;
                 };
             }elseif($table=='products'){
                 $product = Product::where('name', $row['name'])->first();
                 $dataToUpdate['name'] = $row['name']; // Make sure email is set for new entries
+                $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
+                $dataToUpdate['reference'] = $this->generateProductReference();
                 if (!$product){
-                    Product::create($dataToUpdate);
+                    $prod=Product::create($dataToUpdate);
+                    mouvements_stock::create([
+                        'product_id'=>$prod->id,
+                        'quantitéajoutée'=>$prod->stock,
+                        'quantitéprecedente'=>0,
+                        'date_mouvement'=>now(),
+                        'type_mouvement'=>'entrée',
+                        'reference'=>$prod->name.'-'.$prod->reference,
+                    ]);
                     $count++;
                     // $product = Product::where('name', $row['name'])->first();
                 }else{
                     $dataToUpdate['stock'] = $row['stock']+$product['stock']; // Make sure email is set for new entries
                     $product->update($dataToUpdate);
+                    mouvements_stock::create([
+                        'product_id'=>$product->id,
+                        'quantitéajoutée'=>$row['stock'],
+                        'quantitéprecedente'=>$product->stock - $row['stock'],
+                        'date_mouvement'=>now(),
+                        'type_mouvement'=>'entrée',
+                        'reference'=>$product->name.'-'.$product->reference,
+                    ]);
                     $count++;
+                    
                 }
                 // mouvements_stock::create([
                 //     'product_id'=>$product->id,
@@ -232,6 +251,29 @@ class ImportController extends Controller
         }
         return redirect()->route($table . '.index');
     }
+
+    private function generateProductReference()
+{
+    // Get the last product with the highest reference
+    $lastProduct = Product::orderBy('reference', 'desc')->first();
+
+    // If there is no previous reference, start with Product_00000001
+    if (!$lastProduct) {
+        return 'Product_00000001';
+    }
+
+    // Extract the hexadecimal part of the last reference
+    $lastHex = substr($lastProduct->reference, 8); // Skip the 'Product_' prefix
+
+    // Convert the hexadecimal part to a decimal number, increment it, and then convert back to hexadecimal
+    $nextHex = strtoupper(dechex(hexdec($lastHex) + 1));
+
+    // Pad the new hex value to 8 characters (e.g., 00000001, 0000000A)
+    $nextReference = str_pad($nextHex, 8, '0', STR_PAD_LEFT);
+
+    // Return the new reference with the Product_ prefix
+    return 'Product_' . $nextReference;
+}
     
 
 }

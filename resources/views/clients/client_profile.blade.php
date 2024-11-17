@@ -78,19 +78,19 @@
                         <div class="mb-3 col-md-4">
                             <label class="form-label" for="state"><?= get_label('if', "IDENTIFIANT FISCALE") ?></label>
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="state" placeholder="" value="{{$client->if??'--'}}" readonly="">
+                                <input class="form-control" type="text" id="state" placeholder="" value="{{$client->IF??'--'}}" readonly="">
                             </div>
                         </div>
                         <div class="mb-3 col-md-4">
                             <label class="form-label" for="country"><?= get_label('rc', "REGISTRE DU COMMERCE") ?></label>
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="country" placeholder="" value="{{$client->rc??'--'}}" readonly="">
+                                <input class="form-control" type="text" id="country" placeholder="" value="{{$client->RC??'--'}}" readonly="">
                             </div>
                         </div>
                         <div class="mb-3 col-md-4">
                             <label class="form-label" for="zip"><?= get_label('ice', "Identifiant Commun de l'Entreprise") ?></label>
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="zip" placeholder="" value="{{$client->ice??'--'}}" readonly="">
+                                <input class="form-control" type="text" id="zip" placeholder="" value="{{$client->ICE??'--'}}" readonly="">
                             </div>
                         </div>
 
