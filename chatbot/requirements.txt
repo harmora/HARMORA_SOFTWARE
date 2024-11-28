@@ -2,5 +2,7 @@ langchain-core
 langchain-community
 langchain-chroma>=0.1.2
 langchain-nvidia-ai-endpoints
+langchain_openai
 python-dotenv
 flask
+mysql-connector-python

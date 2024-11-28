@@ -8,6 +8,15 @@ use GuzzleHttp\Client;
 
 class ChatbotController extends Controller
 {
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // fetch session and use it in entire class with constructor
+            $this->user = getAuthenticatedUser();
+            return $next($request);
+        });
+    }
     public function index()
     {
 
@@ -87,6 +96,26 @@ class ChatbotController extends Controller
         }
     }
 
+    public function chat2(Request $request)
+    {
+        $message = $request->input('message');
+        
+        // Send request to Flask API
+        $response = Http::post('http://localhost:5002/chat', [
+            'message' => $message,
+            'entreprise_id'=> $this->user->entreprise_id
+        ]);
+
+        if ($response->successful()) {
+            return response()->json([
+                'response' => $response->json('response'),
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Failed to get AI response',
+            ], 500);
+        }
+    }
 
 
 }

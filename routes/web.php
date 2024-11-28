@@ -410,6 +410,7 @@ Route::post('/achats/store-validated', [BonneCommandeController::class, 'storeVa
         //chatbot-------------------------------------------------------------------------
         Route::get('/chatbot', [ChatbotController::class, 'index'])->name(name: 'chatbot.index');
         Route::post('/chatbot', [ChatbotController::class, 'chat'])->name('chatbot.getResponse');
+        Route::post('/chatbot2', [ChatbotController::class, 'chat2'])->name('chatbot.getResponse2');
 
 
 
