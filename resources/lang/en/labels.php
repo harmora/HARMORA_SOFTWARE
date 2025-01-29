@@ -978,7 +978,7 @@
 'enterprise_profile' => 'Enterprise Profile',
 'Forme_juridique' => 'Legal Form',
 'Identifiant_commun_entreprise' => 'ICE',
-'REGISTRE_COMMERCE' => 'IC',
+'REGISTRE_COMMERCE' => 'RC',
 'IDENTIFIANT_FISCALE' => 'IF',
 'import Excel' => 'import Excel',
 'add_stock' => 'Add Stock',

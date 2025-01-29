@@ -85,9 +85,8 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
 
 
                     <div class="mb-3">
-                        <label for="client_id" class="form-select">{{ get_label('select_client', 'Select Client') }}</label>
+                        <label for="client_id" class="form-select">{{ get_label('', ' Client') }}</label>
                         <select class="form-control" name="client_id">
-                            <option value=""></option>
                             @foreach($clients as $client)
 =                                <option value="{{ $client->id }}">
                                     @if ($client->first_name)

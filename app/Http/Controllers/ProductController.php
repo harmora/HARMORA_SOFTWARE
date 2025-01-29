@@ -71,7 +71,7 @@ class ProductController extends Controller
 
         return view('products.addquantity',['products'=>$products,'depots'=>$depots]);
     }
-    public function     storeQuantity(Request $request)
+    public function storeQuantity(Request $request)
     {
         // Validation
         $request->validate([
@@ -362,7 +362,7 @@ class ProductController extends Controller
         $mouvements= $query->select('mouvements_stocks.*')
             ->leftJoin('products', 'mouvements_stocks.product_id', '=', 'products.id')
             ->leftJoin('achats', 'mouvements_stocks.achat_id', '=', 'achats.id')
-            ->leftJoin('commandes', 'mouvements_stocks.commande_id', '=', 'commandes.id')
+            ->leftJoin('depots', 'mouvements_stocks.depot_id', '=', 'depots.id')
             ->orderBy($sort, $order)
             ->paginate(request('limit'));
 
@@ -427,11 +427,12 @@ class ProductController extends Controller
      */
     public function show($id)
     {
+        $product = Product::findOrFail($id);
         // $workspace = Workspace::find(session()->get('workspace_id'));
-        $product = Product::join('prod_categories', 'products.product_category_id', '=', 'prod_categories.id')
-        ->where('products.id', $id)
-        ->select('products.*', 'prod_categories.name_cat as category_name')
-        ->firstOrFail();
+        // $product = Product::join('prod_categories', 'products.product_category_id', '=', 'prod_categories.id')
+        // ->where('products.id', $id)
+        // ->select('products.*', 'prod_categories.name_cat as category_name')
+        // ->firstOrFail();
         $depots = $product->depots->map(function ($depot) {
             return [
                 'id' => $depot->id,

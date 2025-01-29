@@ -117,7 +117,7 @@ $products = Product::all();
                                                 <input class="form-control" type="number" name="products[0][quantity]" required min="1" placeholder="<?= get_label('enter_quantity', 'Enter Quantity') ?>">
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="products[0][price]" class="form-label"><?= get_label('price', 'Price') ?> </label>
+                                                <label for="products[0][price]" class="form-label"><?= get_label('price_unit', 'Price') ?> </label>
                                                 <input class="form-control" type="number" name="products[0][price]" required step="0.01" placeholder="<?= get_label('enter_price', 'Enter Price') ?>">
                                             </div>
                                         </div>

@@ -212,7 +212,14 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/products/edit/{id}', [ProductController::class, 'edit']);
         Route::put('/products/update/{id}', [ProductController::class, 'update']);
         Route::get('/products/info/{id}', [ProductController::class, 'show']);
+
         Route::post('/depots', [DepotController::class, 'store'])->name('depots.store');
+        Route::get('/depots', [DepotController::class, 'index'])->name('depots.index');
+        Route::get('/depots/list', [DepotController::class, 'list']);
+        Route::get('/depots/create', [DepotController::class, 'create']);
+        Route::get('/depots/edit/{id}', [DepotController::class, 'edit']);
+        Route::put('/depots/{id}', [DepotController::class, 'update']);
+        Route::delete('/depots/destroy/{id}', [DepotController::class, 'destroy']);
 
 
 
@@ -363,6 +370,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/import', [ImportController::class, 'showForm'])->name('import.form')->middleware('cleanup.temp');
         Route::post('/import/step1', [ImportController::class, 'step1'])->name('import.step1')->middleware('cleanup.temp');
         Route::post('/import/step2', [ImportController::class, 'step2'])->name('import.step2')->middleware('cleanup.temp');
+        Route::post('import/get-headers', [ImportController::class, 'getHeaders'])->name('import.get-headers');
         Route::post('/import/save', [ImportController::class, 'save'])->name('import.save')->middleware('cleanup.temp');
 
         // Route::get('/achats/{id}', [AchatController::class, 'show']);
@@ -394,6 +402,7 @@ Route::put('/packs/update/{id}', [PackController::class, 'update']); // Update a
         Route::get('/boncommande/list', [BonneCommandeController::class, 'list'])->name('boncommande.list');
 
         Route::post('/boncommande/cancel/{id}', [BonneCommandeController::class, 'cancelBonCommande'])->name('bon-commande.cancel');
+        Route::delete('/bondecommande   /destroy/{id}', [BonneCommandeController::class, 'destroy']);
 
 
 
@@ -422,9 +431,6 @@ Route::post('/achats/store-validated', [BonneCommandeController::class, 'storeVa
         // Route::put('/factures/update/{id}', [FactureController::class, 'update'])->name('factures.update');
         Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
         Route::resource('commandes', CommandesController::class);
-
-
-        //chatbot-------------------------------------------------------------------------
 
 
 

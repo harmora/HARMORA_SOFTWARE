@@ -3,7 +3,7 @@
 
 'redirect_url' => '/settings/languages',
 'langcode' => 'es',
-'dashboard' => 'Panel',
+    'dashboard' => 'Panel',
 'total_projects' => 'Proyectos totales',
 'total_tasks' => 'Tareas totales',
 'total_users' => 'Usuarios totales',

@@ -144,8 +144,7 @@ class FournisseurController extends Controller
         $order = request('order') ?: 'DESC';
         $fournisseur_status_filter = request('fournisseur_status_filter', '');
         $query = Fournisseur::query();
-        // $fournisseurs=fournisseur::all();
-        // Search functionality
+
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
@@ -168,11 +167,7 @@ class FournisseurController extends Controller
         ->where('fournisseurs.entreprise_id', $this->user->entreprise_id)
         ->orderBy($sort, $order)
         ->paginate(request('limit'));
-        // $fournisseurs = $fournisseurs->select('fournisseurs.*')
-        // ->distinct()
-        // ->orderBy($sort, $order)
-        // ->paginate(request('limit'))
-        // ->through(function ($fournisseur)
+
         $fournisseurs = $fournisseurs->through(function ($fournisseur){
             $actions = '';
 
@@ -228,29 +223,6 @@ class FournisseurController extends Controller
         ]);
         }
 
-        // public function importExcelData(Request $request)
-        // {
-        //     $request->validate([
-        //         'import_file' => [
-        //             'required',
-        //             'file'
-        //         ],
-        //     ]);
-
-        //     // Retrieve the entreprise_id from the user or request
-        //     $entrepriseId = auth()->user()->entreprise_id; // Example: from authenticated user
-
-        //     // If `entreprise_id` is not set or needs to be obtained differently, adjust accordingly
-        //     if (!$entrepriseId) {
-        //         return redirect()->back()->with('error', 'Entreprise ID is required.');
-        //     }
-
-        //     // Import the Excel file
-        //     Excel::import(new FournisseurImport($entrepriseId), $request->file('import_file'));
-        //     // return redirect()->back()->with('status', 'Imported Successfully');
-        //     Session::flash('message', 'Imported Successfully');
-        //     return response()->json(['error'y=>false]);
-        // }
 }
 
 

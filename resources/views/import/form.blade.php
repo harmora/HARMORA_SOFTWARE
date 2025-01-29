@@ -29,6 +29,7 @@
                                 <option value="fournisseurs"><?= get_label('Suppliers', 'Suppliers') ?></option>
                                 {{-- <option value="achats">Achats</option> --}}
                                 <option value="products"><?= get_label('products', 'products') ?></option>
+                                <option value="depots"><?= get_label('depots', 'depots') ?></option>
                                 <option value="clients"><?= get_label('clients', 'clients') ?></option>
                             </select>
                         </div>

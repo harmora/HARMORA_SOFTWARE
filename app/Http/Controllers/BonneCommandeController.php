@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Services\DeletionService;
 
 use App\Models\Achat;
 use App\Models\BonDeCommande;
@@ -100,7 +101,7 @@ public function cancelBonCommande($id)
 
     // Redirect back or to another page with a success message
 
-    Session::flash('message', 'Bon de commande was cancelled successfully.');
+    Session::flash('message', 'Bon de commande est creer avec succes.');
     return response()->json(['error' => false, 'id' => $bonDeCommande->id]);
 }
 
@@ -112,13 +113,19 @@ public function create(Request $request)
     $products = Product::where('entreprise_id', $this->user->entreprise_id)->get();
     $fournisseurs = fournisseur::where('entreprise_id', $this->user->entreprise_id)->get();
     $categories = ProdCategory::all();
-
+    
     // Return the view for creating a bon de commande
     return view('achats.create_bondecommande', [
         'products' => $products,
         'fournisseurs' => $fournisseurs,
         'categories' => $categories
     ]);
+}
+
+public function destroy($id)
+{
+    $response = DeletionService::delete(BonDeCommande::class, $id, 'bondecommande');
+    return $response;
 }
 public function list()
 {

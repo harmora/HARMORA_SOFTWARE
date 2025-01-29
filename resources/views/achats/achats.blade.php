@@ -33,7 +33,7 @@ $visibleColumns = getUserPreferences('achats');
                     <a
                     {{-- href="{{ route('achats.bonne') }}" --}}
                      class="btn btn-primary">
-                        <i class="bx bx-box"></i> <?= get_label('Purchase order', ' Purchase order') ?>
+                        <i class="bx bx-box"></i> <?= get_label('Purchase_order', ' Purchase order') ?>
                     </a>
                 </div>
 

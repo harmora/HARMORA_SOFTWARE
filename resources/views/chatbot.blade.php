@@ -9,10 +9,10 @@
     <div class="row">
         <div class="card-body text-center">
             <div class="d-flex justify-content-center align-items-center gap-3">
-                <h4 class="card-title text-primary mb-0" id="chatbot-title">{{ get_label('custumer', 'Customer Service Chatbot') }}</h4>
+                <h4 class="card-title text-primary mb-0" id="chatbot-title">{{ get_label('custumer_service', 'Customer Service Chatbot') }}</h4>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="serviceToggle">
-                    <label class="form-check-label" for="serviceToggle">Switch to Data Service</label>
+                    <label class="form-check-label" for="serviceToggle">{{get_label('switch_data_mode','switch data service') }}</label>
                 </div>
             </div>
         </div>
@@ -24,13 +24,13 @@
                     <div id="data-chat-output" class="chat-output"></div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" id="chat-input" class="form-control" placeholder="Ask me anything...">
+                    <input type="text" id="chat-input" class="form-control" placeholder="demander ce que vous vouler...">
                     <button id="send-btn" class="btn btn-primary">
                         <span class="normal-state">
-                            <i class="fas fa-paper-plane"></i> Send
+                            <i class="fas fa-paper-plane"></i> {{get_label('ask','ask') }}
                         </span>
                         <span class="loading-state d-none">
-                            <i class="fas fa-spinner fa-spin"></i> Generating...
+                            <i class="fas fa-spinner fa-spin"></i> {{ get_label('generating', 'Generating...') }}
                         </span>
                     </button>
                 </div>
@@ -215,7 +215,7 @@
             $(currentOutput).addClass('active chat-switch-animation');
             
             // Update title
-            const title = isDataService ? 'Data Service Chatbot' : '{{ get_label('custumer', 'Customer Service Chatbot') }}';
+            const title = isDataService ? '{{ get_label('data_service', 'Service utilisateur') }}': '{{ get_label('custumer_service', 'Service utilisateur') }}';
             $('#chatbot-title').text(title);
             
             // Scroll to bottom of new chat
@@ -266,7 +266,7 @@
                 },
                 error: function () {
                     removeTypingIndicator();
-                    appendMessage('bot', 'Sorry, something went wrong. Please try again.');
+                    appendMessage('bot', '{{ get_label('error_message', 'Sorry, something went wrong. Please try again.') }}');
                 },
                 complete: function() {
                     setLoadingState(false);

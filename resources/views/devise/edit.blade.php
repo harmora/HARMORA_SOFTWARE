@@ -36,7 +36,7 @@ $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'admin')->get();
                 <div class="row">
                     <!-- Title -->
                     <div class="mb-3 col-md-6">
-                        <label for="title" class="form-label">Title <span class="asterisk">*</span></label>
+                        <label for="title" class="form-label">Titre <span class="asterisk">*</span></label>
                         <input type="text" name="title" class="form-control" value="{{ old('title', $commande->title) }}" required>
                     </div>
                     <!-- Client Selection -->

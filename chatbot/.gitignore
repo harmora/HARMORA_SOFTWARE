@@ -1,5 +1,10 @@
 .env
 venvharmo/
+venvharmora/
 test/
 vector_db/
 .idea/
+client.py
+huggingface_llm_RAG.ipynb
+lastapp.py
+old_vectore_db/

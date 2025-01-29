@@ -107,8 +107,8 @@ background-repeat: no-repeat;
                             <a href="{{ route('enterprise.profile') }}">
                             <img src="{{ auth()->user()->entreprise->photo ? asset('storage/' . auth()->user()->entreprise->photo) : asset('storage/photos/no-image.jpg') }}" alt="Profile Picture" class="profile-pic">
                         </a>
-                            <h2 class="admin-dashboard-title">Welcome to Your Dashboard</h2>
-                            <p class="admin-dashboard-description">Here you can manage your Entreprise, view statistics, and perform tasks.</p>
+                            <h2 class="admin-dashboard-title">{{ get_label('welcome_to_your_dashboard', 'Welcome to Your Dashboard') }}</h2>
+                            <p class="admin-dashboard-description">{{ get_label('manage_entreprise', 'Here you can manage your Entreprise, view statistics, and perform tasks.') }}</p>
                          </div>
                     @elseif(auth()->user()->role->rolename === 'admin')
                         {{-- <div class="profile-container">
@@ -149,7 +149,7 @@ background-repeat: no-repeat;
                                     <i class="menu-icon tf-icons bx bx-pulse bx-md text-success"></i>
                                 </div>
                             </div>
-                            <span class="fw-semibold d-block mb-1"><?= get_label('ca', 'CA') ?></span>
+                            <span class="fw-semibold d-block mb-1" title="Chiffre d'Affaires"><?= get_label('ca', 'CA') ?></span>
                             <h3 class="card-title mb-2">{{$ca}}</h3>
                             <a href="/{{getUserPreferences('projects', 'default_view')}}">
                                 <small class="text-success fw-semibold"><i class="bx bx-right-arrow-alt"></i><?= get_label('view_more', 'View more') ?></small>

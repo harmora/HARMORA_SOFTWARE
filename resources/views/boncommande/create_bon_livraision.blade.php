@@ -9,7 +9,7 @@
         <nav aria-label="breadcrumb" class="mb-0">
             <ol class="breadcrumb breadcrumb-style1 mb-0">
                 <li class="breadcrumb-item"><a href="{{url('/home')}}"><?= get_label('home', 'Home') ?></a></li>
-                <li class="breadcrumb-item"><a href="{{url('/commandes')}}"><?= get_label('sale', 'Commandes') ?></a></li>
+                <li class="breadcrumb-item"><a href="{{url('/commandes/draggable')}}"><?= get_label('sale', 'Commandes') ?></a></li>
                 <li class="breadcrumb-item active"><?= get_label('bon_liv', 'Bon Livraison') ?></li>
             </ol>
         </nav>

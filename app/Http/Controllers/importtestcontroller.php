@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\depot;
 use App\Models\Entreprise;
 use App\Models\Achat;
 use App\Models\mouvements_stock;
@@ -58,13 +57,32 @@ class ImportController extends Controller
         ]);
         $file = $request->file('file');
         $table = $request->input('table');
-
+        
         // Save the file to a temporary location in storage
         $path = $file->storeAs('temp', $file->getClientOriginalName());
-    
-        // Get the headings (first row) from the uploaded file
-        $headings = Excel::toArray([], storage_path(path: 'app/' . $path))[0][0];
-    
+
+        // Get the entire array from Excel file
+        $excelData = Excel::toArray([], storage_path('app/' . $path))[0];
+
+        // Filter out completely empty rows and get valid data
+        $validData = array_filter($excelData, function($row) {
+            return !empty(array_filter($row, function($cell) {
+                return !is_null($cell) && trim($cell) !== '';
+            }));
+        });
+
+        // Reset array keys after filtering
+        $validData = array_values($validData);
+
+        // If no valid data found
+        if (empty($validData)) {
+            Storage::delete($path);
+            return redirect()->back()->withErrors(['file' => 'The Excel file contains no valid data']);
+        }
+
+        // Get headers from the first non-empty row
+        $headings = array_map('trim', $validData[0]);
+
         // Retrieve all columns from the table
         $allColumns = Schema::getColumnListing($table); // Replace 'your_table_name' with the actual table name
         
@@ -80,7 +98,7 @@ class ImportController extends Controller
             $requiredColumns = array_keys($requiredColumns);
             //remove column that ara in requiredColumns along with id, created_at, and updated_at
             $dbColumns = array_filter($allColumns, function($column) use ($requiredColumns) {
-                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at','entreprise_id','photo']));
+                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at','entreprise_id']));
             });
 
         }elseif($table == 'clients'){
@@ -100,18 +118,9 @@ class ImportController extends Controller
             $requiredColumns = array_keys($requiredColumns);
             //remove column that ara in requiredColumns along with id, created_at, and updated_at
             $dbColumns = array_filter($allColumns, function($column) use ($requiredColumns) {
-                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at','product_category_id','photo','entreprise_id','prev_stock','reference','prev_price']));
+                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at','product_category_id','photo']));
             });
 
-        }elseif($table == 'depots'){
-            $requiredColumns = array_filter($requiredColumns, function($column) {
-                return $column->getNotnull() && !in_array($column->getName(), ['id']);
-            });
-            $requiredColumns = array_keys($requiredColumns);
-            //remove column that ara in requiredColumns along with id, created_at, and updated_at
-            $dbColumns = array_filter($allColumns, function($column) use ($requiredColumns) {
-                return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at']));
-            });
         }elseif($table == 'achats'){
             $requiredColumns = array_filter($requiredColumns, function($column) {
                 return $column->getNotnull() && !in_array($column->getName(), ['id']);
@@ -121,37 +130,115 @@ class ImportController extends Controller
             $dbColumns = array_filter($allColumns, function($column) use ($requiredColumns) {
                 return !in_array($column, array_merge($requiredColumns, ['id', 'created_at', 'updated_at']));
             });
-        } else {
-            $dbColumns = [];
         }
         
-
-
-    
+        session(['excel_data' => $validData]);
         return view('import.step2', compact('headings', 'dbColumns', 'path', 'requiredColumns','table'));
     }
     
 
     public function step2(Request $request)
     {
+        $request->validate([
+            'path' => 'required|string',
+            'table' => 'required|string',
+            'mappings' => 'required|array',
+            'save_columns' => 'array',
+        ]);
+    
         $path = $request->input('path');
         $table = $request->input('table');
         $mappings = $request->input('mappings');
         $saveColumns = $request->input('save_columns', []);
     
-        // Read all rows from the stored file
-        $rows = Excel::toArray([], storage_path('app/' . $path))[0];
-        $rows = array_slice($rows, 1); // Remove the header row
-        $rows = array_filter($rows, function($row) {
-            return array_filter($row); // Keep rows that have at least one non-empty value
-        });
-        $depots = [];
-        if ($table === 'products') {
-            $depots = Depot::all();
+        // Get the filtered data from session that we stored in step1
+        $validData = session('excel_data', []);
+    
+        if (empty($validData)) {
+            // If somehow the session data is lost, try to read from file again
+            $validData = Excel::toArray([], storage_path('app/' . $path))[0];
+            $validData = array_filter($validData, function($row) {
+                return !empty(array_filter($row, function($cell) {
+                    return !is_null($cell) && trim($cell) !== '';
+                }));
+            });
+            $validData = array_values($validData);
         }
+    
+        // Remove the header row and get only data rows
+        $rows = array_slice($validData, 1);
+    
+        // Additional validation to ensure we have data to process
+        if (empty($rows)) {
+            Storage::delete($path);
+            return redirect()->back()->withErrors(['file' => 'No valid data rows found in the Excel file']);
+        }
+    
+        // Validate mappings against the actual columns
+        $validMappings = [];
+        foreach ($mappings as $excelColumn => $dbColumn) {
+            if (!empty($dbColumn)) {
+                $validMappings[$excelColumn] = $dbColumn;
+            }
+        }
+    
+        if (empty($validMappings)) {
+            return redirect()->back()->withErrors(['mappings' => 'At least one column mapping is required']);
+        }
+    
+        // Store mappings in session for use in next step
+        session(['column_mappings' => $validMappings]);
         
-        return view('import.step3', compact('rows', 'mappings', 'saveColumns', 'path', 'table','depots'));
+        return view('import.step3', compact('rows', 'mappings', 'saveColumns', 'path', 'table'));
     }
+    // In your ImportController.php
+
+public function getHeaders(Request $request)
+{
+    $request->validate([
+        'path' => 'required|string',
+        'sheet' => 'required|numeric',
+    ]);
+
+    try {
+        // Get all sheets from the Excel file
+        $excelData = Excel::toArray([], storage_path('app/' . $request->path));
+        
+        // Get data from selected sheet
+        $sheetData = $excelData[$request->sheet];
+
+        // Filter out completely empty rows and get valid data
+        $validData = array_filter($sheetData, function($row) {
+            return !empty(array_filter($row, function($cell) {
+                return !is_null($cell) && trim($cell) !== '';
+            }));
+        });
+
+        // Reset array keys after filtering
+        $validData = array_values($validData);
+
+        if (empty($validData)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No valid data found in the selected sheet'
+            ]);
+        }
+
+        // Get headers from the first non-empty row
+        $headings = array_map('trim', $validData[0]);
+
+        return response()->json([
+            'success' => true,
+            'headings' => $headings
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error reading sheet headers: ' . $e->getMessage()
+        ]);
+    }
+}
     
     public function save(Request $request)
     {
@@ -212,14 +299,12 @@ class ImportController extends Controller
                     $count++;
                 };
             }elseif($table=='products'){
-                $depot_id = $request->input('depot_id');
                 $product = Product::where('name', $row['name'])->first();
-                $dataToUpdate['name'] = $row['name'];
+                $dataToUpdate['name'] = $row['name']; // Make sure email is set for new entries
                 $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
                 $dataToUpdate['reference'] = $this->generateProductReference();
                 if (!$product){
                     $prod=Product::create($dataToUpdate);
-                    $prod->depots()->attach($depot_id, ['quantity' => $row['stock']]);
                     mouvements_stock::create([
                         'product_id'=>$prod->id,
                         'quantitéajoutée'=>$prod->stock,
@@ -227,15 +312,11 @@ class ImportController extends Controller
                         'date_mouvement'=>now(),
                         'type_mouvement'=>'entrée',
                         'reference'=>$prod->name.'-'.$prod->reference,
-                        'depot_id'=>$depot_id,
                     ]);
                     $count++;
                     // $product = Product::where('name', $row['name'])->first();
                 }else{
-                    $existingQuantity = $product->depots()->where('depot_id', $depot_id)->first()->pivot->quantity ?? 0;
-                    $newQuantity = $existingQuantity + $row['stock'];
-                    $product->depots()->syncWithoutDetaching([$depot_id => ['quantity' => $newQuantity]]);
-                    $dataToUpdate['stock'] = $row['stock']+$product['stock'];
+                    $dataToUpdate['stock'] = $row['stock']+$product['stock']; // Make sure email is set for new entries
                     $product->update($dataToUpdate);
                     mouvements_stock::create([
                         'product_id'=>$product->id,
@@ -244,7 +325,6 @@ class ImportController extends Controller
                         'date_mouvement'=>now(),
                         'type_mouvement'=>'entrée',
                         'reference'=>$product->name.'-'.$product->reference,
-                        'depot_id'=>$depot_id,
                     ]);
                     $count++;
                     
@@ -258,14 +338,6 @@ class ImportController extends Controller
                 //     'type_mouvement'=>'entrée',
                 //     'reference'=>$product->id.'-'.,
                 // ]);
-            }elseif($table == 'depots'){
-                $depot=depot::where('name', $row['name'])->first();
-                if (!$depot){
-                    $dataToUpdate['name'] = $row['name']; 
-                    $dataToUpdate['entreprise_id'] = $this->user->entreprise_id;
-                    depot::create($dataToUpdate);
-                    $count++;
-                };   
             }
             
         }

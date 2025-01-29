@@ -187,6 +187,11 @@ $ongoing_meetings_count = $user->meetings('ongoing')->count();
                         <div><?= get_label('stock_movements', 'Stock Movements') ?></div>
                     </a>
                 </li>
+                <li class="menu-item {{ Request::is('products') ? 'active' : '' }}">
+                    <a href="/depots" class="menu-link">
+                        <div><?= get_label('depot', 'Mes depots') ?></div>
+                    </a>
+                </li>
             </ul>
         </li>
 

@@ -1,4 +1,5 @@
 @extends('layout')
+{{-- @if(isset($general_settings)) --}}
 <title>Login - {{$general_settings['company_title']}}</title>
 @section('content')
 <style>
@@ -83,5 +84,8 @@
         </div>
     </div>
 </div>
+{{-- @else
+@include('error')
+@endif --}}
 <!-- / Content -->
 @endsection

@@ -24,6 +24,17 @@
                 <input type="hidden" name="save_columns" value="{{ json_encode($saveColumns) }}">
                 <input type="hidden" name="table" value="{{ $table }}">
 
+                @if($table === 'products')
+                    <div class="form-group mb-4">
+                        <label for="depot_id">Depot</label>
+                        <select name="depot_id" id="depot_id" class="form-control" required>
+                            <option value="">veuiller chosir un depot</option>
+                            @foreach($depots as $depot)
+                                <option value="{{ $depot->id }}">{{ $depot->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover text-center">
